@@ -287,7 +287,7 @@ async function envoyerAlerteUrgence() {
   document.getElementById('btn-alerter-texte').textContent = 'Envoi en cours…';
 
   try {
-    await fetch('/api/urgence', {
+    const r = await fetch('/api/urgence', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -297,7 +297,16 @@ async function envoyerAlerteUrgence() {
         callmebot_apikey: proche?.callmebot_apikey || ''
       })
     });
-  } catch { /* on affiche la confirmation même en cas d'erreur réseau */ }
+    const data = await r.json();
+    if (!data.ok) {
+      document.getElementById('btn-alerter-texte').textContent = '⚠️ Échec — vérifier la configuration';
+      btn.disabled = false;
+      console.error('Urgence erreur:', data.erreur, data.detail);
+      return;
+    }
+  } catch {
+    // réseau indisponible — on affiche quand même la confirmation
+  }
 
   afficherZone('urgence-confirmation');
   btn.style.display = 'none';
