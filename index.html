@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#E8631A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Mon Sucre" />
+  <title>Mon Sucre</title>
+  <link rel="manifest" href="/public/manifest.json" />
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+
+  <!-- ÉCRAN 1 : ACCUEIL -->
+  <div id="ecran-accueil" class="ecran actif">
+    <div class="entete">
+      <div class="logo">🍊</div>
+      <h1>Mon Sucre</h1>
+      <p class="bonjour" id="message-bonjour">Bonjour !</p>
+    </div>
+
+    <div class="boutons-principaux">
+      <button class="btn-principal" onclick="allerA('ecran-repas')">
+        <span class="btn-icone">🍽️</span>
+        <span class="btn-texte">Mon repas</span>
+      </button>
+
+      <button class="btn-principal" onclick="allerA('ecran-medicaments')">
+        <span class="btn-icone">💊</span>
+        <span class="btn-texte">Mes médicaments</span>
+      </button>
+
+      <button class="btn-urgence" onclick="allerA('ecran-urgence')">
+        <span class="btn-icone">🔴</span>
+        <span class="btn-texte">Je ne me sens pas bien</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 2 : MON REPAS -->
+  <div id="ecran-repas" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
+      <h2>Mon repas</h2>
+    </div>
+
+    <div class="contenu-ecran">
+      <p class="instruction">Qu'avez-vous mangé ?</p>
+
+      <button class="btn-action" onclick="ouvrirPhoto()">
+        <span class="btn-icone">📷</span>
+        <span class="btn-texte">Prendre une photo</span>
+      </button>
+      <input type="file" id="input-photo" accept="image/*" capture="environment" style="display:none" onchange="analyserPhoto(this)" />
+
+      <button class="btn-action" onclick="commencerVoix()">
+        <span class="btn-icone">🎤</span>
+        <span class="btn-texte">Dire à voix haute</span>
+      </button>
+
+      <div id="zone-voix" class="zone-cachee">
+        <p class="ecoute-texte">🎙️ J'écoute…</p>
+        <p id="texte-reconnu" class="texte-reconnu"></p>
+        <button class="btn-confirmer" onclick="envoyerRepas()" style="display:none" id="btn-envoyer-repas">
+          ✅ C'est ça !
+        </button>
+      </div>
+
+      <div id="zone-analyse" class="zone-cachee">
+        <div class="chargement">⏳ J'analyse votre repas…</div>
+      </div>
+
+      <div id="zone-conseil" class="zone-cachee">
+        <div class="conseil-card">
+          <p id="texte-conseil" class="conseil-texte"></p>
+          <button class="btn-bravo" onclick="allerA('ecran-bravo')">✅ Merci !</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 3 : MÉDICAMENTS -->
+  <div id="ecran-medicaments" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
+      <h2>Mes médicaments</h2>
+    </div>
+
+    <div class="contenu-ecran">
+      <div id="liste-medicaments">
+        <p class="chargement-meds">⏳ Chargement…</p>
+      </div>
+
+      <button class="btn-action" onclick="allerA('ecran-ajouter-med')">
+        <span class="btn-icone">➕</span>
+        <span class="btn-texte">Ajouter un médicament</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 4 : URGENCE -->
+  <div id="ecran-urgence" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
+      <h2>Besoin d'aide</h2>
+    </div>
+
+    <div class="contenu-ecran urgence-contenu">
+      <p class="instruction urgence-message">Vous pouvez prévenir un proche maintenant.</p>
+
+      <button class="btn-urgence-gros" onclick="envoyerAlerteUrgence()">
+        <span class="btn-icone">📱</span>
+        <span class="btn-texte">Prévenir ma famille</span>
+      </button>
+
+      <div id="urgence-confirmation" class="zone-cachee">
+        <div class="bravo-card">
+          <p class="bravo-texte">✅ Votre famille a été prévenue.</p>
+          <p class="bravo-sous">Restez calme, ils arrivent.</p>
+          <button class="btn-bravo" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
+        </div>
+      </div>
+
+      <button class="btn-secondaire" onclick="allerA('ecran-accueil')">
+        Je vais mieux, retour à l'accueil
+      </button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 5 : BRAVO -->
+  <div id="ecran-bravo" class="ecran">
+    <div class="bravo-ecran">
+      <div class="bravo-icone">⭐</div>
+      <h2 class="bravo-titre">Bravo !</h2>
+      <p class="bravo-texte">C'est noté. Continuez comme ça !</p>
+      <button class="btn-bravo" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
+    </div>
+  </div>
+
+  <script src="/public/app.js"></script>
+</body>
+</html>
