@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#E8631A" />
+  <meta name="theme-color" content="#3B7A6B" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Mon Sucre" />
@@ -16,9 +16,15 @@
   <!-- ÉCRAN 0 : INSCRIPTION -->
   <div id="ecran-inscription" class="ecran">
     <div class="entete">
-      <div class="logo">🍊</div>
-      <h1>Mon Sucre</h1>
-      <p class="bonjour">Bienvenue !</p>
+      <div class="entete-inner">
+        <svg class="logo" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,0.15)"/>
+          <path d="M30 10 C30 10 16 21 16 32 C16 39.732 22.268 46 30 46 C37.732 46 44 39.732 44 32 C44 21 30 10 30 10Z" fill="white"/>
+          <circle cx="30" cy="32" r="7" fill="#3B7A6B"/>
+        </svg>
+        <h1>Mon Sucre</h1>
+        <p class="bonjour">Bienvenue !</p>
+      </div>
     </div>
 
     <div class="contenu-ecran">
@@ -69,11 +75,18 @@
   </div>
 
   <!-- ÉCRAN 1 : ACCUEIL -->
-  <div id="ecran-accueil" class="ecran actif">
+  <div id="ecran-accueil" class="ecran">
     <div class="entete">
-      <div class="logo">🍊</div>
-      <h1>Mon Sucre</h1>
-      <p class="bonjour" id="message-bonjour">Bonjour !</p>
+      <button class="btn-settings" onclick="allerA('ecran-proche')" title="Mon proche aidant">⚙️</button>
+      <div class="entete-inner">
+        <svg class="logo" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,0.15)"/>
+          <path d="M30 10 C30 10 16 21 16 32 C16 39.732 22.268 46 30 46 C37.732 46 44 39.732 44 32 C44 21 30 10 30 10Z" fill="white"/>
+          <circle cx="30" cy="32" r="7" fill="#3B7A6B"/>
+        </svg>
+        <h1>Mon Sucre</h1>
+        <p class="bonjour" id="message-bonjour">Bonjour !</p>
+      </div>
     </div>
 
     <div class="boutons-principaux">
@@ -163,20 +176,28 @@
     </div>
 
     <div class="contenu-ecran urgence-contenu">
-      <p class="instruction urgence-message">Vous pouvez prévenir un proche maintenant.</p>
+      <div id="urgence-proche-info" class="proche-info zone-cachee"></div>
 
-      <button class="btn-urgence-gros" onclick="envoyerAlerteUrgence()">
+      <p id="urgence-pas-de-proche" class="instruction urgence-message zone-cachee">
+        Aucun proche configuré.<br>Ajoutez un proche d'abord.
+      </p>
+
+      <button class="btn-urgence-gros" id="btn-alerter-proche" onclick="envoyerAlerteUrgence()">
         <span class="btn-icone">📱</span>
-        <span class="btn-texte">Prévenir ma famille</span>
+        <span id="btn-alerter-texte" class="btn-texte">Prévenir ma famille</span>
       </button>
 
       <div id="urgence-confirmation" class="zone-cachee">
-        <div class="bravo-card">
-          <p class="bravo-texte">✅ Votre famille a été prévenue.</p>
-          <p class="bravo-sous">Restez calme, ils arrivent.</p>
-          <button class="btn-bravo" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
+        <div class="conseil-card" style="text-align:center; margin-top:16px;">
+          <p class="bravo-texte" style="font-size:20px;">✅ Votre proche a été prévenu.</p>
+          <p class="bravo-sous" style="margin-top:8px;">Restez calme, ils arrivent.</p>
+          <button class="btn-bravo" style="margin-top:20px;" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
         </div>
       </div>
+
+      <button class="btn-secondaire" onclick="allerA('ecran-proche')">
+        ⚙️ Configurer mon proche aidant
+      </button>
 
       <button class="btn-secondaire" onclick="allerA('ecran-accueil')">
         Je vais mieux, retour à l'accueil
@@ -191,6 +212,36 @@
       <h2 class="bravo-titre">Bravo !</h2>
       <p class="bravo-texte">C'est noté. Continuez comme ça !</p>
       <button class="btn-bravo" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 6 : MON PROCHE AIDANT -->
+  <div id="ecran-proche" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
+      <h2>Mon proche aidant</h2>
+    </div>
+
+    <div class="contenu-ecran">
+      <p class="instruction">Qui prévenir en cas d'urgence ?</p>
+
+      <div class="champ-group">
+        <label class="champ-label" for="inp-proche-prenom">Prénom du proche</label>
+        <input class="champ-input" type="text" id="inp-proche-prenom" placeholder="Ex : Pierre" />
+      </div>
+
+      <div class="champ-group">
+        <label class="champ-label" for="inp-proche-tel">Son numéro de téléphone</label>
+        <input class="champ-input" type="tel" id="inp-proche-tel" placeholder="Ex : +32 470 00 00 00" />
+      </div>
+
+      <button class="btn-confirmer" onclick="sauverProche()">
+        ✅ Enregistrer
+      </button>
+
+      <div id="proche-sauve" class="zone-cachee" style="text-align:center; color:#2D7A3A; font-size:18px; font-weight:600; padding:12px;">
+        ✅ Proche enregistré !
+      </div>
     </div>
   </div>
 

@@ -20,6 +20,18 @@ function allerA(ecranId) {
   const cible = document.getElementById(ecranId);
   if (cible) cible.classList.add('actif');
   window.scrollTo(0, 0);
+
+  if (ecranId === 'ecran-urgence') chargerEcranUrgence();
+  if (ecranId === 'ecran-proche') chargerFormulaireProche();
+}
+
+function chargerFormulaireProche() {
+  const proche = getProcheContact();
+  if (proche) {
+    document.getElementById('inp-proche-prenom').value = proche.prenom;
+    document.getElementById('inp-proche-tel').value = proche.telephone;
+  }
+  masquerZone('proche-sauve');
 }
 
 // ── Inscription — Étape 1 : envoyer le code ───────────
@@ -220,21 +232,69 @@ function afficherConseil(texte) {
   afficherZone('zone-conseil');
 }
 
+// ── Proche aidant ─────────────────────────────────────
+function getProcheContact() {
+  try { return JSON.parse(localStorage.getItem('ms_proche') || 'null'); } catch { return null; }
+}
+
+function sauverProche() {
+  const prenom = document.getElementById('inp-proche-prenom').value.trim();
+  const tel    = document.getElementById('inp-proche-tel').value.trim();
+  if (!prenom || !tel) return;
+
+  localStorage.setItem('ms_proche', JSON.stringify({ prenom, telephone: tel }));
+  afficherZone('proche-sauve');
+  setTimeout(() => {
+    masquerZone('proche-sauve');
+    allerA('ecran-accueil');
+  }, 1500);
+}
+
+function chargerEcranUrgence() {
+  const proche = getProcheContact();
+  const infoEl = document.getElementById('urgence-proche-info');
+  const pasDeProche = document.getElementById('urgence-pas-de-proche');
+  const btn = document.getElementById('btn-alerter-proche');
+  const btnTexte = document.getElementById('btn-alerter-texte');
+
+  // Réinitialiser
+  btn.disabled = false;
+  btnTexte.textContent = 'Prévenir ma famille';
+  masquerZone('urgence-confirmation');
+  btn.style.display = '';
+
+  if (proche) {
+    infoEl.innerHTML = `Votre proche aidant : <strong>${proche.prenom}</strong><br>${proche.telephone}`;
+    afficherZone('urgence-proche-info');
+    masquerZone('urgence-pas-de-proche');
+    btnTexte.textContent = `Prévenir ${proche.prenom}`;
+  } else {
+    masquerZone('urgence-proche-info');
+    afficherZone('urgence-pas-de-proche');
+    btn.disabled = true;
+  }
+}
+
 // ── Urgence ───────────────────────────────────────────
 async function envoyerAlerteUrgence() {
-  const btn = document.querySelector('.btn-urgence-gros');
+  const proche = getProcheContact();
+  const btn = document.getElementById('btn-alerter-proche');
+  const session = getSession();
+
   btn.disabled = true;
-  btn.querySelector('.btn-texte').textContent = 'Envoi en cours…';
+  document.getElementById('btn-alerter-texte').textContent = 'Envoi en cours…';
 
   try {
     await fetch('/api/urgence', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ timestamp: new Date().toISOString() })
+      body: JSON.stringify({
+        timestamp: new Date().toISOString(),
+        prenom_utilisateur: session?.prenom || 'Votre proche',
+        telephone_proche: proche?.telephone || ''
+      })
     });
-  } catch {
-    // on affiche la confirmation même si l'envoi échoue côté réseau
-  }
+  } catch { /* on affiche la confirmation même en cas d'erreur réseau */ }
 
   afficherZone('urgence-confirmation');
   btn.style.display = 'none';
