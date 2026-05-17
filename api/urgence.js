@@ -15,6 +15,13 @@ export default async function handler(req, res) {
 
   const heure = new Date(timestamp).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
 
+  // Brevo : format international sans + ni espaces (ex: 32470000000)
+  let tel = telephone_proche.replace(/[\s\-\.\(\)]/g, '');
+  if (tel.startsWith('+')) tel = tel.slice(1);
+  if (tel.startsWith('00')) tel = tel.slice(2);
+  // Numéro local belge commençant par 0 → remplace par 32
+  if (tel.startsWith('0') && tel.length <= 10) tel = '32' + tel.slice(1);
+
   try {
     const r = await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
       method: 'POST',
@@ -24,7 +31,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         sender: 'MonSucre',
-        recipient: telephone_proche.replace(/\s/g, ''),
+        recipient: tel,
         content: `URGENT - ${prenom_utilisateur} ne se sent pas bien. Bouton urgence appuye a ${heure}. Contactez-le rapidement. (Mon Sucre)`
       })
     });
