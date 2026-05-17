@@ -29,16 +29,13 @@ export default async function handler(req, res) {
   const code = genererCode();
   const token = signerToken(tel, code);
 
-  // DEV_MODE : affiche le code à l'écran sans envoyer de SMS
-  if (process.env.DEV_MODE === 'true') {
-    return res.status(200).json({ token, dev_code: code });
-  }
-
+  const devMode = ['true', '1', 'yes'].includes((process.env.DEV_MODE || '').toLowerCase().trim());
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken  = process.env.TWILIO_AUTH_TOKEN;
   const from       = process.env.TWILIO_FROM;
 
-  if (!accountSid || !authToken || !from) {
+  // DEV_MODE ou Twilio non configuré : code affiché directement
+  if (devMode || !accountSid || !authToken || !from) {
     return res.status(200).json({ token, dev_code: code });
   }
 
