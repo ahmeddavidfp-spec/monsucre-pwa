@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="fond" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8F4EF"/>
+      <stop offset="100%" stop-color="#D0E9E0"/>
+    </linearGradient>
+    <linearGradient id="sol" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A8D5C2"/>
+      <stop offset="100%" stop-color="#7ABFA8"/>
+    </linearGradient>
+    <radialGradient id="soleil" cx="75%" cy="20%" r="30%">
+      <stop offset="0%" stop-color="#FFF5D6" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#FFF5D6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Fond dégradé doux -->
+  <rect width="800" height="320" fill="url(#fond)"/>
+  <!-- Lueur soleil -->
+  <rect width="800" height="320" fill="url(#soleil)"/>
+
+  <!-- Collines / sol -->
+  <ellipse cx="400" cy="340" rx="520" ry="110" fill="#C5E8D8" opacity="0.6"/>
+  <ellipse cx="400" cy="360" rx="600" ry="100" fill="url(#sol)" opacity="0.5"/>
+
+  <!-- Arbres décoratifs gauche -->
+  <ellipse cx="80" cy="200" rx="38" ry="50" fill="#3B7A6B" opacity="0.25"/>
+  <rect x="76" y="240" width="8" height="50" rx="4" fill="#5A8A78" opacity="0.3"/>
+  <ellipse cx="120" cy="220" rx="28" ry="38" fill="#3B7A6B" opacity="0.18"/>
+  <rect x="116" y="248" width="7" height="40" rx="3" fill="#5A8A78" opacity="0.25"/>
+
+  <!-- Arbres décoratifs droite -->
+  <ellipse cx="720" cy="195" rx="42" ry="55" fill="#3B7A6B" opacity="0.22"/>
+  <rect x="715" y="238" width="9" height="52" rx="4" fill="#5A8A78" opacity="0.28"/>
+  <ellipse cx="675" cy="215" rx="30" ry="42" fill="#3B7A6B" opacity="0.17"/>
+
+  <!-- Petits ronds décoratifs -->
+  <circle cx="400" cy="50" r="90" fill="white" opacity="0.07"/>
+  <circle cx="400" cy="50" r="55" fill="white" opacity="0.06"/>
+
+  <!-- ═══ FEMME (gauche) ═══ -->
+  <!-- Corps -->
+  <ellipse cx="265" cy="290" rx="58" ry="75" fill="#7BB8A0"/>
+  <!-- Col -->
+  <ellipse cx="265" cy="225" rx="26" ry="12" fill="#6DADA8" opacity="0.8"/>
+  <!-- Cou -->
+  <rect x="256" y="210" width="18" height="22" rx="7" fill="#E8B88A"/>
+  <!-- Tête -->
+  <ellipse cx="265" cy="190" rx="40" ry="44" fill="#F0C49A"/>
+  <!-- Cheveux blancs/gris courts -->
+  <ellipse cx="265" cy="155" rx="42" ry="24" fill="#D8D8D8"/>
+  <ellipse cx="228" cy="172" rx="17" ry="28" fill="#D8D8D8"/>
+  <ellipse cx="302" cy="172" rx="17" ry="28" fill="#D8D8D8"/>
+  <ellipse cx="265" cy="148" rx="38" ry="16" fill="#E2E2E2"/>
+  <!-- Oreilles -->
+  <ellipse cx="225" cy="192" rx="9" ry="11" fill="#E8B890"/>
+  <ellipse cx="305" cy="192" rx="9" ry="11" fill="#E8B890"/>
+  <!-- Yeux -->
+  <ellipse cx="252" cy="187" rx="5.5" ry="6" fill="#4A3020"/>
+  <ellipse cx="278" cy="187" rx="5.5" ry="6" fill="#4A3020"/>
+  <circle cx="254" cy="185" r="2" fill="white"/>
+  <circle cx="280" cy="185" r="2" fill="white"/>
+  <!-- Paupières douces -->
+  <path d="M246 183 Q252 179 258 183" stroke="#A07050" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <path d="M272 183 Q278 179 284 183" stroke="#A07050" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <!-- Sourire -->
+  <path d="M250 203 Q265 216 280 203" stroke="#9A5A32" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Joues roses -->
+  <ellipse cx="240" cy="200" rx="12" ry="8" fill="#F08888" opacity="0.28"/>
+  <ellipse cx="290" cy="200" rx="12" ry="8" fill="#F08888" opacity="0.28"/>
+  <!-- Petites rides sourire (détail affectueux) -->
+  <path d="M242 208 Q237 213 240 218" stroke="#C8956A" stroke-width="1.2" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M288 208 Q293 213 290 218" stroke="#C8956A" stroke-width="1.2" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <!-- Bras gauche -->
+  <ellipse cx="315" cy="265" rx="14" ry="45" fill="#7BB8A0" transform="rotate(-15 315 265)"/>
+  <ellipse cx="215" cy="265" rx="14" ry="45" fill="#7BB8A0" transform="rotate(15 215 265)"/>
+
+  <!-- ═══ HOMME (droite) ═══ -->
+  <!-- Corps -->
+  <ellipse cx="535" cy="290" rx="62" ry="80" fill="#6B9E8A"/>
+  <!-- Col chemise -->
+  <ellipse cx="535" cy="222" rx="28" ry="13" fill="#5A8A78" opacity="0.9"/>
+  <!-- Cou -->
+  <rect x="525" y="208" width="20" height="24" rx="7" fill="#D4906A"/>
+  <!-- Tête -->
+  <ellipse cx="535" cy="186" rx="43" ry="47" fill="#D8946A"/>
+  <!-- Cheveux gris/blancs -->
+  <ellipse cx="535" cy="148" rx="45" ry="26" fill="#C8C8C8"/>
+  <ellipse cx="494" cy="167" rx="18" ry="32" fill="#C8C8C8"/>
+  <ellipse cx="576" cy="167" rx="18" ry="32" fill="#C8C8C8"/>
+  <ellipse cx="535" cy="142" rx="40" ry="18" fill="#D8D8D8"/>
+  <!-- Oreilles -->
+  <ellipse cx="493" cy="188" rx="9" ry="12" fill="#D4906A"/>
+  <ellipse cx="577" cy="188" rx="9" ry="12" fill="#D4906A"/>
+  <!-- Lunettes -->
+  <rect x="508" y="178" width="24" height="18" rx="9" fill="none" stroke="#6A5A48" stroke-width="2.8"/>
+  <rect x="538" y="178" width="24" height="18" rx="9" fill="none" stroke="#6A5A48" stroke-width="2.8"/>
+  <line x1="532" y1="187" x2="538" y2="187" stroke="#6A5A48" stroke-width="2.8"/>
+  <line x1="508" y1="187" x2="500" y2="189" stroke="#6A5A48" stroke-width="2.5"/>
+  <line x1="562" y1="187" x2="570" y2="189" stroke="#6A5A48" stroke-width="2.5"/>
+  <!-- Reflet lunettes -->
+  <path d="M512 181 Q516 179 520 181" stroke="white" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <path d="M542 181 Q546 179 550 181" stroke="white" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <!-- Yeux -->
+  <ellipse cx="520" cy="187" rx="5" ry="5.5" fill="#3A2A18"/>
+  <ellipse cx="550" cy="187" rx="5" ry="5.5" fill="#3A2A18"/>
+  <circle cx="522" cy="185" r="2" fill="white"/>
+  <circle cx="552" cy="185" r="2" fill="white"/>
+  <!-- Sourcils légèrement gris -->
+  <path d="M512 177 Q520 174 528 177" stroke="#8A8A8A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M542 177 Q550 174 558 177" stroke="#8A8A8A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Sourire large -->
+  <path d="M518 205 Q535 220 552 205" stroke="#7A3A18" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Joues -->
+  <ellipse cx="506" cy="200" rx="13" ry="9" fill="#C05838" opacity="0.22"/>
+  <ellipse cx="564" cy="200" rx="13" ry="9" fill="#C05838" opacity="0.22"/>
+  <!-- Petites rides sourire -->
+  <path d="M509 210 Q503 216 506 222" stroke="#B07848" stroke-width="1.2" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <path d="M561 210 Q567 216 564 222" stroke="#B07848" stroke-width="1.2" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <!-- Bras -->
+  <ellipse cx="590" cy="262" rx="15" ry="48" fill="#6B9E8A" transform="rotate(-18 590 262)"/>
+  <ellipse cx="480" cy="262" rx="15" ry="48" fill="#6B9E8A" transform="rotate(18 480 262)"/>
+
+  <!-- Main femme dans main homme (geste de complicité) -->
+  <ellipse cx="398" cy="278" rx="22" ry="14" fill="#E8B890" transform="rotate(-10 398 278)"/>
+  <ellipse cx="418" cy="280" rx="22" ry="14" fill="#D4906A" transform="rotate(8 418 280)"/>
+
+  <!-- Petits éléments flottants (fleurs/étoiles) -->
+  <circle cx="180" cy="120" r="5" fill="#F5C842" opacity="0.55"/>
+  <circle cx="620" cy="100" r="4" fill="#F5C842" opacity="0.45"/>
+  <circle cx="400" cy="90" r="3.5" fill="#F5C842" opacity="0.4"/>
+  <path d="M178 112 L180 120 L182 112 L180 114 Z" fill="#F5C842" opacity="0.5"/>
+  <path d="M618 92 L620 100 L622 92 L620 94 Z" fill="#F5C842" opacity="0.4"/>
+
+  <!-- Petits papillons subtils -->
+  <ellipse cx="350" cy="130" rx="10" ry="6" fill="#3B7A6B" opacity="0.15" transform="rotate(-20 350 130)"/>
+  <ellipse cx="362" cy="128" rx="10" ry="6" fill="#3B7A6B" opacity="0.15" transform="rotate(20 362 128)"/>
+  <ellipse cx="450" cy="115" rx="9" ry="5" fill="#3B7A6B" opacity="0.13" transform="rotate(-25 450 115)"/>
+  <ellipse cx="461" cy="113" rx="9" ry="5" fill="#3B7A6B" opacity="0.13" transform="rotate(25 461 113)"/>
+</svg>
