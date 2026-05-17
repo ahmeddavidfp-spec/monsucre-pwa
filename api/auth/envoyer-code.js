@@ -5,7 +5,6 @@ function genererCode() {
 }
 
 function signerToken(telephone, code) {
-  // Fenêtre de 10 minutes (600 secondes)
   const fenetre = Math.floor(Date.now() / 600000);
   const secret = process.env.SESSION_SECRET || 'monsucre-dev-secret';
   return crypto
@@ -30,15 +29,24 @@ export default async function handler(req, res) {
   const code = genererCode();
   const token = signerToken(tel, code);
 
-  // Envoi SMS via Twilio
+  // DEV_MODE : affiche le code à l'écran sans envoyer de SMS
+  if (process.env.DEV_MODE === 'true') {
+    return res.status(200).json({ token, dev_code: code });
+  }
+
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken  = process.env.TWILIO_AUTH_TOKEN;
   const from       = process.env.TWILIO_FROM;
 
-  if (accountSid && authToken && from) {
-    try {
-      const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
-      await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+  if (!accountSid || !authToken || !from) {
+    return res.status(200).json({ token, dev_code: code });
+  }
+
+  try {
+    const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
+    const r = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+      {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${credentials}`,
@@ -49,14 +57,15 @@ export default async function handler(req, res) {
           To: tel,
           Body: `Mon Sucre — Bonjour ${prenom} ! Votre code de connexion est : ${code}`
         })
-      });
-    } catch {
+      }
+    );
+    const data = await r.json();
+    if (!r.ok) {
+      console.error('Twilio erreur:', data.message);
       return res.status(500).json({ erreur: 'Impossible d\'envoyer le SMS. Réessayez.' });
     }
-  } else {
-    // Mode développement : on affiche le code dans la réponse
-    console.log(`[DEV] Code pour ${tel} : ${code}`);
-    return res.status(200).json({ token, dev_code: code });
+  } catch {
+    return res.status(500).json({ erreur: 'Impossible d\'envoyer le SMS. Réessayez.' });
   }
 
   res.status(200).json({ token });
