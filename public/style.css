@@ -386,6 +386,52 @@ html, body {
 .med-pris.deja-pris { background: #B8CBCA; }
 .chargement-meds { font-size: 18px; color: var(--texte-doux); text-align: center; padding: 20px; }
 
+/* ── HISTORIQUE ─────────────────────────────────────── */
+.btn-historique {
+  background: none;
+  border: 2px solid #C5DDD8;
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 17px;
+  color: var(--texte-doux);
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.historique-carte {
+  background: white;
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(59,122,107,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.historique-entete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.historique-icone { font-size: 24px; flex-shrink: 0; }
+.historique-date { display: flex; flex-direction: column; }
+.historique-jour { font-size: 15px; font-weight: 600; color: var(--texte); text-transform: capitalize; }
+.historique-heure { font-size: 13px; color: var(--texte-doux); }
+.historique-description {
+  font-size: 16px;
+  color: var(--texte-doux);
+  font-style: italic;
+  padding: 8px 12px;
+  background: var(--primaire-clair);
+  border-radius: 10px;
+}
+.historique-conseil {
+  font-size: 16px;
+  color: var(--texte);
+  line-height: 1.5;
+}
+
 /* ── CALLMEBOT INFO ─────────────────────────────────── */
 .info-callmebot {
   background: var(--primaire-clair);

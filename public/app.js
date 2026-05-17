@@ -23,6 +23,7 @@ function allerA(ecranId) {
 
   if (ecranId === 'ecran-urgence') chargerEcranUrgence();
   if (ecranId === 'ecran-proche') chargerFormulaireProche();
+  if (ecranId === 'ecran-historique') chargerHistorique();
 }
 
 function chargerFormulaireProche() {
@@ -122,9 +123,9 @@ async function analyserPhoto(input) {
       body: JSON.stringify({ image: base64, type: fichier.type })
     });
     const data = await res.json();
-    afficherConseil(data.conseil);
+    afficherConseil(data.conseil, '', 'photo');
   } catch {
-    afficherConseil("Je n'arrive pas à analyser la photo pour le moment. Essayez de décrire votre repas à voix haute.");
+    afficherConseil("Je n'arrive pas à analyser la photo pour le moment. Essayez de décrire votre repas à voix haute.", '', 'photo');
   }
 }
 
@@ -191,16 +192,66 @@ async function envoyerRepas() {
       body: JSON.stringify({ texte })
     });
     const data = await res.json();
-    afficherConseil(data.conseil);
+    const texteRepas = document.getElementById('texte-reconnu').textContent;
+    afficherConseil(data.conseil, texteRepas, 'vocal');
   } catch {
-    afficherConseil('Votre repas a bien été noté. Continuez à bien manger !');
+    afficherConseil('Votre repas a bien été noté. Continuez à bien manger !', '', 'vocal');
   }
 }
 
-function afficherConseil(texte) {
+function afficherConseil(texte, description, type) {
   masquerZone('zone-analyse');
   document.getElementById('texte-conseil').textContent = texte;
   afficherZone('zone-conseil');
+  sauverRepas(description, texte, type);
+}
+
+// ── Historique des repas ──────────────────────────────
+function sauverRepas(description, conseil, type) {
+  const historique = getHistorique();
+  historique.unshift({
+    id: Date.now(),
+    date: new Date().toISOString(),
+    type: type || 'vocal',
+    description: description || '',
+    conseil
+  });
+  // Garder max 30 repas
+  localStorage.setItem('ms_historique', JSON.stringify(historique.slice(0, 30)));
+}
+
+function getHistorique() {
+  try { return JSON.parse(localStorage.getItem('ms_historique') || '[]'); } catch { return []; }
+}
+
+function chargerHistorique() {
+  const liste = document.getElementById('liste-historique');
+  const historique = getHistorique();
+
+  if (historique.length === 0) {
+    liste.innerHTML = '<p class="chargement-meds">Aucun repas enregistré pour l\'instant.</p>';
+    return;
+  }
+
+  liste.innerHTML = historique.map(repas => {
+    const date = new Date(repas.date);
+    const jour = date.toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' });
+    const heure = date.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+    const icone = repas.type === 'photo' ? '📷' : '🎤';
+    return `
+      <div class="historique-carte">
+        <div class="historique-entete">
+          <span class="historique-icone">${icone}</span>
+          <div class="historique-date">
+            <span class="historique-jour">${jour}</span>
+            <span class="historique-heure">${heure}</span>
+          </div>
+        </div>
+        ${repas.description ? `<p class="historique-description">"${repas.description}"</p>` : ''}
+        <p class="historique-conseil">${repas.conseil}</p>
+      </div>
+    `;
+  }).join('');
 }
 
 // ── Proche aidant ─────────────────────────────────────
