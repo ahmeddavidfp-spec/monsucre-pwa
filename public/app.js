@@ -365,14 +365,17 @@ async function viderCache() {
     const cles = await caches.keys();
     await Promise.all(cles.map(k => caches.delete(k)));
 
-    // Désenregistrer le service worker pour forcer un rechargement propre
+    // Désenregistrer le service worker
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(r => r.unregister()));
     }
 
     btn.textContent = '✅';
-    setTimeout(() => location.reload(), 600);
+    // Cache-busting : force le navigateur à aller chercher sur le serveur
+    setTimeout(() => {
+      window.location.href = '/?v=' + Date.now();
+    }, 400);
   } catch (e) {
     btn.textContent = '❌';
     btn.disabled = false;
