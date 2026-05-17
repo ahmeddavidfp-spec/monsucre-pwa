@@ -357,6 +357,32 @@ function masquerZone(id) {
   if (el) el.classList.remove('visible');
 }
 
+// ── Vider le cache (debug) ────────────────────────────
+async function viderCache() {
+  const btn = document.querySelector('.btn-debug');
+  btn.textContent = '⏳';
+  btn.disabled = true;
+
+  try {
+    // Vider tous les caches du service worker
+    const cles = await caches.keys();
+    await Promise.all(cles.map(k => caches.delete(k)));
+
+    // Désenregistrer le service worker pour forcer un rechargement propre
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(r => r.unregister()));
+    }
+
+    btn.textContent = '✅';
+    setTimeout(() => location.reload(), 600);
+  } catch (e) {
+    btn.textContent = '❌';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = '🔄'; }, 2000);
+  }
+}
+
 // ── Service Worker ────────────────────────────────────
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
