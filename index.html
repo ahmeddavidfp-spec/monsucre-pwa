@@ -13,6 +13,61 @@
 </head>
 <body>
 
+  <!-- ÉCRAN 0 : INSCRIPTION -->
+  <div id="ecran-inscription" class="ecran">
+    <div class="entete">
+      <div class="logo">🍊</div>
+      <h1>Mon Sucre</h1>
+      <p class="bonjour">Bienvenue !</p>
+    </div>
+
+    <div class="contenu-ecran">
+      <p class="instruction">Pour commencer, qui êtes-vous ?</p>
+
+      <div class="champ-group">
+        <label class="champ-label" for="inp-prenom">Votre prénom</label>
+        <input class="champ-input" type="text" id="inp-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
+      </div>
+
+      <div class="champ-group">
+        <label class="champ-label" for="inp-tel">Votre numéro de téléphone</label>
+        <input class="champ-input" type="tel" id="inp-tel" placeholder="Ex : +32 470 00 00 00" autocomplete="tel" />
+      </div>
+
+      <div id="inscription-erreur" class="erreur-msg zone-cachee"></div>
+
+      <button class="btn-confirmer" id="btn-envoyer-code" onclick="envoyerCode()">
+        Recevoir mon code par SMS →
+      </button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 0b : VÉRIFICATION CODE SMS -->
+  <div id="ecran-verification" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-inscription')">← Retour</button>
+      <h2>Code reçu par SMS</h2>
+    </div>
+
+    <div class="contenu-ecran">
+      <p class="instruction">Entrez le code à 4 chiffres<br>reçu par SMS</p>
+
+      <div class="code-group">
+        <input class="champ-code" type="tel" id="inp-code" maxlength="4" placeholder="0000" inputmode="numeric" />
+      </div>
+
+      <div id="verification-erreur" class="erreur-msg zone-cachee"></div>
+
+      <button class="btn-confirmer" onclick="verifierCode()">
+        ✅ Valider mon code
+      </button>
+
+      <button class="btn-secondaire" onclick="envoyerCode()">
+        Renvoyer le code
+      </button>
+    </div>
+  </div>
+
   <!-- ÉCRAN 1 : ACCUEIL -->
   <div id="ecran-accueil" class="ecran actif">
     <div class="entete">

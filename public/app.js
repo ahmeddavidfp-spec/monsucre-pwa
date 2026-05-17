@@ -1,11 +1,111 @@
 'use strict';
 
+// ── Session ───────────────────────────────────────────
+function getSession() {
+  try { return JSON.parse(localStorage.getItem('ms_session') || 'null'); } catch { return null; }
+}
+function sauverSession(data) {
+  localStorage.setItem('ms_session', JSON.stringify(data));
+}
+function deconnecterSession() {
+  localStorage.removeItem('ms_session');
+  localStorage.removeItem('ms_token');
+  localStorage.removeItem('ms_prenom');
+  localStorage.removeItem('ms_telephone');
+}
+
 // ── Navigation ────────────────────────────────────────
 function allerA(ecranId) {
   document.querySelectorAll('.ecran').forEach(e => e.classList.remove('actif'));
   const cible = document.getElementById(ecranId);
   if (cible) cible.classList.add('actif');
   window.scrollTo(0, 0);
+}
+
+// ── Inscription — Étape 1 : envoyer le code ───────────
+async function envoyerCode() {
+  const prenom    = document.getElementById('inp-prenom').value.trim();
+  const telephone = document.getElementById('inp-tel').value.trim();
+  const erreur    = document.getElementById('inscription-erreur');
+  const btn       = document.getElementById('btn-envoyer-code');
+
+  erreur.classList.remove('visible');
+
+  if (!prenom) return afficherErreur(erreur, 'Veuillez entrer votre prénom.');
+  if (!telephone) return afficherErreur(erreur, 'Veuillez entrer votre numéro de téléphone.');
+
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+
+  try {
+    const res = await fetch('/api/auth/envoyer-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prenom, telephone })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      afficherErreur(erreur, data.erreur || 'Une erreur est survenue.');
+      btn.disabled = false;
+      btn.textContent = 'Recevoir mon code par SMS →';
+      return;
+    }
+
+    localStorage.setItem('ms_token', data.token);
+    localStorage.setItem('ms_prenom', prenom);
+    localStorage.setItem('ms_telephone', telephone);
+
+    // En mode dev, Vercel renvoie le code directement
+    if (data.dev_code) {
+      document.getElementById('inp-code').value = data.dev_code;
+    }
+
+    allerA('ecran-verification');
+  } catch {
+    afficherErreur(erreur, 'Impossible de se connecter. Vérifiez votre connexion.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Recevoir mon code par SMS →';
+  }
+}
+
+// ── Inscription — Étape 2 : vérifier le code ─────────
+async function verifierCode() {
+  const code     = document.getElementById('inp-code').value.trim();
+  const erreur   = document.getElementById('verification-erreur');
+  const prenom   = localStorage.getItem('ms_prenom') || '';
+  const tel      = localStorage.getItem('ms_telephone') || '';
+  const token    = localStorage.getItem('ms_token') || '';
+
+  erreur.classList.remove('visible');
+
+  if (code.length !== 4) return afficherErreur(erreur, 'Le code fait 4 chiffres.');
+
+  try {
+    const res = await fetch('/api/auth/verifier-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prenom, telephone: tel, code, token })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      afficherErreur(erreur, data.erreur || 'Code incorrect.');
+      return;
+    }
+
+    sauverSession({ prenom: data.prenom, telephone: tel, session: data.session });
+    document.getElementById('message-bonjour').textContent = `Bonjour ${data.prenom} !`;
+    allerA('ecran-accueil');
+  } catch {
+    afficherErreur(erreur, 'Impossible de vérifier le code. Réessayez.');
+  }
+}
+
+function afficherErreur(el, msg) {
+  el.textContent = msg;
+  el.classList.add('visible');
 }
 
 // ── Bonjour selon l'heure ─────────────────────────────
@@ -192,6 +292,12 @@ if ('serviceWorker' in navigator) {
 
 // ── Init ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  messageBonjour();
-  chargerMedicaments();
+  const session = getSession();
+  if (session) {
+    document.getElementById('message-bonjour').textContent = `Bonjour ${session.prenom} !`;
+    allerA('ecran-accueil');
+    chargerMedicaments();
+  } else {
+    allerA('ecran-inscription');
+  }
 });

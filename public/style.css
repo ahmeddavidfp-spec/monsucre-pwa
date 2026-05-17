@@ -244,6 +244,55 @@ html, body {
   padding: 8px;
 }
 
+/* ── INSCRIPTION ────────────────────────────────────── */
+.champ-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.champ-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--texte);
+}
+.champ-input {
+  font-size: 22px;
+  padding: 18px 20px;
+  border: 2px solid #DDD;
+  border-radius: 16px;
+  outline: none;
+  width: 100%;
+  background: white;
+  color: var(--texte);
+  transition: border-color 0.15s;
+}
+.champ-input:focus { border-color: var(--orange); }
+
+.code-group { display: flex; justify-content: center; margin: 8px 0; }
+.champ-code {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 16px;
+  text-align: center;
+  padding: 20px 24px;
+  border: 3px solid var(--orange);
+  border-radius: 20px;
+  width: 200px;
+  outline: none;
+  color: var(--texte);
+  background: white;
+}
+
+.erreur-msg {
+  background: #FFF0F0;
+  border: 1px solid #FFCCCC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 17px;
+  color: var(--rouge);
+  text-align: center;
+}
+
 /* ── MÉDICAMENTS ────────────────────────────────────── */
 .med-carte {
   background: white;
