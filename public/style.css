@@ -32,7 +32,10 @@ html, body {
 
 /* ── HEADER ACCUEIL ──────────────────────────────────── */
 .entete {
-  background: var(--primaire);
+  background:
+    linear-gradient(rgba(35, 90, 78, 0.78), rgba(35, 90, 78, 0.72)),
+    url('/public/images/header-seniors.jpg') center 30% / cover no-repeat,
+    var(--primaire);
   color: white;
   padding: 36px 24px 28px;
   text-align: center;
