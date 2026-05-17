@@ -365,3 +365,18 @@ html, body {
 }
 .med-pris.deja-pris { background: #B8CBCA; }
 .chargement-meds { font-size: 18px; color: var(--texte-doux); text-align: center; padding: 20px; }
+
+/* ── CALLMEBOT INFO ─────────────────────────────────── */
+.info-callmebot {
+  background: var(--primaire-clair);
+  border-left: 4px solid var(--primaire);
+  border-radius: 14px;
+  padding: 18px 20px;
+  font-size: 16px;
+  color: var(--texte);
+  line-height: 1.5;
+}
+.info-titre { font-size: 17px; font-weight: 700; color: var(--primaire); margin-bottom: 8px; }
+.info-etape { color: var(--texte-doux); margin-bottom: 6px; }
+.info-liste { padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
+.info-liste li strong { color: var(--texte); }

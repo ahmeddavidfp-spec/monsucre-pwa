@@ -231,8 +231,23 @@
       </div>
 
       <div class="champ-group">
-        <label class="champ-label" for="inp-proche-tel">Son numéro de téléphone</label>
+        <label class="champ-label" for="inp-proche-tel">Son numéro WhatsApp</label>
         <input class="champ-input" type="tel" id="inp-proche-tel" placeholder="Ex : +32 470 00 00 00" />
+      </div>
+
+      <div class="champ-group">
+        <label class="champ-label" for="inp-proche-apikey">Sa clé CallMeBot</label>
+        <input class="champ-input" type="text" id="inp-proche-apikey" placeholder="Ex : 123456" inputmode="numeric" />
+      </div>
+
+      <div class="info-callmebot">
+        <p class="info-titre">📲 Comment obtenir la clé ?</p>
+        <p class="info-etape">Votre proche doit :</p>
+        <ol class="info-liste">
+          <li>Enregistrer ce numéro dans ses contacts WhatsApp :<br><strong>+34 644 34 74 28</strong></li>
+          <li>Lui envoyer ce message :<br><strong>I allow callmebot to send me messages</strong></li>
+          <li>Recevoir sa clé par WhatsApp et vous la communiquer</li>
+        </ol>
       </div>
 
       <button class="btn-confirmer" onclick="sauverProche()">
