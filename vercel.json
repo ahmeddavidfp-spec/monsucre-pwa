@@ -1,7 +1,8 @@
 {
+  "buildCommand": "",
+  "outputDirectory": ".",
   "rewrites": [
     { "source": "/api/medicaments/:id/pris", "destination": "/api/medicaments/[id]/pris" },
-    { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/((?!api|public|sw.js|favicon.ico).*)", "destination": "/index.html" }
+    { "source": "/((?!api|public|sw\\.js|favicon\\.ico).*)", "destination": "/index.html" }
   ]
 }
