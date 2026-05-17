@@ -1,33 +1,44 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { prenom_utilisateur, telephone_proche, callmebot_apikey, timestamp } = req.body;
+  const { prenom_utilisateur, telephone_proche, timestamp } = req.body;
 
-  if (!telephone_proche || !callmebot_apikey) {
-    return res.status(400).json({ ok: false, erreur: 'Proche non configuré (numéro ou clé manquant).' });
+  if (!telephone_proche) {
+    return res.status(400).json({ ok: false, erreur: 'Aucun proche configuré.' });
   }
 
-  // Format : supprimer espaces et +, garder chiffres uniquement
-  const tel = telephone_proche.replace(/[\s\-\(\)]/g, '').replace(/^\+/, '');
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) {
+    console.log(`[DEV] SMS urgence pour ${prenom_utilisateur} → ${telephone_proche}`);
+    return res.status(200).json({ ok: true, dev: true });
+  }
 
   const heure = new Date(timestamp).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
-  const message = `Mon Sucre - ${prenom_utilisateur} ne se sent pas bien. Urgence declenchee a ${heure}. Contactez-le rapidement.`;
-  const texte = encodeURIComponent(message);
-
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${tel}&text=${texte}&apikey=${callmebot_apikey}`;
 
   try {
-    const r = await fetch(url);
-    const body = await r.text();
+    const r = await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
+      method: 'POST',
+      headers: {
+        'api-key': apiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        sender: 'MonSucre',
+        recipient: telephone_proche.replace(/\s/g, ''),
+        content: `URGENT - ${prenom_utilisateur} ne se sent pas bien. Bouton urgence appuye a ${heure}. Contactez-le rapidement. (Mon Sucre)`
+      })
+    });
 
-    if (!r.ok || body.toLowerCase().includes('error')) {
-      console.error('CallMeBot erreur:', body);
-      return res.status(200).json({ ok: false, erreur: 'CallMeBot a refusé le message.', detail: body });
+    const data = await r.json();
+
+    if (!r.ok) {
+      console.error('Brevo erreur:', JSON.stringify(data));
+      return res.status(200).json({ ok: false, erreur: 'Échec envoi SMS.', detail: data.message });
     }
 
     return res.status(200).json({ ok: true });
   } catch (e) {
-    console.error('CallMeBot fetch error:', e.message);
-    return res.status(200).json({ ok: false, erreur: 'Impossible de contacter CallMeBot.', detail: e.message });
+    console.error('Brevo fetch error:', e.message);
+    return res.status(200).json({ ok: false, erreur: 'Impossible de contacter Brevo.', detail: e.message });
   }
 }

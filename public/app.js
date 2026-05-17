@@ -30,7 +30,6 @@ function chargerFormulaireProche() {
   if (proche) {
     document.getElementById('inp-proche-prenom').value = proche.prenom || '';
     document.getElementById('inp-proche-tel').value = proche.telephone || '';
-    document.getElementById('inp-proche-apikey').value = proche.callmebot_apikey || '';
   }
   masquerZone('proche-sauve');
 }
@@ -239,12 +238,11 @@ function getProcheContact() {
 }
 
 function sauverProche() {
-  const prenom  = document.getElementById('inp-proche-prenom').value.trim();
-  const tel     = document.getElementById('inp-proche-tel').value.trim();
-  const apikey  = document.getElementById('inp-proche-apikey').value.trim();
-  if (!prenom || !tel || !apikey) return;
+  const prenom = document.getElementById('inp-proche-prenom').value.trim();
+  const tel    = document.getElementById('inp-proche-tel').value.trim();
+  if (!prenom || !tel) return;
 
-  localStorage.setItem('ms_proche', JSON.stringify({ prenom, telephone: tel, callmebot_apikey: apikey }));
+  localStorage.setItem('ms_proche', JSON.stringify({ prenom, telephone: tel }));
   afficherZone('proche-sauve');
   setTimeout(() => {
     masquerZone('proche-sauve');
@@ -293,8 +291,7 @@ async function envoyerAlerteUrgence() {
       body: JSON.stringify({
         timestamp: new Date().toISOString(),
         prenom_utilisateur: session?.prenom || 'Votre proche',
-        telephone_proche: proche?.telephone || '',
-        callmebot_apikey: proche?.callmebot_apikey || ''
+        telephone_proche: proche?.telephone || ''
       })
     });
     const data = await r.json();
