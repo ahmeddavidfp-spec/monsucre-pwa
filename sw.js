@@ -1,4 +1,4 @@
-const CACHE = 'monsucre-v1';
+const CACHE = 'monsucre-v6';
 const ASSETS = ['/', '/index.html', '/public/style.css', '/public/app.js', '/public/manifest.json'];
 
 self.addEventListener('install', e => {
@@ -14,8 +14,29 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if (e.request.url.includes('/api/')) return; // toujours réseau pour les API
+  // API : toujours réseau
+  if (e.request.url.includes('/api/')) return;
+
+  // Cache-busting (?v=...) : toujours réseau, puis met à jour le cache
+  if (e.request.url.includes('?v=')) {
+    e.respondWith(
+      fetch(e.request.url.split('?')[0]).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request.url.split('?')[0], clone));
+        return res;
+      })
+    );
+    return;
+  }
+
+  // Reste : network-first (réseau en priorité, cache en fallback)
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    fetch(e.request)
+      .then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
