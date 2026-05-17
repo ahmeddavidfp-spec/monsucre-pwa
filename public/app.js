@@ -46,40 +46,11 @@ async function envoyerCode() {
   if (!prenom) return afficherErreur(erreur, 'Veuillez entrer votre prénom.');
   if (!telephone) return afficherErreur(erreur, 'Veuillez entrer votre numéro de téléphone.');
 
-  btn.disabled = true;
-  btn.textContent = 'Envoi en cours…';
-
-  try {
-    const res = await fetch('/api/auth/envoyer-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prenom, telephone })
-    });
-    const data = await res.json();
-
-    if (!res.ok) {
-      afficherErreur(erreur, data.erreur || 'Une erreur est survenue.');
-      btn.disabled = false;
-      btn.textContent = 'Recevoir mon code par SMS →';
-      return;
-    }
-
-    localStorage.setItem('ms_token', data.token);
-    localStorage.setItem('ms_prenom', prenom);
-    localStorage.setItem('ms_telephone', telephone);
-
-    // En mode dev, Vercel renvoie le code directement
-    if (data.dev_code) {
-      document.getElementById('inp-code').value = data.dev_code;
-    }
-
-    allerA('ecran-verification');
-  } catch {
-    afficherErreur(erreur, 'Impossible de se connecter. Vérifiez votre connexion.');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Recevoir mon code par SMS →';
-  }
+  // Inscription directe sans SMS (mode développement)
+  sauverSession({ prenom, telephone });
+  document.getElementById('message-bonjour').textContent = `Bonjour ${prenom} !`;
+  allerA('ecran-accueil');
+  chargerMedicaments();
 }
 
 // ── Inscription — Étape 2 : vérifier le code ─────────
