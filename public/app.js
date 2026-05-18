@@ -553,6 +553,52 @@ function afficherConseil(texte, description, type, analyse, thumbnail) {
 }
 
 // ════════════════════════════════════════════════════════
+// ── Glycémie saisie directe (carte dans écran repas) ───
+// ════════════════════════════════════════════════════════
+function indicateurGlycTexte(val) {
+  if (isNaN(val))  return { texte: '', cls: '' };
+  if (val < 4.0)   return { texte: '🔴 Hypoglycémie — Mangez quelque chose de sucré !', cls: 'glyc-ind-bas' };
+  if (val <= 7.0)  return { texte: '🟢 Normal — Bonne glycémie !', cls: 'glyc-ind-ok' };
+  if (val <= 10.0) return { texte: '🟡 Élevé — Attention à ce que vous mangez.', cls: 'glyc-ind-elevee' };
+  return { texte: '🔴 Très élevé — Consultez votre médecin.', cls: 'glyc-ind-tres-elevee' };
+}
+
+function mettreAJourIndicateurGlycRepas() {
+  const val = parseFloat(document.getElementById('inp-glycemie-repas')?.value);
+  const ind = document.getElementById('glyc-repas-indicateur');
+  if (!ind) return;
+  const { texte, cls } = indicateurGlycTexte(val);
+  ind.textContent = texte;
+  ind.className   = 'glycemie-indicateur' + (cls ? ' ' + cls : '');
+  ind.style.minHeight = texte ? '' : '0';
+  ind.style.padding   = texte ? '' : '0';
+}
+
+function sauverGlycemieRepas() {
+  const valeur = parseFloat(document.getElementById('inp-glycemie-repas')?.value);
+  if (isNaN(valeur) || valeur < 1 || valeur > 40) {
+    alert('Valeur invalide. Entrez une valeur entre 1 et 40 mmol/L.');
+    return;
+  }
+  const historique = getHistorique();
+  historique.unshift({
+    id:     Date.now(),
+    date:   new Date().toISOString(),
+    type:   'glycemie',
+    valeur: Math.round(valeur * 10) / 10,
+    unite:  'mmol/L'
+  });
+  patchUserLocal({ historique_repas: historique.slice(0, 60) });
+  syncUserServeur();
+
+  // Feedback visuel
+  const conf = document.getElementById('glyc-repas-confirm');
+  if (conf) { conf.classList.add('visible'); setTimeout(() => conf.classList.remove('visible'), 2500); }
+  document.getElementById('inp-glycemie-repas').value = '';
+  mettreAJourIndicateurGlycRepas();
+}
+
+// ════════════════════════════════════════════════════════
 // ── Glycémie ───────────────────────────────────────────
 // ════════════════════════════════════════════════════════
 function reinitGlyc() {

@@ -133,6 +133,22 @@
         <span class="btn-texte">Dire à voix haute</span>
       </button>
 
+      <!-- Saisie glycémie mesurée -->
+      <div class="glyc-saisie-carte">
+        <div class="glyc-saisie-titre">📟 Ma glycémie mesurée</div>
+        <div class="glyc-saisie-ligne">
+          <input type="number" id="inp-glycemie-repas" step="0.1" min="1" max="40"
+                 placeholder="Ex : 6.5" inputmode="decimal" class="glyc-saisie-input"
+                 oninput="mettreAJourIndicateurGlycRepas()" />
+          <span class="glyc-saisie-unite">mmol/L</span>
+        </div>
+        <div id="glyc-repas-indicateur" class="glycemie-indicateur" style="min-height:0"></div>
+        <button class="btn-confirmer" onclick="sauverGlycemieRepas()" style="margin-top:10px">
+          💾 Enregistrer ma glycémie
+        </button>
+        <div id="glyc-repas-confirm" class="config-confirmation zone-cachee">✅ Glycémie enregistrée !</div>
+      </div>
+
       <div id="zone-voix" class="zone-cachee">
         <p class="ecoute-texte">🎙️ J'écoute…</p>
         <p id="texte-reconnu" class="texte-reconnu"></p>
