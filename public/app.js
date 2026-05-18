@@ -39,6 +39,7 @@ function chargerFormulaireProche() {
   }
   masquerZone('profil-sauve');
   masquerZone('proche-sauve');
+  afficherStatutNotifications();
 }
 
 function sauverProfil() {
@@ -562,10 +563,57 @@ function mettreAJourBadge(nb) {
 }
 
 // ── Notifications de rappel ───────────────────────────
-function demanderPermissionNotifications() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
+function afficherStatutNotifications() {
+  const statut = document.getElementById('notif-statut');
+  const btn    = document.getElementById('btn-notif');
+  const hint   = document.getElementById('notif-ios-hint');
+  if (!statut) return;
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isPWA = window.matchMedia('(display-mode: standalone)').matches
+             || window.navigator.standalone === true;
+
+  if (!('Notification' in window)) {
+    if (isIOS && !isPWA) {
+      statut.textContent = '⚠️ Installez l\'app sur l\'écran d\'accueil pour activer les notifications.';
+      statut.className = 'notif-statut notif-warn';
+      if (hint) hint.style.display = 'block';
+      if (btn) btn.style.display = 'none';
+    } else {
+      statut.textContent = '❌ Votre navigateur ne supporte pas les notifications.';
+      statut.className = 'notif-statut notif-off';
+      if (btn) btn.style.display = 'none';
+    }
+    return;
   }
+
+  const p = Notification.permission;
+  if (p === 'granted') {
+    statut.textContent = '✅ Notifications activées — vous recevrez les rappels.';
+    statut.className = 'notif-statut notif-on';
+    if (btn) btn.style.display = 'none';
+  } else if (p === 'denied') {
+    statut.textContent = '🚫 Notifications bloquées. Allez dans les réglages de votre navigateur pour les autoriser.';
+    statut.className = 'notif-statut notif-off';
+    if (btn) btn.style.display = 'none';
+  } else {
+    statut.textContent = '💤 Notifications non activées.';
+    statut.className = 'notif-statut notif-warn';
+    if (btn) btn.style.display = 'block';
+  }
+}
+
+async function activerNotifications() {
+  if (!('Notification' in window)) return;
+  const permission = await Notification.requestPermission();
+  afficherStatutNotifications();
+  if (permission === 'granted') {
+    getMedicaments().forEach(planifierNotification);
+  }
+}
+
+function demanderPermissionNotifications() {
+  afficherStatutNotifications();
 }
 
 function envoyerNotification(titre, corps) {

@@ -621,6 +621,17 @@ input[type="time"].champ-input {
   padding: 10px;
 }
 
+.notif-statut {
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.notif-on   { background: #E8F5E9; color: #2D7A3A; }
+.notif-warn { background: #FFF8E1; color: #92700A; }
+.notif-off  { background: #FFF0F0; color: var(--rouge); }
+
 /* ── CALLMEBOT INFO ─────────────────────────────────── */
 .info-callmebot {
   background: var(--primaire-clair);
