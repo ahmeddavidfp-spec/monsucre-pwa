@@ -339,14 +339,49 @@ function sauverMedicaments(liste) {
   localStorage.setItem('ms_medicaments', JSON.stringify(liste));
 }
 
+function estDuAujourdhui(med) {
+  const f = med.frequence || 'quotidien';
+  if (f === 'quotidien') return true;
+  const d = new Date();
+  if (f === 'hebdomadaire') return d.getDay() === med.jourSemaine;
+  if (f === 'mensuel') return d.getDate() === med.jourMois;
+  return true;
+}
+
 function reinitialiserPrisSiNouveauJour() {
   const aujourd = new Date().toDateString();
-  const dernierJour = localStorage.getItem('ms_dernier_reset');
-  if (dernierJour !== aujourd) {
-    const meds = getMedicaments().map(m => ({ ...m, pris: false }));
-    sauverMedicaments(meds);
-    localStorage.setItem('ms_dernier_reset', aujourd);
+  const meds = getMedicaments().map(m => {
+    if (m.dernierReset === aujourd) return m;
+    if (!estDuAujourdhui(m)) return m;
+    return { ...m, pris: false, dernierReset: aujourd };
+  });
+  sauverMedicaments(meds);
+}
+
+// ── Fréquence — sélection visuelle ───────────────────
+let frequenceCourante = 'quotidien';
+let jourSemaineCourant = null;
+
+function selectionnerFrequence(btn) {
+  document.querySelectorAll('.btn-frequence').forEach(b => b.classList.remove('selectionne'));
+  btn.classList.add('selectionne');
+  frequenceCourante = btn.dataset.freq;
+
+  const zoneS = document.getElementById('zone-jour-semaine');
+  const zoneM = document.getElementById('zone-jour-mois');
+  if (frequenceCourante === 'hebdomadaire') {
+    zoneS.classList.add('visible'); zoneM.classList.remove('visible');
+  } else if (frequenceCourante === 'mensuel') {
+    zoneM.classList.add('visible'); zoneS.classList.remove('visible');
+  } else {
+    zoneS.classList.remove('visible'); zoneM.classList.remove('visible');
   }
+}
+
+function selectionnerJourSemaine(btn) {
+  document.querySelectorAll('.btn-jour').forEach(b => b.classList.remove('selectionne'));
+  btn.classList.add('selectionne');
+  jourSemaineCourant = parseInt(btn.dataset.jour, 10);
 }
 
 // ── Période — sélection visuelle ──────────────────────
@@ -360,14 +395,22 @@ function selectionnerPeriode(btn) {
 
 // ── Ajouter un médicament ─────────────────────────────
 function ajouterMedicament() {
-  const nom = document.getElementById('inp-med-nom').value.trim();
-  const heure = document.getElementById('inp-med-heure').value;
+  const nom    = document.getElementById('inp-med-nom').value.trim();
+  const heure  = document.getElementById('inp-med-heure').value;
   const erreur = document.getElementById('med-erreur');
 
   erreur.classList.remove('visible');
 
   if (!nom) return afficherErreur(erreur, 'Entrez le nom du médicament.');
-  if (!periodeCourante) return afficherErreur(erreur, 'Choisissez quand le prendre.');
+  if (!periodeCourante) return afficherErreur(erreur, 'Choisissez quand le prendre (matin, midi…).');
+
+  if (frequenceCourante === 'hebdomadaire' && jourSemaineCourant === null)
+    return afficherErreur(erreur, 'Choisissez le jour de la semaine.');
+
+  if (frequenceCourante === 'mensuel') {
+    const j = parseInt(document.getElementById('inp-jour-mois').value, 10);
+    if (!j || j < 1 || j > 31) return afficherErreur(erreur, 'Entrez un jour du mois (1 à 31).');
+  }
 
   const icones = { matin: '🌅', midi: '☀️', soir: '🌆', nuit: '🌙' };
   const labels = { matin: 'Matin', midi: 'Midi', soir: 'Soir', nuit: 'Nuit' };
@@ -378,7 +421,11 @@ function ajouterMedicament() {
     periode: periodeCourante,
     heure: heure || labels[periodeCourante],
     icone: icones[periodeCourante],
-    pris: false
+    frequence: frequenceCourante,
+    jourSemaine: frequenceCourante === 'hebdomadaire' ? jourSemaineCourant : null,
+    jourMois: frequenceCourante === 'mensuel' ? parseInt(document.getElementById('inp-jour-mois').value, 10) : null,
+    pris: false,
+    dernierReset: null
   };
 
   const meds = getMedicaments();
@@ -390,8 +437,14 @@ function ajouterMedicament() {
   // Reset formulaire
   document.getElementById('inp-med-nom').value = '';
   document.getElementById('inp-med-heure').value = '';
-  document.querySelectorAll('.btn-periode').forEach(b => b.classList.remove('selectionne'));
+  document.getElementById('inp-jour-mois').value = '';
+  document.querySelectorAll('.btn-periode, .btn-frequence, .btn-jour').forEach(b => b.classList.remove('selectionne'));
+  document.querySelector('.btn-frequence[data-freq="quotidien"]').classList.add('selectionne');
+  document.getElementById('zone-jour-semaine').classList.remove('visible');
+  document.getElementById('zone-jour-mois').classList.remove('visible');
   periodeCourante = null;
+  frequenceCourante = 'quotidien';
+  jourSemaineCourant = null;
 
   allerA('ecran-medicaments');
   chargerMedicaments();
@@ -425,20 +478,36 @@ function chargerMedicaments() {
 
   const now = minutesMaintenant();
   const ordre = ['matin', 'midi', 'soir', 'nuit'];
-  const tries = [...meds].sort((a, b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode));
+  const jours = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+  function labelFrequence(med) {
+    const f = med.frequence || 'quotidien';
+    if (f === 'hebdomadaire') return ` · chaque ${jours[med.jourSemaine]}`;
+    if (f === 'mensuel') return ` · le ${med.jourMois} du mois`;
+    return '';
+  }
+
+  // Médicaments du jour en premier, puis les autres en grisé
+  const duJour   = meds.filter(m => estDuAujourdhui(m));
+  const pasAujourd = meds.filter(m => !estDuAujourdhui(m));
+  const tries = [
+    ...[...duJour].sort((a, b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode)),
+    ...[...pasAujourd].sort((a, b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode))
+  ];
 
   liste.innerHTML = tries.map(med => {
-    const enRetard = !med.pris && heureEnMinutes(med) + 30 <= now;
+    const duJour = estDuAujourdhui(med);
+    const enRetard = duJour && !med.pris && heureEnMinutes(med) + 30 <= now;
     return `
-      <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''}">
+      <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''} ${!duJour ? 'pas-aujourd' : ''}">
         <div>
           <div class="med-nom">${med.icone} ${med.nom}</div>
-          <div class="med-heure">${med.heure}${enRetard ? ' <span class="med-retard">⚠️ Oublié</span>' : ''}</div>
+          <div class="med-heure">${med.heure}${labelFrequence(med)}${enRetard ? ' <span class="med-retard">⚠️ Oublié</span>' : ''}</div>
         </div>
         <button class="med-pris ${med.pris ? 'deja-pris' : ''}"
                 onclick="marquerPris(${med.id}, this)"
-                ${med.pris ? 'disabled' : ''}>
-          ${med.pris ? '✅ Pris' : 'Pris'}
+                ${med.pris || !duJour ? 'disabled' : ''}>
+          ${med.pris ? '✅ Pris' : duJour ? 'Pris' : '—'}
         </button>
       </div>
     `;
@@ -487,7 +556,7 @@ function envoyerNotification(titre, corps) {
 function verifierMedsOublies() {
   const now = minutesMaintenant();
   const meds = getMedicaments();
-  const oublies = meds.filter(m => !m.pris && heureEnMinutes(m) + 30 <= now);
+  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && heureEnMinutes(m) + 30 <= now);
 
   mettreAJourBadge(oublies.length);
 

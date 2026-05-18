@@ -196,6 +196,33 @@
       </div>
 
       <div class="champ-group">
+        <label class="champ-label">À quelle fréquence ?</label>
+        <div class="frequence-grid">
+          <button class="btn-frequence selectionne" data-freq="quotidien" onclick="selectionnerFrequence(this)">📅 Chaque jour</button>
+          <button class="btn-frequence" data-freq="hebdomadaire" onclick="selectionnerFrequence(this)">📆 Par semaine</button>
+          <button class="btn-frequence" data-freq="mensuel" onclick="selectionnerFrequence(this)">🗓️ Par mois</button>
+        </div>
+      </div>
+
+      <div class="champ-group zone-cachee" id="zone-jour-semaine">
+        <label class="champ-label">Quel jour de la semaine ?</label>
+        <div class="jours-grid">
+          <button class="btn-jour" data-jour="1" onclick="selectionnerJourSemaine(this)">Lun</button>
+          <button class="btn-jour" data-jour="2" onclick="selectionnerJourSemaine(this)">Mar</button>
+          <button class="btn-jour" data-jour="3" onclick="selectionnerJourSemaine(this)">Mer</button>
+          <button class="btn-jour" data-jour="4" onclick="selectionnerJourSemaine(this)">Jeu</button>
+          <button class="btn-jour" data-jour="5" onclick="selectionnerJourSemaine(this)">Ven</button>
+          <button class="btn-jour" data-jour="6" onclick="selectionnerJourSemaine(this)">Sam</button>
+          <button class="btn-jour" data-jour="0" onclick="selectionnerJourSemaine(this)">Dim</button>
+        </div>
+      </div>
+
+      <div class="champ-group zone-cachee" id="zone-jour-mois">
+        <label class="champ-label" for="inp-jour-mois">Quel jour du mois ?</label>
+        <input class="champ-input" type="number" id="inp-jour-mois" min="1" max="31" placeholder="Ex : 15" inputmode="numeric" />
+      </div>
+
+      <div class="champ-group">
         <label class="champ-label">Quand le prendre ?</label>
         <div class="periode-grid">
           <button class="btn-periode matin"  data-periode="matin"  onclick="selectionnerPeriode(this)">🌅 Matin</button>
