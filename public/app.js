@@ -331,39 +331,149 @@ async function envoyerAlerteUrgence() {
   btn.style.display = 'none';
 }
 
-// ── Médicaments ───────────────────────────────────────
-async function chargerMedicaments() {
-  const liste = document.getElementById('liste-medicaments');
-  try {
-    const res = await fetch('/api/medicaments');
-    const data = await res.json();
-    if (!data.medicaments || data.medicaments.length === 0) {
-      liste.innerHTML = '<p class="chargement-meds">Aucun médicament enregistré.</p>';
-      return;
-    }
-    liste.innerHTML = data.medicaments.map(med => `
-      <div class="med-carte">
-        <div>
-          <div class="med-nom">${med.nom}</div>
-          <div class="med-heure">${med.heure}</div>
-        </div>
-        <button class="med-pris ${med.pris ? 'deja-pris' : ''}" onclick="marquerPris(${med.id}, this)">
-          ${med.pris ? '✅ Pris' : 'Pris'}
-        </button>
-      </div>
-    `).join('');
-  } catch {
-    liste.innerHTML = '<p class="chargement-meds">Impossible de charger les médicaments.</p>';
+// ── Médicaments — stockage localStorage ──────────────
+function getMedicaments() {
+  try { return JSON.parse(localStorage.getItem('ms_medicaments') || '[]'); } catch { return []; }
+}
+function sauverMedicaments(liste) {
+  localStorage.setItem('ms_medicaments', JSON.stringify(liste));
+}
+
+function reinitialiserPrisSiNouveauJour() {
+  const aujourd = new Date().toDateString();
+  const dernierJour = localStorage.getItem('ms_dernier_reset');
+  if (dernierJour !== aujourd) {
+    const meds = getMedicaments().map(m => ({ ...m, pris: false }));
+    sauverMedicaments(meds);
+    localStorage.setItem('ms_dernier_reset', aujourd);
   }
 }
 
-async function marquerPris(id, btn) {
+// ── Période — sélection visuelle ──────────────────────
+let periodeCourante = null;
+
+function selectionnerPeriode(btn) {
+  document.querySelectorAll('.btn-periode').forEach(b => b.classList.remove('selectionne'));
+  btn.classList.add('selectionne');
+  periodeCourante = btn.dataset.periode;
+}
+
+// ── Ajouter un médicament ─────────────────────────────
+function ajouterMedicament() {
+  const nom = document.getElementById('inp-med-nom').value.trim();
+  const heure = document.getElementById('inp-med-heure').value;
+  const erreur = document.getElementById('med-erreur');
+
+  erreur.classList.remove('visible');
+
+  if (!nom) return afficherErreur(erreur, 'Entrez le nom du médicament.');
+  if (!periodeCourante) return afficherErreur(erreur, 'Choisissez quand le prendre.');
+
+  const icones = { matin: '🌅', midi: '☀️', soir: '🌆', nuit: '🌙' };
+  const labels = { matin: 'Matin', midi: 'Midi', soir: 'Soir', nuit: 'Nuit' };
+
+  const med = {
+    id: Date.now(),
+    nom,
+    periode: periodeCourante,
+    heure: heure || labels[periodeCourante],
+    icone: icones[periodeCourante],
+    pris: false
+  };
+
+  const meds = getMedicaments();
+  meds.push(med);
+  sauverMedicaments(meds);
+
+  planifierNotification(med);
+
+  // Reset formulaire
+  document.getElementById('inp-med-nom').value = '';
+  document.getElementById('inp-med-heure').value = '';
+  document.querySelectorAll('.btn-periode').forEach(b => b.classList.remove('selectionne'));
+  periodeCourante = null;
+
+  allerA('ecran-medicaments');
+  chargerMedicaments();
+}
+
+// ── Charger la liste des médicaments ─────────────────
+function chargerMedicaments() {
+  reinitialiserPrisSiNouveauJour();
+  const liste = document.getElementById('liste-medicaments');
+  const meds = getMedicaments();
+
+  if (meds.length === 0) {
+    liste.innerHTML = '<p class="chargement-meds">Aucun médicament enregistré.</p>';
+    return;
+  }
+
+  const ordre = ['matin', 'midi', 'soir', 'nuit'];
+  const tries = [...meds].sort((a, b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode));
+
+  liste.innerHTML = tries.map(med => `
+    <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''}">
+      <div>
+        <div class="med-nom">${med.icone} ${med.nom}</div>
+        <div class="med-heure">${med.heure}</div>
+      </div>
+      <button class="med-pris ${med.pris ? 'deja-pris' : ''}"
+              onclick="marquerPris(${med.id}, this)"
+              ${med.pris ? 'disabled' : ''}>
+        ${med.pris ? '✅ Pris' : 'Pris'}
+      </button>
+    </div>
+  `).join('');
+}
+
+function marquerPris(id, btn) {
   btn.textContent = '✅ Pris';
   btn.classList.add('deja-pris');
   btn.disabled = true;
-  try {
-    await fetch(`/api/medicaments/${id}/pris`, { method: 'POST' });
-  } catch { /* on ignore */ }
+
+  const carte = btn.closest('.med-carte');
+  if (carte) carte.classList.add('pris');
+
+  const meds = getMedicaments().map(m => m.id === id ? { ...m, pris: true } : m);
+  sauverMedicaments(meds);
+}
+
+// ── Notifications de rappel ───────────────────────────
+function demanderPermissionNotifications() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function planifierNotification(med) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+  const heuresParPeriode = { matin: 8, midi: 12, soir: 19, nuit: 22 };
+  let heure = heuresParPeriode[med.periode];
+  let minutes = 0;
+
+  if (med.heure && med.heure.includes(':')) {
+    const parts = med.heure.split(':');
+    heure = parseInt(parts[0], 10);
+    minutes = parseInt(parts[1], 10);
+  }
+
+  const maintenant = new Date();
+  const cible = new Date();
+  cible.setHours(heure, minutes, 0, 0);
+  if (cible <= maintenant) cible.setDate(cible.getDate() + 1);
+
+  const delai = cible.getTime() - maintenant.getTime();
+  setTimeout(() => {
+    const meds = getMedicaments();
+    const m = meds.find(x => x.id === med.id);
+    if (m && !m.pris) {
+      new Notification('Mon Sucre 💊', {
+        body: `N'oubliez pas de prendre : ${m.nom}`,
+        icon: '/public/icons/icon-192.png'
+      });
+    }
+  }, delai);
 }
 
 // ── Helpers ───────────────────────────────────────────
@@ -417,6 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('message-bonjour').textContent = `Bonjour ${session.prenom} !`;
     allerA('ecran-accueil');
     chargerMedicaments();
+    demanderPermissionNotifications();
   } else {
     allerA('ecran-inscription');
   }

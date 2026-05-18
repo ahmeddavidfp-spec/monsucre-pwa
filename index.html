@@ -171,15 +171,48 @@
       <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
       <h2>Mes médicaments</h2>
     </div>
-
     <div class="contenu-ecran">
       <div id="liste-medicaments">
         <p class="chargement-meds">⏳ Chargement…</p>
       </div>
-
       <button class="btn-action" onclick="allerA('ecran-ajouter-med')">
         <span class="btn-icone">➕</span>
         <span class="btn-texte">Ajouter un médicament</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN AJOUTER MÉDICAMENT -->
+  <div id="ecran-ajouter-med" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-medicaments')">← Retour</button>
+      <h2>Nouveau médicament</h2>
+    </div>
+    <div class="contenu-ecran">
+      <div class="champ-group">
+        <label class="champ-label" for="inp-med-nom">Nom du médicament</label>
+        <input class="champ-input" type="text" id="inp-med-nom" placeholder="Ex : Metformine" />
+      </div>
+
+      <div class="champ-group">
+        <label class="champ-label">Quand le prendre ?</label>
+        <div class="periode-grid">
+          <button class="btn-periode matin"  data-periode="matin"  onclick="selectionnerPeriode(this)">🌅 Matin</button>
+          <button class="btn-periode midi"   data-periode="midi"   onclick="selectionnerPeriode(this)">☀️ Midi</button>
+          <button class="btn-periode soir"   data-periode="soir"   onclick="selectionnerPeriode(this)">🌆 Soir</button>
+          <button class="btn-periode nuit"   data-periode="nuit"   onclick="selectionnerPeriode(this)">🌙 Nuit</button>
+        </div>
+      </div>
+
+      <div class="champ-group">
+        <label class="champ-label" for="inp-med-heure">Heure exacte (optionnel)</label>
+        <input class="champ-input" type="time" id="inp-med-heure" />
+      </div>
+
+      <div id="med-erreur" class="erreur-msg zone-cachee"></div>
+
+      <button class="btn-confirmer" onclick="ajouterMedicament()">
+        ✅ Enregistrer
       </button>
     </div>
   </div>

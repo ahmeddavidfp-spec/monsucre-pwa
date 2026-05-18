@@ -362,29 +362,82 @@ html, body {
 }
 
 /* ── MÉDICAMENTS ────────────────────────────────────── */
+/* ── MÉDICAMENTS ────────────────────────────────────── */
 .med-carte {
-  background: white;
-  border-radius: 18px;
-  padding: 20px 22px;
+  border-radius: 20px;
+  padding: 18px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  gap: 12px;
+  border-left: 6px solid transparent;
+  position: relative;
+  transition: opacity 0.3s;
 }
-.med-nom { font-size: 19px; font-weight: 600; }
-.med-heure { font-size: 16px; color: var(--texte-doux); }
+.med-carte.pris { opacity: 0.5; }
+
+/* Couleurs par période */
+.med-carte.matin { background: #FFF8E1; border-left-color: #F59E0B; }
+.med-carte.midi  { background: #E3F2FD; border-left-color: #2196F3; }
+.med-carte.soir  { background: #F3E5F5; border-left-color: #9C27B0; }
+.med-carte.nuit  { background: #E8EAF6; border-left-color: #5C6BC0; }
+
+.med-info { flex: 1; }
+.med-nom { font-size: 19px; font-weight: 700; color: var(--texte); }
+.med-heure {
+  font-size: 15px;
+  color: var(--texte-doux);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.med-retard { color: var(--rouge); font-weight: 600; font-size: 13px; }
+
 .med-pris {
-  background: var(--vert);
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  padding: 10px 18px;
+  padding: 12px 16px;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.med-pris.deja-pris { background: #B8CBCA; }
+.med-carte.matin .med-pris { background: #F59E0B; }
+.med-carte.midi  .med-pris { background: #2196F3; }
+.med-carte.soir  .med-pris { background: #9C27B0; }
+.med-carte.nuit  .med-pris { background: #5C6BC0; }
+.med-pris.deja-pris { background: #B8CBCA !important; cursor: default; }
+
 .chargement-meds { font-size: 18px; color: var(--texte-doux); text-align: center; padding: 20px; }
+
+/* ── AJOUTER MÉDICAMENT ─────────────────────────────── */
+.periode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.btn-periode {
+  padding: 18px 12px;
+  border: 3px solid transparent;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+  text-align: center;
+}
+.btn-periode:active { transform: scale(0.96); }
+.btn-periode.matin { background: #FFF8E1; color: #92700A; }
+.btn-periode.midi  { background: #E3F2FD; color: #1565C0; }
+.btn-periode.soir  { background: #F3E5F5; color: #6A1B9A; }
+.btn-periode.nuit  { background: #E8EAF6; color: #283593; }
+.btn-periode.selectionne.matin { border-color: #F59E0B; }
+.btn-periode.selectionne.midi  { border-color: #2196F3; }
+.btn-periode.selectionne.soir  { border-color: #9C27B0; }
+.btn-periode.selectionne.nuit  { border-color: #5C6BC0; }
 
 /* ── HISTORIQUE ─────────────────────────────────────── */
 .btn-historique {
