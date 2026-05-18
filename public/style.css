@@ -160,6 +160,7 @@ html, body {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   padding: 0 18px 20px;
+  margin-top: auto;
 }
 .btn-appel {
   display: flex;
