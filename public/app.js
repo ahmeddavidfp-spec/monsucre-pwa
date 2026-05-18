@@ -784,10 +784,10 @@ function rendreEntreeHistorique(repas) {
       <span class="historique-icone">${icone}</span>
       <div class="historique-date"><span class="historique-heure">${heure}</span></div>
     </div>
-    ${photoHtml}
     ${repas.description ? `<p class="historique-description">"${repas.description}"</p>` : ''}
     <p class="historique-conseil">${repas.conseil}</p>
     ${tableau}
+    ${photoHtml}
   </div>`;
 }
 
