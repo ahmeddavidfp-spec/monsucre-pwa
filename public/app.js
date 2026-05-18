@@ -1104,23 +1104,24 @@ function chargerMedicaments() {
     const dj       = estDuAujourdhui(med);
     const enRetard = dj && !med.pris && heureEnMinutes(med) + 30 <= now;
     html += `
-    <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''} ${!dj ? 'pas-aujourd' : ''}">
+    <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''} ${!dj ? 'pas-aujourd' : ''} ${med.desactive ? 'desactive' : ''}"
+         onclick="ouvrirFicheMed(${med.id})">
       <div class="med-carte-top">
         <div>
-          <div class="med-nom">${med.icone} ${med.nom}</div>
+          <div class="med-nom">${med.icone} ${med.nom}${med.desactive ? ' <span style="font-size:13px;font-weight:600;color:#999">— désactivé</span>' : ''}</div>
           <div class="med-heure">${med.heure}${labelFrequence(med)}${enRetard ? ' <span class="med-retard">⚠️ Oublié !</span>' : ''}</div>
         </div>
       </div>
       <button class="btn-med-pris ${med.pris ? 'deja-pris' : ''}"
-              onclick="marquerPris(${med.id}, this)"
-              ${med.pris || !dj ? 'disabled' : ''}>
-        ${med.pris ? '✅ Pris — bien joué !' : dj ? '✔ Marquer comme pris' : '—'}
+              onclick="event.stopPropagation(); marquerPris(${med.id}, this)"
+              ${med.pris || !dj || med.desactive ? 'disabled' : ''}>
+        ${med.pris ? '✅ Pris — bien joué !' : med.desactive ? '⏸ Désactivé' : dj ? '✔ Marquer comme pris' : '—'}
       </button>
     </div>`;
   });
 
   liste.innerHTML = html;
-  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && heureEnMinutes(m) + 30 <= now).length;
+  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && !m.desactive && heureEnMinutes(m) + 30 <= now).length;
   mettreAJourBadge(oublies);
 }
 
@@ -1132,8 +1133,81 @@ function marquerPris(id, btn) {
   if (carte) { carte.classList.add('pris'); carte.classList.remove('en-retard'); }
   const meds = getMedicaments().map(m => m.id === id ? { ...m, pris: true } : m);
   sauverMedicaments(meds);
-  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && heureEnMinutes(m) + 30 <= minutesMaintenant()).length;
+  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && !m.desactive && heureEnMinutes(m) + 30 <= minutesMaintenant()).length;
   mettreAJourBadge(oublies);
+}
+
+// ════════════════════════════════════════════════════════
+// ── Fiche médicament : désactiver / supprimer ──────────
+// ════════════════════════════════════════════════════════
+let _ficheMedId = null;
+
+function ouvrirFicheMed(id) {
+  const med = getMedicaments().find(m => m.id === id);
+  if (!med) return;
+  _ficheMedId = id;
+
+  const jours   = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  let detail    = med.periode.charAt(0).toUpperCase() + med.periode.slice(1);
+  if (med.heure) detail += ` · ${med.heure}`;
+  const f = med.frequence || 'quotidien';
+  if (f === 'hebdomadaire') detail += ` · chaque ${jours[med.jourSemaine]}`;
+  if (f === 'mensuel')      detail += ` · le ${med.jourMois} du mois`;
+
+  document.getElementById('fiche-med-icone').textContent   = med.icone || '💊';
+  document.getElementById('fiche-med-nom').textContent     = med.nom;
+  document.getElementById('fiche-med-detail').textContent  = detail;
+
+  const badge = document.getElementById('fiche-med-statut-badge');
+  const btnD  = document.getElementById('btn-fiche-desactiver');
+  const hint  = document.getElementById('fiche-med-hint-desactiver');
+  if (med.desactive) {
+    badge.textContent = '⏸ Désactivé';
+    badge.className   = 'fiche-med-statut-badge desactive';
+    btnD.textContent  = '▶ Réactiver ce médicament';
+    btnD.classList.add('reactiver');
+    hint.textContent  = 'Ce médicament est actuellement désactivé. Réactivez-le pour recevoir des rappels.';
+  } else {
+    badge.textContent = '✅ Actif';
+    badge.className   = 'fiche-med-statut-badge';
+    btnD.textContent  = '⏸ Désactiver ce médicament';
+    btnD.classList.remove('reactiver');
+    hint.textContent  = 'Le médicament sera conservé mais n\'apparaîtra plus dans vos rappels du jour.';
+  }
+
+  // Réinitialise la zone de suppression
+  document.getElementById('fiche-suppr-confirm').style.display = 'none';
+
+  allerA('ecran-fiche-med');
+}
+
+function toggleDesactiverMed() {
+  if (_ficheMedId === null) return;
+  const meds = getMedicaments().map(m =>
+    m.id === _ficheMedId ? { ...m, desactive: !m.desactive } : m
+  );
+  sauverMedicaments(meds);
+  // Rouvre la fiche pour refléter le nouveau statut
+  ouvrirFicheMed(_ficheMedId);
+}
+
+function demanderConfirmationSuppression() {
+  document.getElementById('fiche-suppr-confirm').style.display = 'block';
+  document.querySelector('.btn-fiche-supprimer').style.display = 'none';
+}
+
+function annulerSuppression() {
+  document.getElementById('fiche-suppr-confirm').style.display = 'none';
+  document.querySelector('.btn-fiche-supprimer').style.display = 'block';
+}
+
+function confirmerSuppression() {
+  if (_ficheMedId === null) return;
+  const meds = getMedicaments().filter(m => m.id !== _ficheMedId);
+  sauverMedicaments(meds);
+  _ficheMedId = null;
+  allerA('ecran-medicaments');
+  chargerMedicaments();
 }
 
 // ════════════════════════════════════════════════════════
@@ -1203,7 +1277,7 @@ function envoyerNotification(titre, corps) {
 function verifierMedsOublies() {
   const now     = minutesMaintenant();
   const meds    = getMedicaments();
-  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && heureEnMinutes(m) + 30 <= now);
+  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && !m.desactive && heureEnMinutes(m) + 30 <= now);
   mettreAJourBadge(oublies.length);
   if (oublies.length === 0) return;
   const noms  = oublies.map(m => m.nom).join(', ');

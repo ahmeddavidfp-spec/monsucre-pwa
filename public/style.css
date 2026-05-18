@@ -674,6 +674,115 @@ input[type="time"].champ-input {
 .med-carte.en-retard { border-left-width: 9px; }
 .med-carte.en-retard .med-nom { color: var(--rouge); }
 .med-carte.pas-aujourd { opacity: 0.28; }
+.med-carte.desactive   { opacity: 0.35; filter: grayscale(0.6); }
+
+/* Carte cliquable */
+.med-carte { cursor: pointer; }
+.med-carte:active { transform: scale(0.985); }
+
+/* ── Fiche médicament ─────────────────────────────────── */
+.fiche-med-carte {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--blanc);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  margin-bottom: 24px;
+  position: relative;
+}
+.fiche-med-icone { font-size: 40px; line-height: 1; }
+.fiche-med-info  { flex: 1; }
+.fiche-med-nom   { font-size: 22px; font-weight: 800; color: var(--texte); }
+.fiche-med-detail{ font-size: 15px; color: var(--texte-doux); margin-top: 4px; }
+.fiche-med-statut-badge {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #E0F0E8;
+  color: var(--accent);
+}
+.fiche-med-statut-badge.desactive {
+  background: #F0E0E0;
+  color: var(--rouge);
+}
+
+.btn-fiche-desactiver {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  border: 2px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: background 0.2s;
+}
+.btn-fiche-desactiver.reactiver {
+  border-color: #4F8A6D;
+  color: #4F8A6D;
+  background: #E6F5ED;
+}
+.btn-fiche-desactiver:active { opacity: 0.8; }
+
+.fiche-med-hint {
+  font-size: 14px;
+  color: var(--texte-doux);
+  text-align: center;
+  margin: 0 0 24px;
+  padding: 0 8px;
+  line-height: 1.4;
+}
+.fiche-med-hint.rouge { color: var(--rouge); font-weight: 600; }
+
+.btn-fiche-supprimer {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  border: 2px solid var(--rouge);
+  background: transparent;
+  color: var(--rouge);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-fiche-supprimer:active { background: #FDE8E8; }
+
+.fiche-suppr-btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+.btn-fiche-annuler {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  border: 2px solid #ccc;
+  background: transparent;
+  color: var(--texte-doux);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-fiche-confirmer-suppr {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: var(--rouge);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-fiche-confirmer-suppr:active { opacity: 0.85; }
 
 .badge-meds {
   margin-left: auto;

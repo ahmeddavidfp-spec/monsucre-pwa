@@ -297,6 +297,49 @@
     </div>
   </div>
 
+  <!-- ÉCRAN FICHE MÉDICAMENT -->
+  <div id="ecran-fiche-med" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-medicaments')">← Retour</button>
+      <h2>Fiche médicament</h2>
+    </div>
+    <div class="contenu-ecran">
+
+      <!-- Résumé du médicament -->
+      <div class="fiche-med-carte">
+        <div class="fiche-med-icone" id="fiche-med-icone">💊</div>
+        <div class="fiche-med-info">
+          <div class="fiche-med-nom" id="fiche-med-nom">—</div>
+          <div class="fiche-med-detail" id="fiche-med-detail">—</div>
+        </div>
+        <div id="fiche-med-statut-badge" class="fiche-med-statut-badge"></div>
+      </div>
+
+      <!-- Bouton Désactiver / Réactiver -->
+      <button class="btn-fiche-desactiver" id="btn-fiche-desactiver" onclick="toggleDesactiverMed()">
+        ⏸ Désactiver ce médicament
+      </button>
+      <p class="fiche-med-hint" id="fiche-med-hint-desactiver">
+        Le médicament sera conservé mais n'apparaîtra plus dans vos rappels du jour.
+      </p>
+
+      <!-- Bouton Supprimer -->
+      <div id="fiche-suppr-zone">
+        <button class="btn-fiche-supprimer" onclick="demanderConfirmationSuppression()">
+          🗑 Supprimer ce médicament
+        </button>
+        <div id="fiche-suppr-confirm" style="display:none">
+          <p class="fiche-med-hint rouge">⚠️ Cette action est définitive. Confirmez-vous la suppression ?</p>
+          <div class="fiche-suppr-btns">
+            <button class="btn-fiche-annuler" onclick="annulerSuppression()">Annuler</button>
+            <button class="btn-fiche-confirmer-suppr" onclick="confirmerSuppression()">Oui, supprimer</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ÉCRAN 4 : URGENCE -->
   <div id="ecran-urgence" class="ecran">
     <div class="entete-ecran">
