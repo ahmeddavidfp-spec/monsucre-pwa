@@ -28,6 +28,22 @@ function getUserLocal() {
 function sauverUserLocal(user) {
   localStorage.setItem('ms_user', JSON.stringify(user));
 }
+
+// Fusionne les thumbnails du localStorage dans un user venant du serveur
+// (le serveur ne stocke jamais les thumbnails pour limiter la taille Redis)
+function restaurerThumbnails(userServeur) {
+  const local = getUserLocal();
+  if (!local?.historique_repas || !userServeur?.historique_repas) return userServeur;
+  const indexThumbs = {};
+  local.historique_repas.forEach(e => { if (e.thumbnail) indexThumbs[e.id] = e.thumbnail; });
+  return {
+    ...userServeur,
+    historique_repas: userServeur.historique_repas.map(e => ({
+      ...e,
+      thumbnail: indexThumbs[e.id] || e.thumbnail || null
+    }))
+  };
+}
 function getPrenom()       { return getUserLocal()?.prenom || ''; }
 function getMedicaments()  { return getUserLocal()?.medicaments || []; }
 function getProcheContact()  { return getUserLocal()?.proche  || null; }
@@ -75,7 +91,7 @@ async function envoyerSync() {
     }
     if (!r.ok) return;
     const data = await r.json();
-    if (data.user) sauverUserLocal(data.user);
+    if (data.user) sauverUserLocal(restaurerThumbnails(data.user));
   } catch { /* offline */ }
 }
 
@@ -91,7 +107,7 @@ async function hydraterDepuisServeur() {
     }
     if (!r.ok) return null;
     const data = await r.json();
-    if (data.user) sauverUserLocal(data.user);
+    if (data.user) sauverUserLocal(restaurerThumbnails(data.user));
     return data.user;
   } catch { return null; }
 }
