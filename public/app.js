@@ -397,6 +397,20 @@ function ajouterMedicament() {
   chargerMedicaments();
 }
 
+// ── Helpers temps ─────────────────────────────────────
+function heureEnMinutes(med) {
+  if (med.heure && med.heure.includes(':')) {
+    const [h, m] = med.heure.split(':').map(Number);
+    return h * 60 + m;
+  }
+  return { matin: 480, midi: 720, soir: 1140, nuit: 1320 }[med.periode] ?? 480;
+}
+
+function minutesMaintenant() {
+  const d = new Date();
+  return d.getHours() * 60 + d.getMinutes();
+}
+
 // ── Charger la liste des médicaments ─────────────────
 function chargerMedicaments() {
   reinitialiserPrisSiNouveauJour();
@@ -405,25 +419,33 @@ function chargerMedicaments() {
 
   if (meds.length === 0) {
     liste.innerHTML = '<p class="chargement-meds">Aucun médicament enregistré.</p>';
+    mettreAJourBadge(0);
     return;
   }
 
+  const now = minutesMaintenant();
   const ordre = ['matin', 'midi', 'soir', 'nuit'];
   const tries = [...meds].sort((a, b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode));
 
-  liste.innerHTML = tries.map(med => `
-    <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''}">
-      <div>
-        <div class="med-nom">${med.icone} ${med.nom}</div>
-        <div class="med-heure">${med.heure}</div>
+  liste.innerHTML = tries.map(med => {
+    const enRetard = !med.pris && heureEnMinutes(med) + 30 <= now;
+    return `
+      <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''}">
+        <div>
+          <div class="med-nom">${med.icone} ${med.nom}</div>
+          <div class="med-heure">${med.heure}${enRetard ? ' <span class="med-retard">⚠️ Oublié</span>' : ''}</div>
+        </div>
+        <button class="med-pris ${med.pris ? 'deja-pris' : ''}"
+                onclick="marquerPris(${med.id}, this)"
+                ${med.pris ? 'disabled' : ''}>
+          ${med.pris ? '✅ Pris' : 'Pris'}
+        </button>
       </div>
-      <button class="med-pris ${med.pris ? 'deja-pris' : ''}"
-              onclick="marquerPris(${med.id}, this)"
-              ${med.pris ? 'disabled' : ''}>
-        ${med.pris ? '✅ Pris' : 'Pris'}
-      </button>
-    </div>
-  `).join('');
+    `;
+  }).join('');
+
+  const oublies = meds.filter(m => !m.pris && heureEnMinutes(m) + 30 <= now).length;
+  mettreAJourBadge(oublies);
 }
 
 function marquerPris(id, btn) {
@@ -432,10 +454,21 @@ function marquerPris(id, btn) {
   btn.disabled = true;
 
   const carte = btn.closest('.med-carte');
-  if (carte) carte.classList.add('pris');
+  if (carte) { carte.classList.add('pris'); carte.classList.remove('en-retard'); }
 
   const meds = getMedicaments().map(m => m.id === id ? { ...m, pris: true } : m);
   sauverMedicaments(meds);
+
+  const oublies = meds.filter(m => !m.pris && heureEnMinutes(m) + 30 <= minutesMaintenant()).length;
+  mettreAJourBadge(oublies);
+}
+
+// ── Badge accueil ─────────────────────────────────────
+function mettreAJourBadge(nb) {
+  const badge = document.getElementById('badge-meds');
+  if (!badge) return;
+  badge.style.display = nb > 0 ? 'flex' : 'none';
+  badge.textContent = nb;
 }
 
 // ── Notifications de rappel ───────────────────────────
@@ -445,35 +478,52 @@ function demanderPermissionNotifications() {
   }
 }
 
-function planifierNotification(med) {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-
-  const heuresParPeriode = { matin: 8, midi: 12, soir: 19, nuit: 22 };
-  let heure = heuresParPeriode[med.periode];
-  let minutes = 0;
-
-  if (med.heure && med.heure.includes(':')) {
-    const parts = med.heure.split(':');
-    heure = parseInt(parts[0], 10);
-    minutes = parseInt(parts[1], 10);
+function envoyerNotification(titre, corps) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(titre, { body: corps, icon: '/public/icons/icon-192.png' });
   }
+}
 
-  const maintenant = new Date();
+function verifierMedsOublies() {
+  const now = minutesMaintenant();
+  const meds = getMedicaments();
+  const oublies = meds.filter(m => !m.pris && heureEnMinutes(m) + 30 <= now);
+
+  mettreAJourBadge(oublies.length);
+
+  if (oublies.length === 0) return;
+  const noms = oublies.map(m => m.nom).join(', ');
+  const corps = oublies.length === 1
+    ? `Vous n'avez pas encore pris : ${noms}`
+    : `${oublies.length} médicaments oubliés : ${noms}`;
+  envoyerNotification('Mon Sucre 💊 — Rappel', corps);
+}
+
+function planifierNotification(med) {
+  if (!('Notification' in window)) return;
+
   const cible = new Date();
-  cible.setHours(heure, minutes, 0, 0);
-  if (cible <= maintenant) cible.setDate(cible.getDate() + 1);
+  const mins = heureEnMinutes(med);
+  cible.setHours(Math.floor(mins / 60), mins % 60, 0, 0);
+  if (cible <= new Date()) cible.setDate(cible.getDate() + 1);
 
-  const delai = cible.getTime() - maintenant.getTime();
+  const delai = cible.getTime() - Date.now();
+
+  // Notification à l'heure prévue
   setTimeout(() => {
-    const meds = getMedicaments();
-    const m = meds.find(x => x.id === med.id);
+    const m = getMedicaments().find(x => x.id === med.id);
     if (m && !m.pris) {
-      new Notification('Mon Sucre 💊', {
-        body: `N'oubliez pas de prendre : ${m.nom}`,
-        icon: '/public/icons/icon-192.png'
-      });
+      envoyerNotification('Mon Sucre 💊', `N'oubliez pas de prendre : ${m.nom}`);
     }
   }, delai);
+
+  // Rappel 30 min après si toujours pas pris
+  setTimeout(() => {
+    const m = getMedicaments().find(x => x.id === med.id);
+    if (m && !m.pris) {
+      envoyerNotification('Mon Sucre ⚠️ Rappel', `Vous n'avez pas encore pris : ${m.nom} !`);
+    }
+  }, delai + 30 * 60 * 1000);
 }
 
 // ── Helpers ───────────────────────────────────────────
@@ -528,6 +578,11 @@ document.addEventListener('DOMContentLoaded', () => {
     allerA('ecran-accueil');
     chargerMedicaments();
     demanderPermissionNotifications();
+    // Vérification immédiate puis toutes les 15 min
+    verifierMedsOublies();
+    setInterval(verifierMedsOublies, 15 * 60 * 1000);
+    // Replanifier les notifications pour tous les médicaments existants
+    getMedicaments().forEach(planifierNotification);
   } else {
     allerA('ecran-inscription');
   }
