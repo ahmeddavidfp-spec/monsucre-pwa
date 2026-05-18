@@ -292,33 +292,62 @@
     </div>
   </div>
 
-  <!-- ÉCRAN 6 : MON PROCHE AIDANT -->
+  <!-- ÉCRAN 6 : PARAMÈTRES -->
   <div id="ecran-proche" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
-      <h2>Mon proche aidant</h2>
+      <h2>⚙️ Paramètres</h2>
     </div>
 
     <div class="contenu-ecran">
-      <p class="instruction">Qui prévenir en cas d'urgence ?</p>
 
-      <div class="champ-group">
-        <label class="champ-label" for="inp-proche-prenom">Prénom du proche</label>
-        <input class="champ-input" type="text" id="inp-proche-prenom" placeholder="Ex : Pierre" />
+      <!-- Section Mon profil -->
+      <div class="config-section">
+        <div class="config-section-titre">👤 Mon profil</div>
+
+        <div class="champ-group">
+          <label class="champ-label" for="inp-profil-prenom">Mon prénom</label>
+          <input class="champ-input" type="text" id="inp-profil-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
+        </div>
+
+        <div class="champ-group">
+          <label class="champ-label" for="inp-profil-tel">Mon numéro de téléphone</label>
+          <input class="champ-input" type="tel" id="inp-profil-tel" placeholder="Ex : +32 470 00 00 00" autocomplete="tel" />
+        </div>
+
+        <button class="btn-confirmer" onclick="sauverProfil()">
+          ✅ Enregistrer mon profil
+        </button>
+
+        <div id="profil-sauve" class="config-confirmation zone-cachee">
+          ✅ Profil mis à jour !
+        </div>
       </div>
 
-      <div class="champ-group">
-        <label class="champ-label" for="inp-proche-tel">Son numéro WhatsApp</label>
-        <input class="champ-input" type="tel" id="inp-proche-tel" placeholder="Ex : +32 470 00 00 00" />
+      <!-- Section Mon proche aidant -->
+      <div class="config-section">
+        <div class="config-section-titre">🤝 Mon proche aidant</div>
+        <p class="config-section-sous">Qui prévenir en cas d'urgence ?</p>
+
+        <div class="champ-group">
+          <label class="champ-label" for="inp-proche-prenom">Prénom du proche</label>
+          <input class="champ-input" type="text" id="inp-proche-prenom" placeholder="Ex : Pierre" />
+        </div>
+
+        <div class="champ-group">
+          <label class="champ-label" for="inp-proche-tel">Son numéro de téléphone</label>
+          <input class="champ-input" type="tel" id="inp-proche-tel" placeholder="Ex : +32 470 00 00 00" />
+        </div>
+
+        <button class="btn-confirmer" onclick="sauverProche()">
+          ✅ Enregistrer le proche
+        </button>
+
+        <div id="proche-sauve" class="config-confirmation zone-cachee">
+          ✅ Proche enregistré !
+        </div>
       </div>
 
-      <button class="btn-confirmer" onclick="sauverProche()">
-        ✅ Enregistrer
-      </button>
-
-      <div id="proche-sauve" class="zone-cachee" style="text-align:center; color:#2D7A3A; font-size:18px; font-weight:600; padding:12px;">
-        ✅ Proche enregistré !
-      </div>
     </div>
   </div>
 

@@ -27,12 +27,33 @@ function allerA(ecranId) {
 }
 
 function chargerFormulaireProche() {
+  const session = getSession();
+  if (session) {
+    document.getElementById('inp-profil-prenom').value = session.prenom || '';
+    document.getElementById('inp-profil-tel').value = session.telephone || '';
+  }
   const proche = getProcheContact();
   if (proche) {
     document.getElementById('inp-proche-prenom').value = proche.prenom || '';
     document.getElementById('inp-proche-tel').value = proche.telephone || '';
   }
+  masquerZone('profil-sauve');
   masquerZone('proche-sauve');
+}
+
+function sauverProfil() {
+  const prenom = document.getElementById('inp-profil-prenom').value.trim();
+  const tel    = document.getElementById('inp-profil-tel').value.trim();
+  if (!prenom) return;
+
+  const session = getSession() || {};
+  sauverSession({ ...session, prenom, telephone: tel });
+
+  const el = document.getElementById('message-bonjour');
+  if (el) el.textContent = `Bonjour ${prenom} !`;
+
+  afficherZone('profil-sauve');
+  setTimeout(() => masquerZone('profil-sauve'), 2000);
 }
 
 // ── Inscription — Étape 1 : envoyer le code ───────────

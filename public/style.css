@@ -593,6 +593,34 @@ input[type="time"].champ-input {
   line-height: 1.5;
 }
 
+/* ── PARAMÈTRES ─────────────────────────────────────── */
+.config-section {
+  background: white;
+  border-radius: 20px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.config-section-titre {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--texte);
+}
+.config-section-sous {
+  font-size: 16px;
+  color: var(--texte-doux);
+  margin-top: -6px;
+}
+.config-confirmation {
+  text-align: center;
+  color: var(--vert);
+  font-size: 17px;
+  font-weight: 600;
+  padding: 10px;
+}
+
 /* ── CALLMEBOT INFO ─────────────────────────────────── */
 .info-callmebot {
   background: var(--primaire-clair);
