@@ -59,6 +59,13 @@ export default async function handler(req, res) {
       }
       champsAutorises.proche = pr;
     }
+    if ('proche2' in patch) {
+      const pr2 = patch.proche2;
+      if (pr2 !== null && (typeof pr2 !== 'object' || !pr2.telephone)) {
+        return res.status(400).json({ erreur: 'Proche 2 invalide.' });
+      }
+      champsAutorises.proche2 = pr2;
+    }
     if ('historique_repas' in patch) {
       if (!Array.isArray(patch.historique_repas)) {
         return res.status(400).json({ erreur: 'historique_repas doit être un tableau.' });

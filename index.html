@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#3B7A6B" />
+  <meta name="theme-color" content="#0B6650" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Mon Sucre" />
@@ -21,26 +21,20 @@
         <svg class="logo" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,0.15)"/>
           <path d="M30 10 C30 10 16 21 16 32 C16 39.732 22.268 46 30 46 C37.732 46 44 39.732 44 32 C44 21 30 10 30 10Z" fill="white"/>
-          <circle cx="30" cy="32" r="7" fill="#3B7A6B"/>
+          <circle cx="30" cy="32" r="7" fill="#0B6650"/>
         </svg>
         <h1>Mon Sucre</h1>
         <p class="bonjour">Bienvenue !</p>
       </div>
     </div>
-
     <div class="contenu-ecran">
       <p class="instruction">Entrez votre numéro de téléphone pour commencer.</p>
-
       <div class="champ-group">
         <label class="champ-label" for="inp-tel">Votre numéro de téléphone</label>
         <input class="champ-input" type="tel" id="inp-tel" placeholder="Ex : 0470 00 00 00" autocomplete="tel" inputmode="tel" />
       </div>
-
       <div id="inscription-erreur" class="erreur-msg zone-cachee"></div>
-
-      <button class="btn-confirmer" id="btn-continuer" onclick="seConnecter()">
-        Continuer →
-      </button>
+      <button class="btn-confirmer" id="btn-continuer" onclick="seConnecter()">Continuer →</button>
     </div>
   </div>
 
@@ -50,38 +44,28 @@
       <button class="btn-retour" onclick="allerA('ecran-inscription')">← Retour</button>
       <h2>Code reçu par SMS</h2>
     </div>
-
     <div class="contenu-ecran">
       <p class="instruction" id="instruction-code">Entrez le code à 4 chiffres<br>reçu par SMS</p>
-
       <div id="dev-code-affiche" class="dev-code-affiche zone-cachee"></div>
-
       <div class="code-group">
         <input class="champ-code" type="tel" id="inp-code" maxlength="4" placeholder="0000" inputmode="numeric" autocomplete="one-time-code" />
       </div>
-
       <div id="verification-erreur" class="erreur-msg zone-cachee"></div>
-
-      <button class="btn-confirmer" onclick="verifierCode()">
-        ✅ Valider mon code
-      </button>
-
-      <button class="btn-secondaire" onclick="renvoyerCode()">
-        Renvoyer le code
-      </button>
+      <button class="btn-confirmer" onclick="verifierCode()">✅ Valider mon code</button>
+      <button class="btn-secondaire" onclick="renvoyerCode()">Renvoyer le code</button>
     </div>
   </div>
 
   <!-- ÉCRAN 1 : ACCUEIL -->
   <div id="ecran-accueil" class="ecran">
     <div class="entete">
-      <button class="btn-settings" onclick="allerA('ecran-proche')" title="Mon proche aidant">⚙️</button>
+      <button class="btn-settings" onclick="allerA('ecran-proche')" title="Paramètres">⚙️</button>
       <button class="btn-debug" onclick="viderCache()" title="Vider le cache">🔄</button>
       <div class="entete-inner">
         <svg class="logo" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,0.15)"/>
           <path d="M30 10 C30 10 16 21 16 32 C16 39.732 22.268 46 30 46 C37.732 46 44 39.732 44 32 C44 21 30 10 30 10Z" fill="white"/>
-          <circle cx="30" cy="32" r="7" fill="#3B7A6B"/>
+          <circle cx="30" cy="32" r="7" fill="#0B6650"/>
         </svg>
         <h1>Mon Sucre</h1>
         <p class="bonjour" id="message-bonjour">Bonjour !</p>
@@ -93,16 +77,38 @@
         <span class="btn-icone">🍽️</span>
         <span class="btn-texte">Mon repas</span>
       </button>
-
       <button class="btn-principal btn-meds" onclick="allerA('ecran-medicaments')">
         <span class="btn-icone">💊</span>
         <span class="btn-texte">Mes médicaments</span>
         <span class="badge-meds" id="badge-meds" style="display:none">0</span>
       </button>
-
-      <button class="btn-urgence" onclick="allerA('ecran-urgence')">
-        <span class="btn-icone">🔴</span>
+      <button class="btn-urgence-home" onclick="allerA('ecran-urgence')">
+        <span class="btn-icone">🆘</span>
         <span class="btn-texte">Je ne me sens pas bien</span>
+      </button>
+    </div>
+
+    <!-- 4 boutons appel rapide -->
+    <div class="grille-appels">
+      <a href="tel:112" class="btn-appel rouge">
+        <span style="font-size:20px">🚨</span>
+        <span class="btn-appel-numero">112</span>
+        <span class="btn-appel-label">Urgences</span>
+      </a>
+      <a href="tel:1733" class="btn-appel vert">
+        <span style="font-size:20px">🏥</span>
+        <span class="btn-appel-numero">1733</span>
+        <span class="btn-appel-label">Médecin de garde</span>
+      </a>
+      <button class="btn-appel bleu" id="btn-appel-proche1" onclick="appelerProche(1)">
+        <span style="font-size:20px">📞</span>
+        <span id="label-proche1" class="btn-appel-numero">—</span>
+        <span class="btn-appel-label" id="sublabel-proche1">Proche 1</span>
+      </button>
+      <button class="btn-appel violet" id="btn-appel-proche2" onclick="appelerProche(2)">
+        <span style="font-size:20px">📞</span>
+        <span id="label-proche2" class="btn-appel-numero">—</span>
+        <span class="btn-appel-label" id="sublabel-proche2">Proche 2</span>
       </button>
     </div>
   </div>
@@ -113,7 +119,6 @@
       <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
       <h2>Mon repas</h2>
     </div>
-
     <div class="contenu-ecran">
       <p class="instruction">Qu'avez-vous mangé ?</p>
 
@@ -128,12 +133,15 @@
         <span class="btn-texte">Dire à voix haute</span>
       </button>
 
+      <button class="btn-action" style="border-color:var(--glyc-couleur);color:var(--glyc-couleur);" onclick="allerA('ecran-glycemie')">
+        <span class="btn-icone">📊</span>
+        <span class="btn-texte">Saisir ma glycémie</span>
+      </button>
+
       <div id="zone-voix" class="zone-cachee">
         <p class="ecoute-texte">🎙️ J'écoute…</p>
         <p id="texte-reconnu" class="texte-reconnu"></p>
-        <button class="btn-confirmer" onclick="envoyerRepas()" style="display:none" id="btn-envoyer-repas">
-          ✅ C'est ça !
-        </button>
+        <button class="btn-confirmer" onclick="envoyerRepas()" style="display:none" id="btn-envoyer-repas">✅ C'est ça !</button>
       </div>
 
       <div id="zone-analyse" class="zone-cachee">
@@ -147,9 +155,38 @@
         </div>
       </div>
 
-      <button class="btn-historique" onclick="allerA('ecran-historique')">
-        📋 Voir mes repas précédents
-      </button>
+      <button class="btn-historique" onclick="allerA('ecran-historique')">📅 Voir mes repas précédents</button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN GLYCÉMIE -->
+  <div id="ecran-glycemie" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-repas')">← Retour</button>
+      <h2>📊 Ma glycémie</h2>
+    </div>
+    <div class="contenu-ecran">
+      <p class="instruction">Quelle est votre valeur ?</p>
+
+      <div class="glycemie-input-zone">
+        <input type="number" id="inp-glycemie" step="0.1" min="1" max="40"
+               placeholder="6.5" inputmode="decimal" class="champ-glycemie"
+               oninput="mettreAJourIndicateurGlyc()" />
+        <span class="glycemie-unite">mmol/L</span>
+      </div>
+
+      <div id="glycemie-indicateur" class="glycemie-indicateur"></div>
+
+      <div class="glycemie-reference">
+        🔴 Hypoglycémie : &lt; 4.0 mmol/L<br>
+        🟢 Normal : 4.0 – 7.0 mmol/L<br>
+        🟡 Élevé : 7.0 – 10.0 mmol/L<br>
+        🔴 Très élevé : &gt; 10.0 mmol/L
+      </div>
+
+      <div id="glycemie-erreur" class="erreur-msg zone-cachee"></div>
+
+      <button class="btn-confirmer" onclick="sauverGlychemie()">✅ Enregistrer</button>
     </div>
   </div>
 
@@ -157,10 +194,10 @@
   <div id="ecran-historique" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-repas')">← Retour</button>
-      <h2>Mes repas</h2>
+      <h2>Mes repas &amp; glycémies</h2>
     </div>
     <div class="contenu-ecran" id="liste-historique">
-      <p class="chargement-meds">Aucun repas enregistré.</p>
+      <p class="chargement-meds">Aucune entrée enregistrée.</p>
     </div>
   </div>
 
@@ -188,6 +225,14 @@
       <h2>Nouveau médicament</h2>
     </div>
     <div class="contenu-ecran">
+
+      <button class="btn-action" onclick="ouvrirScanMedicament()">
+        <span class="btn-icone">📷</span>
+        <span class="btn-texte">Scanner la boîte du médicament</span>
+      </button>
+      <input type="file" id="input-scan-med" accept="image/*" capture="environment" style="display:none" onchange="analyserMedicamentPhoto(this)" />
+      <div id="scan-med-resultat" class="scan-resultat zone-cachee"></div>
+
       <div class="champ-group">
         <label class="champ-label" for="inp-med-nom">Nom du médicament</label>
         <input class="champ-input" type="text" id="inp-med-nom" placeholder="Ex : Metformine" />
@@ -236,10 +281,7 @@
       </div>
 
       <div id="med-erreur" class="erreur-msg zone-cachee"></div>
-
-      <button class="btn-confirmer" onclick="ajouterMedicament()">
-        ✅ Enregistrer
-      </button>
+      <button class="btn-confirmer" onclick="ajouterMedicament()">✅ Enregistrer</button>
     </div>
   </div>
 
@@ -249,34 +291,24 @@
       <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
       <h2>Besoin d'aide</h2>
     </div>
-
     <div class="contenu-ecran urgence-contenu">
       <div id="urgence-proche-info" class="proche-info zone-cachee"></div>
-
       <p id="urgence-pas-de-proche" class="instruction urgence-message zone-cachee">
         Aucun proche configuré.<br>Ajoutez un proche d'abord.
       </p>
-
       <button class="btn-urgence-gros" id="btn-alerter-proche" onclick="envoyerAlerteUrgence()">
         <span class="btn-icone">📱</span>
         <span id="btn-alerter-texte" class="btn-texte">Prévenir ma famille</span>
       </button>
-
       <div id="urgence-confirmation" class="zone-cachee">
-        <div class="conseil-card" style="text-align:center; margin-top:16px;">
+        <div class="conseil-card" style="text-align:center;margin-top:16px;">
           <p class="bravo-texte" style="font-size:20px;">✅ Votre proche a été prévenu.</p>
           <p class="bravo-sous" style="margin-top:8px;">Restez calme, ils arrivent.</p>
           <button class="btn-bravo" style="margin-top:20px;" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
         </div>
       </div>
-
-      <button class="btn-secondaire" onclick="allerA('ecran-proche')">
-        ⚙️ Configurer mon proche aidant
-      </button>
-
-      <button class="btn-secondaire" onclick="allerA('ecran-accueil')">
-        Je vais mieux, retour à l'accueil
-      </button>
+      <button class="btn-secondaire" onclick="allerA('ecran-proche')">⚙️ Configurer mon proche aidant</button>
+      <button class="btn-secondaire" onclick="allerA('ecran-accueil')">Je vais mieux, retour à l'accueil</button>
     </div>
   </div>
 
@@ -296,78 +328,75 @@
       <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
       <h2>⚙️ Paramètres</h2>
     </div>
-
     <div class="contenu-ecran">
 
-      <!-- Section Mon profil -->
+      <!-- Mon profil -->
       <div class="config-section">
         <div class="config-section-titre">👤 Mon profil</div>
-
         <div class="champ-group">
           <label class="champ-label" for="inp-profil-prenom">Mon prénom</label>
           <input class="champ-input" type="text" id="inp-profil-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
         </div>
-
         <div class="champ-group">
           <label class="champ-label" for="inp-profil-tel">Mon numéro de téléphone</label>
           <input class="champ-input" type="tel" id="inp-profil-tel" placeholder="Ex : +32 470 00 00 00" autocomplete="tel" />
         </div>
-
-        <button class="btn-confirmer" onclick="sauverProfil()">
-          ✅ Enregistrer mon profil
-        </button>
-
-        <div id="profil-sauve" class="config-confirmation zone-cachee">
-          ✅ Profil mis à jour !
-        </div>
+        <button class="btn-confirmer" onclick="sauverProfil()">✅ Enregistrer mon profil</button>
+        <div id="profil-sauve" class="config-confirmation zone-cachee">✅ Profil mis à jour !</div>
       </div>
 
-      <!-- Section Notifications -->
+      <!-- Notifications -->
       <div class="config-section">
         <div class="config-section-titre">🔔 Rappels médicaments</div>
         <div id="notif-statut" class="notif-statut"></div>
-        <button class="btn-confirmer" id="btn-notif" onclick="activerNotifications()">
-          🔔 Activer les notifications
-        </button>
+        <button class="btn-confirmer" id="btn-notif" onclick="activerNotifications()">🔔 Activer les notifications</button>
         <p class="config-section-sous" id="notif-ios-hint" style="display:none">
           Sur iPhone : ajoutez d'abord l'app à votre écran d'accueil (bouton Partager → « Sur l'écran d'accueil »), puis revenez ici.
         </p>
       </div>
 
-      <!-- Section Mon proche aidant -->
+      <!-- Proche aidant 1 -->
       <div class="config-section">
-        <div class="config-section-titre">🤝 Mon proche aidant</div>
-        <p class="config-section-sous">Qui prévenir en cas d'urgence ?</p>
-
+        <div class="config-section-titre">🤝 Proche aidant 1</div>
+        <p class="config-section-sous">Qui prévenir en cas d'urgence (SMS + bouton appel) ?</p>
         <div class="champ-group">
-          <label class="champ-label" for="inp-proche-prenom">Prénom du proche</label>
+          <label class="champ-label" for="inp-proche-prenom">Prénom</label>
           <input class="champ-input" type="text" id="inp-proche-prenom" placeholder="Ex : Pierre" />
         </div>
-
         <div class="champ-group">
-          <label class="champ-label" for="inp-proche-tel">Son numéro de téléphone</label>
+          <label class="champ-label" for="inp-proche-tel">Numéro de téléphone</label>
           <input class="champ-input" type="tel" id="inp-proche-tel" placeholder="Ex : +32 470 00 00 00" />
         </div>
-
-        <button class="btn-confirmer" onclick="sauverProche()">
-          ✅ Enregistrer le proche
-        </button>
-
-        <div id="proche-sauve" class="config-confirmation zone-cachee">
-          ✅ Proche enregistré !
-        </div>
+        <button class="btn-confirmer" onclick="sauverProche()">✅ Enregistrer</button>
+        <div id="proche-sauve" class="config-confirmation zone-cachee">✅ Proche 1 enregistré !</div>
       </div>
 
-      <!-- Section Mode développeur (caché par défaut, tap 5 fois sur ⚙️ pour révéler) -->
+      <!-- Proche aidant 2 -->
+      <div class="config-section">
+        <div class="config-section-titre">🤝 Proche aidant 2</div>
+        <p class="config-section-sous">Second bouton d'appel rapide sur l'accueil</p>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-proche2-prenom">Prénom</label>
+          <input class="champ-input" type="text" id="inp-proche2-prenom" placeholder="Ex : Sophie" />
+        </div>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-proche2-tel">Numéro de téléphone</label>
+          <input class="champ-input" type="tel" id="inp-proche2-tel" placeholder="Ex : +32 470 00 00 00" />
+        </div>
+        <button class="btn-confirmer" onclick="sauverProche2()">✅ Enregistrer</button>
+        <div id="proche2-sauve" class="config-confirmation zone-cachee">✅ Proche 2 enregistré !</div>
+      </div>
+
+      <!-- Mode développeur -->
       <div class="config-section config-dev" id="section-mode-dev">
         <div class="config-section-titre">🛠️ Mode développeur</div>
-        <p class="config-section-sous">Affiche l'analyse nutritionnelle détaillée dans l'historique des repas (calories, sucres, sel, etc.).</p>
-
+        <p class="config-section-sous">Affiche le tableau nutritionnel détaillé dans l'historique.</p>
         <label class="toggle-dev">
           <input type="checkbox" id="toggle-mode-dev" onchange="basculerModeDev(this)" />
           <span class="toggle-dev-slider"></span>
           <span class="toggle-dev-label">Activer le tableau nutritionnel</span>
         </label>
+        <button class="btn-deconnexion" onclick="seDeconnecter()">🚪 Se déconnecter</button>
       </div>
 
     </div>

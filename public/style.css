@@ -1,25 +1,30 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --primaire: #3B7A6B;
-  --primaire-clair: #EBF5F2;
-  --rouge: #C0392B;
-  --vert: #2D7A3A;
-  --gris-clair: #F5F5F5;
-  --texte: #1A1A1A;
-  --texte-doux: #5A6A65;
+  /* Palette senior-friendly : plus vive, plus contrastée */
+  --primaire:        #0B6650;
+  --primaire-clair:  #D6F0E8;
+  --rouge:           #CC1F1F;
+  --vert:            #147A35;
+  --gris-clair:      #F4F4F4;
+  --texte:           #111111;
+  --texte-doux:      #445560;
 
   /* Sections */
-  --repas-couleur:    #D97706;
-  --repas-clair:      #FFF5E6;
-  --meds-couleur:     #2563EB;
-  --meds-clair:       #EEF3FF;
+  --repas-couleur:   #D96500;
+  --repas-clair:     #FFF1E0;
+  --meds-couleur:    #1450C4;
+  --meds-clair:      #E8EEFF;
+
+  /* Glycémie */
+  --glyc-couleur:    #7B22C8;
+  --glyc-clair:      #F3EAFF;
 }
 
 html, body {
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #F5F9F8;
+  background: #EEF5F2;
   color: var(--texte);
   overflow: hidden;
 }
@@ -39,7 +44,7 @@ html, body {
 /* ── HEADER ACCUEIL ──────────────────────────────────── */
 .entete {
   background:
-    linear-gradient(rgba(35, 90, 78, 0.78), rgba(35, 90, 78, 0.72)),
+    linear-gradient(rgba(8, 68, 52, 0.84), rgba(8, 68, 52, 0.78)),
     url('/public/images/header-seniors.jpg') center 30% / cover no-repeat,
     url('/public/images/header-seniors.svg') center 30% / cover no-repeat,
     var(--primaire);
@@ -58,12 +63,12 @@ html, body {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.22);
   border: none;
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  font-size: 20px;
+  width: 48px;
+  height: 48px;
+  font-size: 22px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -74,11 +79,11 @@ html, body {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.22);
   border: none;
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   font-size: 20px;
   cursor: pointer;
   display: flex;
@@ -86,26 +91,16 @@ html, body {
   justify-content: center;
   color: white;
 }
+.logo { width: 60px; height: 60px; margin-bottom: 4px; }
+.entete h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.3px; }
+.bonjour { font-size: 19px; opacity: 0.93; font-weight: 500; }
 
-.logo {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 4px;
-}
-.entete h1 {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-}
-.bonjour { font-size: 18px; opacity: 0.88; }
-
-/* ── BOUTONS ACCUEIL ─────────────────────────────────── */
+/* ── BOUTONS PRINCIPAUX ACCUEIL ─────────────────────── */
 .boutons-principaux {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 24px 20px;
-  flex: 1;
+  gap: 12px;
+  padding: 20px 18px 12px;
 }
 
 .btn-principal {
@@ -114,12 +109,12 @@ html, body {
   gap: 18px;
   border: none;
   border-radius: 20px;
-  border-left: 7px solid transparent;
-  padding: 22px 24px;
-  font-size: 21px;
-  font-weight: 600;
+  border-left: 8px solid transparent;
+  padding: 22px 22px;
+  font-size: 22px;
+  font-weight: 700;
   color: var(--texte);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 14px rgba(0,0,0,0.10);
   cursor: pointer;
   transition: transform 0.1s, box-shadow 0.1s;
   width: 100%;
@@ -127,39 +122,69 @@ html, body {
 }
 .btn-principal:active { transform: scale(0.97); }
 
-/* Repas — orange */
 .btn-principal.btn-repas {
   background: var(--repas-clair);
   border-left-color: var(--repas-couleur);
 }
-/* Médicaments — bleu */
 .btn-principal.btn-meds {
   background: var(--meds-clair);
   border-left-color: var(--meds-couleur);
 }
 
-.btn-urgence {
+.btn-urgence-home {
   display: flex;
   align-items: center;
   gap: 18px;
-  background: var(--rouge);
+  background: #FDECEA;
   border: none;
   border-radius: 20px;
-  padding: 22px 24px;
-  font-size: 21px;
+  border-left: 8px solid var(--rouge);
+  padding: 22px 22px;
+  font-size: 22px;
   font-weight: 700;
-  color: white;
-  box-shadow: 0 4px 18px rgba(192,57,43,0.28);
+  color: var(--rouge);
+  box-shadow: 0 3px 14px rgba(204,31,31,0.15);
   cursor: pointer;
   transition: transform 0.1s;
   width: 100%;
   text-align: left;
-  margin-top: 6px;
 }
-.btn-urgence:active { transform: scale(0.97); }
+.btn-urgence-home:active { transform: scale(0.97); }
 
-.btn-icone { font-size: 28px; flex-shrink: 0; }
+.btn-icone { font-size: 30px; flex-shrink: 0; }
 .btn-texte { line-height: 1.2; }
+
+/* ── GRILLE APPELS URGENCE (4 boutons) ──────────────── */
+.grille-appels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 18px 20px;
+}
+.btn-appel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: none;
+  border-radius: 18px;
+  padding: 16px 10px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.1s;
+  min-height: 80px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+.btn-appel:active { transform: scale(0.96); }
+.btn-appel-numero { font-size: 22px; }
+.btn-appel-label  { font-size: 13px; font-weight: 600; opacity: 0.9; }
+.btn-appel.rouge  { background: #CC1F1F; color: white; }
+.btn-appel.vert   { background: #147A35; color: white; }
+.btn-appel.bleu   { background: #1450C4; color: white; }
+.btn-appel.violet { background: #7B22C8; color: white; }
+.btn-appel.non-configure { background: #D5DDE8; color: #5A6A7A; box-shadow: none; }
 
 /* ── HEADERS INTÉRIEURS ──────────────────────────────── */
 .entete-ecran {
@@ -171,23 +196,24 @@ html, body {
   gap: 14px;
   flex-shrink: 0;
 }
-.entete-ecran h2 { font-size: 22px; font-weight: 700; }
+.entete-ecran h2 { font-size: 22px; font-weight: 800; }
 
-/* Couleur par section */
 #ecran-repas      .entete-ecran,
 #ecran-historique .entete-ecran { background: var(--repas-couleur); }
 
 #ecran-medicaments .entete-ecran,
 #ecran-ajouter-med .entete-ecran { background: var(--meds-couleur); }
 
+#ecran-glycemie .entete-ecran { background: var(--glyc-couleur); }
+
 #ecran-urgence .entete-ecran { background: var(--rouge); }
 
 .btn-retour {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.22);
   border: none;
   color: white;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 8px 14px;
   border-radius: 12px;
   cursor: pointer;
@@ -205,10 +231,10 @@ html, body {
 
 .instruction {
   font-size: 21px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--texte);
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   line-height: 1.35;
 }
 
@@ -217,11 +243,11 @@ html, body {
   align-items: center;
   gap: 16px;
   background: white;
-  border: 2px solid var(--primaire);
+  border: 2.5px solid var(--primaire);
   border-radius: 18px;
   padding: 20px 22px;
   font-size: 19px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--primaire);
   cursor: pointer;
   width: 100%;
@@ -230,11 +256,72 @@ html, body {
 }
 .btn-action:active { background: var(--primaire-clair); }
 
+/* ── GLYCÉMIE ────────────────────────────────────────── */
+.glycemie-input-zone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 3px solid var(--glyc-couleur);
+  border-radius: 20px;
+  padding: 16px 20px;
+}
+.champ-glycemie {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--glyc-couleur);
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.glycemie-unite {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--texte-doux);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.glycemie-indicateur {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-radius: 14px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.glyc-ind-ok         { background: #D4EDDA; color: #147A35; }
+.glyc-ind-attention  { background: #FFF3CD; color: #856404; }
+.glyc-ind-elevee     { background: #FFE4C4; color: #D96500; }
+.glyc-ind-tres-elevee{ background: #FDECEA; color: #CC1F1F; }
+.glyc-ind-bas        { background: #FFE4C4; color: #D96500; }
+.glycemie-reference {
+  background: #F8F9FA;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: var(--texte-doux);
+  line-height: 1.8;
+  text-align: center;
+}
+.glycemie-carte { border-left: 7px solid var(--glyc-couleur) !important; }
+.glycemie-valeur { font-size: 24px; font-weight: 800; margin-top: 6px; color: var(--texte); }
+.glyc-ok        { background: #EAF6EC !important; }
+.glyc-haut      { background: #FFF8E1 !important; }
+.glyc-tres-haut { background: #FDECEA !important; }
+.glyc-bas       { background: #FFF3E0 !important; }
+
 /* ── ZONES DYNAMIQUES ───────────────────────────────── */
 .zone-cachee { display: none; }
 .zone-cachee.visible { display: block; }
 
-.ecoute-texte { font-size: 19px; text-align: center; color: var(--primaire); font-weight: 600; }
+.ecoute-texte { font-size: 19px; text-align: center; color: var(--primaire); font-weight: 700; }
 .texte-reconnu {
   font-size: 21px;
   text-align: center;
@@ -244,18 +331,17 @@ html, body {
   padding: 18px;
   margin: 10px 0;
   min-height: 60px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
 .chargement { font-size: 19px; text-align: center; color: var(--texte-doux); padding: 24px; }
 
 .conseil-card {
   background: white;
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 3px 14px rgba(59,122,107,0.10);
+  box-shadow: 0 3px 16px rgba(11,102,80,0.12);
 }
-.conseil-texte { font-size: 19px; line-height: 1.55; color: var(--texte); margin-bottom: 20px; }
+.conseil-texte { font-size: 20px; line-height: 1.55; color: var(--texte); margin-bottom: 20px; }
 
 /* ── BOUTONS CONFIRMER / BRAVO ───────────────────────── */
 .btn-confirmer, .btn-bravo {
@@ -266,7 +352,7 @@ html, body {
   border-radius: 16px;
   padding: 20px;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: white;
   cursor: pointer;
   text-align: center;
@@ -283,13 +369,13 @@ html, body {
   height: 100dvh;
   padding: 40px 24px;
   text-align: center;
-  background: #F0FFF4;
+  background: #EDFAF3;
   gap: 20px;
 }
-.bravo-icone { font-size: 72px; }
-.bravo-titre { font-size: 38px; font-weight: 800; color: var(--vert); }
-.bravo-texte { font-size: 21px; color: var(--texte-doux); }
-.bravo-sous { font-size: 17px; color: var(--texte-doux); }
+.bravo-icone { font-size: 80px; }
+.bravo-titre { font-size: 40px; font-weight: 900; color: var(--vert); }
+.bravo-texte { font-size: 22px; color: var(--texte-doux); }
+.bravo-sous  { font-size: 17px; color: var(--texte-doux); }
 
 /* ── URGENCE ────────────────────────────────────────── */
 .urgence-contenu { align-items: center; justify-content: center; text-align: center; }
@@ -316,14 +402,14 @@ html, body {
   border-radius: 24px;
   padding: 32px 40px;
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   color: white;
-  box-shadow: 0 6px 24px rgba(192,57,43,0.32);
+  box-shadow: 0 6px 24px rgba(204,31,31,0.35);
   cursor: pointer;
   width: 100%;
   transition: transform 0.1s;
 }
-.btn-urgence-gros .btn-icone { font-size: 44px; }
+.btn-urgence-gros .btn-icone { font-size: 48px; }
 .btn-urgence-gros:active { transform: scale(0.97); }
 .btn-urgence-gros:disabled { background: #ccc; box-shadow: none; }
 
@@ -331,7 +417,7 @@ html, body {
   background: none;
   border: none;
   color: var(--texte-doux);
-  font-size: 16px;
+  font-size: 17px;
   text-decoration: underline;
   cursor: pointer;
   margin-top: 12px;
@@ -346,13 +432,13 @@ html, body {
 }
 .champ-label {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--texte);
 }
 .champ-input {
   font-size: 21px;
   padding: 18px 20px;
-  border: 2px solid #D5E5E0;
+  border: 2.5px solid #C8DEDA;
   border-radius: 16px;
   outline: none;
   width: 100%;
@@ -373,7 +459,7 @@ input[type="time"].champ-input {
 .code-group { display: flex; justify-content: center; margin: 8px 0; }
 .champ-code {
   font-size: 40px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 16px;
   text-align: center;
   padding: 20px 24px;
@@ -386,8 +472,8 @@ input[type="time"].champ-input {
 }
 
 .erreur-msg {
-  background: #FFF0F0;
-  border: 1px solid #FFCCCC;
+  background: #FDECEA;
+  border: 1.5px solid #F5B8B8;
   border-radius: 12px;
   padding: 14px 16px;
   font-size: 17px;
@@ -395,7 +481,6 @@ input[type="time"].champ-input {
   text-align: center;
 }
 
-/* ── Code de vérification affiché (mode dev / Twilio non upgradé) ── */
 .dev-code-affiche {
   background: #FFF8E1;
   border: 2px dashed #F2C94C;
@@ -410,7 +495,7 @@ input[type="time"].champ-input {
 .dev-code-affiche strong {
   display: block;
   font-size: 36px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 6px;
   color: #B8860B;
   margin-top: 6px;
@@ -420,76 +505,99 @@ input[type="time"].champ-input {
 #liste-medicaments {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   padding-bottom: 24px;
+}
+
+.med-section-titre {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--texte-doux);
+  padding: 6px 4px 2px;
+  margin-top: 4px;
 }
 
 .med-carte {
   border-radius: 20px;
-  padding: 18px 20px;
+  padding: 16px 18px 14px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 12px;
-  border-left: 6px solid transparent;
+  border-left: 7px solid transparent;
   position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   transition: opacity 0.3s;
 }
-.med-carte.pris { opacity: 0.5; }
+.med-carte.pris { opacity: 0.45; }
+.med-carte-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
 
 /* Couleurs par période */
-.med-carte.matin { background: #FFF8E1; border-left-color: #F59E0B; }
-.med-carte.midi  { background: #E3F2FD; border-left-color: #2196F3; }
-.med-carte.soir  { background: #F3E5F5; border-left-color: #9C27B0; }
-.med-carte.nuit  { background: #E8EAF6; border-left-color: #5C6BC0; }
+.med-carte.matin { background: #FFF8E1; border-left-color: #E08C00; }
+.med-carte.midi  { background: #E3F2FD; border-left-color: #1450C4; }
+.med-carte.soir  { background: #F3E5F5; border-left-color: #8B00CC; }
+.med-carte.nuit  { background: #E8EAF6; border-left-color: #3949AB; }
 
-.med-info { flex: 1; }
-.med-nom { font-size: 19px; font-weight: 700; color: var(--texte); }
+.med-nom  { font-size: 20px; font-weight: 800; color: var(--texte); }
 .med-heure {
   font-size: 15px;
   color: var(--texte-doux);
-  margin-top: 2px;
+  margin-top: 3px;
   display: flex;
   align-items: center;
   gap: 6px;
+  font-weight: 600;
 }
-.med-retard { color: var(--rouge); font-weight: 600; font-size: 13px; }
+.med-retard { color: var(--rouge); font-weight: 700; font-size: 14px; }
 
-.med-pris {
+/* Bouton pris — grand, full-width */
+.btn-med-pris {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   border: none;
   border-radius: 14px;
+  padding: 16px 20px;
+  font-size: 18px;
+  font-weight: 800;
   color: white;
-  font-size: 15px;
-  font-weight: 700;
-  padding: 12px 16px;
   cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
+  width: 100%;
+  transition: transform 0.1s;
 }
-.med-carte.matin .med-pris { background: #F59E0B; }
-.med-carte.midi  .med-pris { background: #2196F3; }
-.med-carte.soir  .med-pris { background: #9C27B0; }
-.med-carte.nuit  .med-pris { background: #5C6BC0; }
-.med-pris.deja-pris { background: #B8CBCA !important; cursor: default; }
+.btn-med-pris:active { transform: scale(0.98); }
+.btn-med-pris.deja-pris { background: #B8C8C4 !important; cursor: default; }
+.btn-med-pris:disabled  { background: #B8C8C4 !important; cursor: default; }
 
-.med-carte.en-retard { border-left-width: 8px; }
-.med-carte.en-retard .med-nom { color: #C0392B; }
-.med-retard { color: #C0392B; font-weight: 700; font-size: 13px; margin-left: 4px; }
+.med-carte.matin .btn-med-pris:not(.deja-pris):not(:disabled) { background: #E08C00; }
+.med-carte.midi  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #1450C4; }
+.med-carte.soir  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #8B00CC; }
+.med-carte.nuit  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #3949AB; }
+
+.med-carte.en-retard { border-left-width: 9px; }
+.med-carte.en-retard .med-nom { color: var(--rouge); }
+.med-carte.pas-aujourd { opacity: 0.28; }
 
 .badge-meds {
   margin-left: auto;
-  background: #C0392B;
+  background: var(--rouge);
   color: white;
   font-size: 15px;
   font-weight: 800;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-
 .chargement-meds { font-size: 18px; color: var(--texte-doux); text-align: center; padding: 20px; }
 
 /* ── AJOUTER MÉDICAMENT ─────────────────────────────── */
@@ -500,11 +608,11 @@ input[type="time"].champ-input {
 }
 .btn-frequence {
   padding: 14px 8px;
-  border: 3px solid #D5E5E0;
+  border: 3px solid #C8DEDA;
   border-radius: 14px;
   background: white;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--texte-doux);
   cursor: pointer;
   text-align: center;
@@ -524,7 +632,7 @@ input[type="time"].champ-input {
 }
 .btn-jour {
   padding: 12px 4px;
-  border: 2px solid #D5E5E0;
+  border: 2px solid #C8DEDA;
   border-radius: 12px;
   background: white;
   font-size: 13px;
@@ -532,7 +640,6 @@ input[type="time"].champ-input {
   color: var(--texte-doux);
   cursor: pointer;
   text-align: center;
-  transition: border-color 0.15s, color 0.15s;
 }
 .btn-jour.selectionne {
   border-color: var(--meds-couleur);
@@ -550,43 +657,137 @@ input[type="time"].champ-input {
   border: 3px solid transparent;
   border-radius: 16px;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: border-color 0.15s, transform 0.1s;
   text-align: center;
 }
 .btn-periode:active { transform: scale(0.96); }
-.btn-periode.matin { background: #FFF8E1; color: #92700A; }
-.btn-periode.midi  { background: #E3F2FD; color: #1565C0; }
+.btn-periode.matin { background: #FFF8E1; color: #8B5E00; }
+.btn-periode.midi  { background: #E3F2FD; color: #0D47A1; }
 .btn-periode.soir  { background: #F3E5F5; color: #6A1B9A; }
 .btn-periode.nuit  { background: #E8EAF6; color: #283593; }
-.btn-periode.selectionne.matin { border-color: #F59E0B; }
-.btn-periode.selectionne.midi  { border-color: #2196F3; }
-.btn-periode.selectionne.soir  { border-color: #9C27B0; }
-.btn-periode.selectionne.nuit  { border-color: #5C6BC0; }
+.btn-periode.selectionne.matin { border-color: #E08C00; }
+.btn-periode.selectionne.midi  { border-color: #1450C4; }
+.btn-periode.selectionne.soir  { border-color: #8B00CC; }
+.btn-periode.selectionne.nuit  { border-color: #3949AB; }
 
-.med-carte.pas-aujourd { opacity: 0.35; }
-.med-carte.pas-aujourd .med-pris { background: #ccc !important; cursor: default; }
+.scan-resultat {
+  background: white;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 2px solid #C8DEDA;
+  line-height: 1.4;
+}
+.scan-ok  { color: var(--vert); font-weight: 700; }
+.scan-err { color: var(--rouge); }
 
-/* ── HISTORIQUE ─────────────────────────────────────── */
+/* ── CALENDRIER HISTORIQUE ──────────────────────────── */
 .btn-historique {
   background: none;
-  border: 2px solid #C5DDD8;
+  border: 2.5px solid #B0CFCA;
   border-radius: 14px;
   padding: 14px 20px;
   font-size: 17px;
+  font-weight: 600;
   color: var(--texte-doux);
   cursor: pointer;
   width: 100%;
   text-align: center;
   margin-top: 4px;
 }
+.calendrier {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+}
+.calendrier-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.calendrier-titre {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--texte);
+  text-transform: capitalize;
+}
+.btn-cal-nav {
+  background: var(--primaire-clair);
+  border: none;
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  color: var(--primaire);
+  cursor: pointer;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.calendrier-grille {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-entete {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--texte-doux);
+  text-align: center;
+  padding: 4px 0 6px;
+  text-transform: uppercase;
+}
+.cal-jour {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.12s;
+  gap: 2px;
+  padding: 2px;
+}
+.cal-jour.vide { cursor: default; }
+.cal-numero { font-size: 14px; font-weight: 700; color: var(--texte); line-height: 1; }
+.cal-jour.cal-futur .cal-numero { color: #C0C0C0; }
+.cal-jour.cal-futur { cursor: default; }
+.cal-jour.cal-aujourdhui { background: var(--primaire-clair); }
+.cal-jour.cal-aujourdhui .cal-numero { color: var(--primaire); font-weight: 900; }
+.cal-jour.cal-selectionne { background: var(--primaire) !important; }
+.cal-jour.cal-selectionne .cal-numero { color: white !important; }
+.cal-dots { display: flex; gap: 3px; justify-content: center; }
+.cal-dot { width: 5px; height: 5px; border-radius: 50%; }
+.dot-repas { background: var(--repas-couleur); }
+.dot-glyc  { background: var(--glyc-couleur); }
 
+.cal-detail {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 2px solid #EEF0F2;
+}
+.cal-detail-titre {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--texte);
+}
+.cal-vide { font-size: 16px; color: var(--texte-doux); text-align: center; padding: 12px 0; }
+
+/* ── HISTORIQUE CARTES ──────────────────────────────── */
 .historique-carte {
   background: white;
   border-radius: 18px;
-  padding: 18px 20px;
-  box-shadow: 0 2px 10px rgba(59,122,107,0.08);
+  padding: 16px 18px;
+  box-shadow: 0 2px 10px rgba(11,102,80,0.08);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -598,8 +799,8 @@ input[type="time"].champ-input {
 }
 .historique-icone { font-size: 24px; flex-shrink: 0; }
 .historique-date { display: flex; flex-direction: column; }
-.historique-jour { font-size: 15px; font-weight: 600; color: var(--texte); text-transform: capitalize; }
-.historique-heure { font-size: 13px; color: var(--texte-doux); }
+.historique-jour { font-size: 15px; font-weight: 700; color: var(--texte); text-transform: capitalize; }
+.historique-heure { font-size: 13px; color: var(--texte-doux); font-weight: 600; }
 .historique-description {
   font-size: 16px;
   color: var(--texte-doux);
@@ -608,10 +809,12 @@ input[type="time"].champ-input {
   background: var(--primaire-clair);
   border-radius: 10px;
 }
-.historique-conseil {
-  font-size: 16px;
-  color: var(--texte);
-  line-height: 1.5;
+.historique-conseil { font-size: 16px; color: var(--texte); line-height: 1.5; }
+.historique-photo {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
 /* ── PARAMÈTRES ─────────────────────────────────────── */
@@ -622,11 +825,11 @@ input[type="time"].champ-input {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 .config-section-titre {
   font-size: 19px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--texte);
 }
 .config-section-sous {
@@ -638,7 +841,7 @@ input[type="time"].champ-input {
   text-align: center;
   color: var(--vert);
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 10px;
 }
 
@@ -646,32 +849,17 @@ input[type="time"].champ-input {
   border-radius: 14px;
   padding: 14px 16px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
 }
-.notif-on   { background: #E8F5E9; color: #2D7A3A; }
-.notif-warn { background: #FFF8E1; color: #92700A; }
-.notif-off  { background: #FFF0F0; color: var(--rouge); }
+.notif-on   { background: #D4EDDA; color: #147A35; }
+.notif-warn { background: #FFF8E1; color: #8B5E00; }
+.notif-off  { background: #FDECEA; color: var(--rouge); }
 
-/* ── CALLMEBOT INFO ─────────────────────────────────── */
-.info-callmebot {
-  background: var(--primaire-clair);
-  border-left: 4px solid var(--primaire);
-  border-radius: 14px;
-  padding: 18px 20px;
-  font-size: 16px;
-  color: var(--texte);
-  line-height: 1.5;
-}
-.info-titre { font-size: 17px; font-weight: 700; color: var(--primaire); margin-bottom: 8px; }
-.info-etape { color: var(--texte-doux); margin-bottom: 6px; }
-.info-liste { padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
-.info-liste li strong { color: var(--texte); }
-
-/* ── Mode développeur ─────────────────────────────────── */
+/* ── MODE DÉVELOPPEUR ─────────────────────────────────── */
 .config-dev {
   background: #FAFAFA;
-  border: 1px dashed #D0D0D0;
+  border: 1.5px dashed #C0C0C0;
 }
 .toggle-dev {
   display: flex;
@@ -688,10 +876,10 @@ input[type="time"].champ-input {
 }
 .toggle-dev-slider {
   display: inline-block;
-  width: 50px;
-  height: 28px;
+  width: 52px;
+  height: 30px;
   background: #CCC;
-  border-radius: 14px;
+  border-radius: 15px;
   position: relative;
   transition: background 0.2s;
   flex-shrink: 0;
@@ -699,8 +887,8 @@ input[type="time"].champ-input {
 .toggle-dev-slider::after {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
+  top: 4px;
+  left: 4px;
   width: 22px;
   height: 22px;
   background: white;
@@ -708,67 +896,55 @@ input[type="time"].champ-input {
   transition: transform 0.2s;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
-.toggle-dev input:checked + .toggle-dev-slider {
-  background: var(--repas-couleur);
+.toggle-dev input:checked + .toggle-dev-slider { background: var(--repas-couleur); }
+.toggle-dev input:checked + .toggle-dev-slider::after { transform: translateX(22px); }
+.toggle-dev-label { font-size: 16px; color: var(--texte); }
+
+.btn-deconnexion {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 2px solid var(--rouge);
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--rouge);
+  cursor: pointer;
+  text-align: center;
 }
-.toggle-dev input:checked + .toggle-dev-slider::after {
-  transform: translateX(22px);
-}
-.toggle-dev-label {
-  font-size: 16px;
-  color: var(--texte);
-}
+.btn-deconnexion:active { background: #FDECEA; }
 
 /* ── Tableau nutritionnel (Mode DEV) ─────────────────── */
 .analyse-dev {
   margin-top: 14px;
   padding: 14px 16px;
   background: #FFF8E1;
-  border: 1px dashed #E0B870;
+  border: 1px dashed #D9A800;
   border-radius: 14px;
   font-size: 15px;
   color: var(--texte);
 }
 .analyse-dev-titre {
   font-size: 13px;
-  font-weight: 700;
-  color: #8B6914;
+  font-weight: 800;
+  color: #7A5A00;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 10px;
 }
-.analyse-dev-plat {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-.analyse-dev-portion {
-  color: var(--texte-doux);
-  font-weight: normal;
-  font-size: 14px;
-}
+.analyse-dev-plat { font-size: 16px; margin-bottom: 10px; }
+.analyse-dev-portion { color: var(--texte-doux); font-weight: normal; font-size: 14px; }
 .analyse-dev-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 15px;
 }
-.analyse-dev-table td {
-  padding: 7px 4px;
-  border-bottom: 1px solid #F0E5C8;
-}
-.analyse-dev-table td:first-child {
-  color: var(--texte-doux);
-}
-.analyse-dev-table td:last-child {
-  text-align: right;
-  font-weight: 600;
-}
-.analyse-dev-table tr.souligne-sucres td:first-child {
-  padding-left: 16px;
-  font-style: italic;
-}
-.analyse-dev-table tr:last-child td {
-  border-bottom: none;
-}
+.analyse-dev-table td { padding: 7px 4px; border-bottom: 1px solid #EFE0B0; }
+.analyse-dev-table td:first-child { color: var(--texte-doux); }
+.analyse-dev-table td:last-child { text-align: right; font-weight: 700; }
+.analyse-dev-table tr.souligne-sucres td:first-child { padding-left: 16px; font-style: italic; }
+.analyse-dev-table tr:last-child td { border-bottom: none; }
 .analyse-dev-remarque {
   margin-top: 10px;
   padding: 10px 12px;
@@ -778,18 +954,16 @@ input[type="time"].champ-input {
   color: #6B4F00;
   line-height: 1.4;
 }
-
-/* Badges IG et indice diabète */
 .ig-badge, .ind-badge {
   display: inline-block;
   padding: 3px 10px;
   border-radius: 10px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
 }
-.ig-bas      { background: #DCFCE7; color: #166534; }
-.ig-modere   { background: #FEF3C7; color: #92400E; }
-.ig-eleve    { background: #FEE2E2; color: #991B1B; }
-.ind-ok        { background: #DCFCE7; color: #166534; }
-.ind-attention { background: #FEF3C7; color: #92400E; }
-.ind-eviter    { background: #FEE2E2; color: #991B1B; }
+.ig-bas        { background: #DCFCE7; color: #14532D; }
+.ig-modere     { background: #FEF3C7; color: #78350F; }
+.ig-eleve      { background: #FEE2E2; color: #7F1D1D; }
+.ind-ok        { background: #DCFCE7; color: #14532D; }
+.ind-attention { background: #FEF3C7; color: #78350F; }
+.ind-eviter    { background: #FEE2E2; color: #7F1D1D; }
