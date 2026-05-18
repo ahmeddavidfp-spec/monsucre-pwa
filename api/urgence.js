@@ -10,9 +10,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ ok: false, erreur: 'Aucun proche configuré.' });
   }
 
+  const { telephone_utilisateur } = req.body;
   const tel   = normaliserTelephone(telephone_proche);
   const heure = new Date(timestamp).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
-  const msg   = `URGENT - Mon Sucre : ${prenom_utilisateur} ne se sent pas bien. Bouton urgence appuyé à ${heure}. Contactez-le rapidement.`;
+  const telSenior = telephone_utilisateur ? ` (${telephone_utilisateur})` : '';
+  const msg   = `URGENT : ${prenom_utilisateur} ne se sent pas bien. Bouton urgence appuyé à ${heure}. Contactez-le rapidement.${telSenior}`;
 
   if (!smsConfigured()) {
     console.log(`[DEV] SMS urgence pour ${prenom_utilisateur} → ${tel} : ${msg}`);

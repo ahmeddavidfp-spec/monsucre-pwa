@@ -144,6 +144,72 @@ function seDeconnecter() {
 }
 
 // ════════════════════════════════════════════════════════
+// ── Admin : liste & suppression d'utilisateurs (DEV) ───
+// ════════════════════════════════════════════════════════
+async function chargerListeUtilisateurs() {
+  const conteneur = document.getElementById('liste-admin-users');
+  if (!conteneur) return;
+  conteneur.innerHTML = '<p style="color:#6B7280;font-size:15px">Chargement…</p>';
+
+  try {
+    const r    = await fetch('/api/admin/users', { headers: authHeader() });
+    const data = await r.json();
+
+    if (!r.ok) {
+      conteneur.innerHTML = `<p style="color:var(--sos);font-size:15px">Erreur : ${data.erreur}</p>`;
+      return;
+    }
+
+    if (!data.users.length) {
+      conteneur.innerHTML = '<p style="color:#6B7280;font-size:15px">Aucun utilisateur enregistré.</p>';
+      return;
+    }
+
+    conteneur.innerHTML = data.users.map(u => {
+      const date   = u.cree_le ? new Date(u.cree_le).toLocaleDateString('fr-BE') : '—';
+      const prenom = u.prenom || '(sans prénom)';
+      const nbMeds = (u.medicaments || []).length;
+      const nbRepas= (u.historique_repas || []).length;
+      return `
+        <div style="background:white;border-radius:16px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.07);display:flex;align-items:center;gap:12px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:17px;font-weight:800;color:var(--texte)">${prenom}</div>
+            <div style="font-size:13px;color:var(--texte-doux);margin-top:2px">${u.telephone}</div>
+            <div style="font-size:12px;color:var(--texte-doux);margin-top:2px">
+              Inscrit le ${date} · ${nbMeds} méd. · ${nbRepas} repas
+            </div>
+          </div>
+          <button onclick="supprimerUtilisateur('${u.telephone}')"
+            style="background:var(--sos-clair);border:none;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:700;color:var(--sos);cursor:pointer;flex-shrink:0">
+            🗑️ Supprimer
+          </button>
+        </div>`;
+    }).join('');
+
+  } catch (e) {
+    conteneur.innerHTML = `<p style="color:var(--sos);font-size:15px">Erreur réseau.</p>`;
+  }
+}
+
+async function supprimerUtilisateur(telephone) {
+  if (!confirm(`Supprimer définitivement l'utilisateur ${telephone} ?`)) return;
+  try {
+    const r = await fetch(`/api/admin/users?tel=${encodeURIComponent(telephone)}`, {
+      method: 'DELETE',
+      headers: authHeader()
+    });
+    if (r.ok) {
+      chargerListeUtilisateurs(); // rafraîchir la liste
+    } else {
+      const d = await r.json();
+      alert('Erreur : ' + (d.erreur || 'inconnue'));
+    }
+  } catch {
+    alert('Erreur réseau.');
+  }
+}
+
+// ════════════════════════════════════════════════════════
 // ── Mode développeur ──────────────────────────────────
 // ════════════════════════════════════════════════════════
 function estModeDevActif() {
@@ -753,7 +819,7 @@ async function envoyerAlerteUrgence() {
     const r = await fetch('/api/urgence', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ timestamp: new Date().toISOString(), prenom_utilisateur: prenom, telephone_proche: proche?.telephone || '' })
+      body: JSON.stringify({ timestamp: new Date().toISOString(), prenom_utilisateur: prenom, telephone_proche: proche?.telephone || '', telephone_utilisateur: getSession()?.telephone || '' })
     });
     const data = await r.json();
     if (!data.ok) {

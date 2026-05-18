@@ -397,6 +397,14 @@
           <span class="toggle-dev-label">Activer le tableau nutritionnel</span>
         </label>
         <button class="btn-deconnexion" onclick="seDeconnecter()">🚪 Se déconnecter</button>
+
+        <div style="margin-top:20px;border-top:1px solid #DDD;padding-top:16px">
+          <div class="config-section-titre" style="margin-bottom:10px">👥 Utilisateurs enregistrés</div>
+          <button class="btn-action" onclick="chargerListeUtilisateurs()" style="font-size:16px;padding:14px 18px">
+            🔄 Charger la liste
+          </button>
+          <div id="liste-admin-users" style="margin-top:12px;display:flex;flex-direction:column;gap:10px"></div>
+        </div>
       </div>
 
     </div>
