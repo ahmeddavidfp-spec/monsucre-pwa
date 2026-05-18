@@ -514,6 +514,40 @@ async function envoyerRepas() {
 function afficherConseil(texte, description, type, analyse, thumbnail) {
   masquerZone('zone-analyse');
   document.getElementById('texte-conseil').textContent = texte;
+
+  // ── Index glycémique du repas ─────────────────────────
+  const igZone = document.getElementById('repas-ig-zone');
+  if (igZone) {
+    const igMap = {
+      bas:    { label: 'Bas',    emoji: '🟢', cls: 'ig-bas',    desc: 'Bonne tolérance glycémique' },
+      modere: { label: 'Modéré', emoji: '🟡', cls: 'ig-modere', desc: 'À consommer avec modération' },
+      eleve:  { label: 'Élevé',  emoji: '🔴', cls: 'ig-eleve',  desc: 'Impact glycémique important' }
+    };
+    const idMap = {
+      ok:        '✅ OK pour les diabétiques',
+      attention: '⚠️ Attention, à doser',
+      eviter:    '🚫 À éviter si possible'
+    };
+    const ig = analyse?.index_glycemique ? igMap[analyse.index_glycemique] : null;
+    const id = analyse?.indice_diabete   ? idMap[analyse.indice_diabete]   : null;
+
+    if (ig) {
+      igZone.style.display = '';
+      igZone.innerHTML = `
+        <div class="repas-ig-carte">
+          <div class="repas-ig-titre">Index glycémique</div>
+          <div class="repas-ig-ligne">
+            <span class="ig-badge ${ig.cls}" style="font-size:16px;padding:6px 16px">${ig.emoji} ${ig.label}</span>
+            <span class="repas-ig-desc">${ig.desc}</span>
+          </div>
+          ${id ? `<div class="repas-ig-diabete">${id}</div>` : ''}
+          ${analyse.remarque_diabete ? `<div class="repas-ig-remarque">💡 ${analyse.remarque_diabete}</div>` : ''}
+        </div>`;
+    } else {
+      igZone.style.display = 'none';
+    }
+  }
+
   afficherZone('zone-conseil');
   sauverRepas(description, texte, type, analyse, thumbnail);
 }

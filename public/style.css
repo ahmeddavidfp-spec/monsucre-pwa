@@ -349,6 +349,45 @@ html, body {
 }
 .conseil-texte { font-size: 20px; line-height: 1.55; color: var(--texte); margin-bottom: 20px; }
 
+/* ── Carte Index Glycémique dans le résultat repas ── */
+.repas-ig-carte {
+  background: var(--fond);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border: 1.5px solid #E2EAE6;
+}
+.repas-ig-titre {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--texte-doux);
+  margin-bottom: 10px;
+}
+.repas-ig-ligne {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.repas-ig-desc {
+  font-size: 14px;
+  color: var(--texte-doux);
+}
+.repas-ig-diabete {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--texte);
+}
+.repas-ig-remarque {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--texte-doux);
+  line-height: 1.45;
+}
+
 /* ── BOUTONS CONFIRMER / BRAVO ───────────────────────── */
 .btn-confirmer, .btn-bravo {
   display: block;

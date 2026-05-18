@@ -133,11 +133,6 @@
         <span class="btn-texte">Dire à voix haute</span>
       </button>
 
-      <button class="btn-action" style="border-color:var(--glyc-couleur);color:var(--glyc-couleur);" onclick="allerA('ecran-glycemie')">
-        <span class="btn-icone">📊</span>
-        <span class="btn-texte">Saisir ma glycémie</span>
-      </button>
-
       <div id="zone-voix" class="zone-cachee">
         <p class="ecoute-texte">🎙️ J'écoute…</p>
         <p id="texte-reconnu" class="texte-reconnu"></p>
@@ -150,6 +145,7 @@
 
       <div id="zone-conseil" class="zone-cachee">
         <div class="conseil-card">
+          <div id="repas-ig-zone" style="display:none"></div>
           <p id="texte-conseil" class="conseil-texte"></p>
           <button class="btn-bravo" onclick="allerA('ecran-bravo')">✅ Merci !</button>
         </div>
