@@ -8,6 +8,12 @@
   --gris-clair: #F5F5F5;
   --texte: #1A1A1A;
   --texte-doux: #5A6A65;
+
+  /* Sections */
+  --repas-couleur:    #D97706;
+  --repas-clair:      #FFF5E6;
+  --meds-couleur:     #2563EB;
+  --meds-clair:       #EEF3FF;
 }
 
 html, body {
@@ -106,20 +112,31 @@ html, body {
   display: flex;
   align-items: center;
   gap: 18px;
-  background: white;
   border: none;
   border-radius: 20px;
+  border-left: 7px solid transparent;
   padding: 22px 24px;
   font-size: 21px;
   font-weight: 600;
   color: var(--texte);
-  box-shadow: 0 2px 12px rgba(59,122,107,0.10);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   cursor: pointer;
   transition: transform 0.1s, box-shadow 0.1s;
   width: 100%;
   text-align: left;
 }
 .btn-principal:active { transform: scale(0.97); }
+
+/* Repas — orange */
+.btn-principal.btn-repas {
+  background: var(--repas-clair);
+  border-left-color: var(--repas-couleur);
+}
+/* Médicaments — bleu */
+.btn-principal.btn-meds {
+  background: var(--meds-clair);
+  border-left-color: var(--meds-couleur);
+}
 
 .btn-urgence {
   display: flex;
@@ -155,6 +172,15 @@ html, body {
   flex-shrink: 0;
 }
 .entete-ecran h2 { font-size: 22px; font-weight: 700; }
+
+/* Couleur par section */
+#ecran-repas      .entete-ecran,
+#ecran-historique .entete-ecran { background: var(--repas-couleur); }
+
+#ecran-medicaments .entete-ecran,
+#ecran-ajouter-med .entete-ecran { background: var(--meds-couleur); }
+
+#ecran-urgence .entete-ecran { background: var(--rouge); }
 
 .btn-retour {
   background: rgba(255,255,255,0.2);
@@ -330,11 +356,19 @@ html, body {
   border-radius: 16px;
   outline: none;
   width: 100%;
+  min-width: 0;
   background: white;
   color: var(--texte);
   transition: border-color 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
 }
 .champ-input:focus { border-color: var(--primaire); }
+input[type="time"].champ-input {
+  font-size: 20px;
+  padding: 16px 14px;
+  cursor: pointer;
+}
 
 .code-group { display: flex; justify-content: center; margin: 8px 0; }
 .champ-code {
