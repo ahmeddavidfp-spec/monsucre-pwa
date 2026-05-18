@@ -150,6 +150,29 @@ function chargerFormulaireProche() {
   masquerZone('profil-sauve');
   masquerZone('proche-sauve');
   afficherStatutNotifications();
+
+  // Synchronise l'état du toggle Mode DEV avec localStorage
+  const toggle = document.getElementById('toggle-mode-dev');
+  if (toggle) toggle.checked = estModeDevActif();
+}
+
+// ════════════════════════════════════════════════════════
+// ── Mode développeur ──────────────────────────────────
+// ════════════════════════════════════════════════════════
+function estModeDevActif() {
+  return localStorage.getItem('ms_mode_dev') === 'true';
+}
+
+function basculerModeDev(checkbox) {
+  if (checkbox.checked) {
+    localStorage.setItem('ms_mode_dev', 'true');
+  } else {
+    localStorage.removeItem('ms_mode_dev');
+  }
+  // Si on est en train de regarder l'historique, on rafraîchit
+  if (document.getElementById('ecran-historique').classList.contains('actif')) {
+    chargerHistorique();
+  }
 }
 
 function sauverProfil() {
@@ -332,9 +355,9 @@ async function analyserPhoto(input) {
       body: JSON.stringify({ image: base64, type: fichier.type })
     });
     const data = await res.json();
-    afficherConseil(data.conseil, '', 'photo');
+    afficherConseil(data.conseil, '', 'photo', data.analyse);
   } catch {
-    afficherConseil("Je n'arrive pas à analyser la photo pour le moment. Essayez de décrire votre repas à voix haute.", '', 'photo');
+    afficherConseil("Je n'arrive pas à analyser la photo pour le moment. Essayez de décrire votre repas à voix haute.", '', 'photo', null);
   }
 }
 
@@ -404,30 +427,31 @@ async function envoyerRepas() {
     });
     const data = await res.json();
     const texteRepas = document.getElementById('texte-reconnu').textContent;
-    afficherConseil(data.conseil, texteRepas, 'vocal');
+    afficherConseil(data.conseil, texteRepas, 'vocal', data.analyse);
   } catch {
-    afficherConseil('Votre repas a bien été noté. Continuez à bien manger !', '', 'vocal');
+    afficherConseil('Votre repas a bien été noté. Continuez à bien manger !', '', 'vocal', null);
   }
 }
 
-function afficherConseil(texte, description, type) {
+function afficherConseil(texte, description, type, analyse) {
   masquerZone('zone-analyse');
   document.getElementById('texte-conseil').textContent = texte;
   afficherZone('zone-conseil');
-  sauverRepas(description, texte, type);
+  sauverRepas(description, texte, type, analyse);
 }
 
 // ════════════════════════════════════════════════════════
 // ── Historique des repas ───────────────────────────────
 // ════════════════════════════════════════════════════════
-function sauverRepas(description, conseil, type) {
+function sauverRepas(description, conseil, type, analyse) {
   const historique = getHistorique();
   historique.unshift({
     id: Date.now(),
     date: new Date().toISOString(),
     type: type || 'vocal',
     description: description || '',
-    conseil
+    conseil,
+    analyse: analyse || null
   });
   patchUserLocal({ historique_repas: historique.slice(0, 30) });
 }
@@ -435,6 +459,7 @@ function sauverRepas(description, conseil, type) {
 function chargerHistorique() {
   const liste = document.getElementById('liste-historique');
   const historique = getHistorique();
+  const modeDev = estModeDevActif();
 
   if (historique.length === 0) {
     liste.innerHTML = '<p class="chargement-meds">Aucun repas enregistré pour l\'instant.</p>';
@@ -446,6 +471,7 @@ function chargerHistorique() {
     const jour = date.toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' });
     const heure = date.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
     const icone = repas.type === 'photo' ? '📷' : '🎤';
+    const tableau = (modeDev && repas.analyse) ? rendreTableauNutritionnel(repas.analyse) : '';
     return `
       <div class="historique-carte">
         <div class="historique-entete">
@@ -457,9 +483,46 @@ function chargerHistorique() {
         </div>
         ${repas.description ? `<p class="historique-description">"${repas.description}"</p>` : ''}
         <p class="historique-conseil">${repas.conseil}</p>
+        ${tableau}
       </div>
     `;
   }).join('');
+}
+
+function rendreTableauNutritionnel(a) {
+  if (!a) return '';
+  const num = (v, unite) => (v === null || v === undefined) ? '—' : `${v} ${unite}`;
+  const indices = {
+    bas: { label: 'Bas', cls: 'ig-bas' },
+    modere: { label: 'Modéré', cls: 'ig-modere' },
+    eleve: { label: 'Élevé', cls: 'ig-eleve' }
+  };
+  const diabetes = {
+    ok: { label: '✅ OK', cls: 'ind-ok' },
+    attention: { label: '⚠️ Attention', cls: 'ind-attention' },
+    eviter: { label: '🚫 À éviter', cls: 'ind-eviter' }
+  };
+  const ig = indices[a.index_glycemique] || null;
+  const id = diabetes[a.indice_diabete] || null;
+
+  return `
+    <div class="analyse-dev">
+      <div class="analyse-dev-titre">🛠️ Analyse détaillée (Mode DEV)</div>
+      ${a.plat ? `<div class="analyse-dev-plat"><strong>${a.plat}</strong>${a.portion ? ` <span class="analyse-dev-portion">· ${a.portion}</span>` : ''}</div>` : ''}
+      <table class="analyse-dev-table">
+        <tr><td>Calories</td><td>${num(a.calories, 'kcal')}</td></tr>
+        <tr><td>Glucides</td><td>${num(a.glucides_g, 'g')}</td></tr>
+        <tr class="souligne-sucres"><td>dont sucres</td><td>${num(a.sucres_g, 'g')}</td></tr>
+        <tr><td>Lipides</td><td>${num(a.lipides_g, 'g')}</td></tr>
+        <tr><td>Protéines</td><td>${num(a.proteines_g, 'g')}</td></tr>
+        <tr><td>Fibres</td><td>${num(a.fibres_g, 'g')}</td></tr>
+        <tr><td>Sel</td><td>${num(a.sel_g, 'g')}</td></tr>
+        ${ig ? `<tr><td>Index glycémique</td><td><span class="ig-badge ${ig.cls}">${ig.label}</span></td></tr>` : ''}
+        ${id ? `<tr><td>Indice diabète</td><td><span class="ind-badge ${id.cls}">${id.label}</span></td></tr>` : ''}
+      </table>
+      ${a.remarque_diabete ? `<div class="analyse-dev-remarque">💡 ${a.remarque_diabete}</div>` : ''}
+    </div>
+  `;
 }
 
 // ════════════════════════════════════════════════════════

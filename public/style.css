@@ -667,3 +667,129 @@ input[type="time"].champ-input {
 .info-etape { color: var(--texte-doux); margin-bottom: 6px; }
 .info-liste { padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
 .info-liste li strong { color: var(--texte); }
+
+/* ── Mode développeur ─────────────────────────────────── */
+.config-dev {
+  background: #FAFAFA;
+  border: 1px dashed #D0D0D0;
+}
+.toggle-dev {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 0;
+}
+.toggle-dev input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.toggle-dev-slider {
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  background: #CCC;
+  border-radius: 14px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-dev-slider::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-dev input:checked + .toggle-dev-slider {
+  background: var(--repas-couleur);
+}
+.toggle-dev input:checked + .toggle-dev-slider::after {
+  transform: translateX(22px);
+}
+.toggle-dev-label {
+  font-size: 16px;
+  color: var(--texte);
+}
+
+/* ── Tableau nutritionnel (Mode DEV) ─────────────────── */
+.analyse-dev {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: #FFF8E1;
+  border: 1px dashed #E0B870;
+  border-radius: 14px;
+  font-size: 15px;
+  color: var(--texte);
+}
+.analyse-dev-titre {
+  font-size: 13px;
+  font-weight: 700;
+  color: #8B6914;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.analyse-dev-plat {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.analyse-dev-portion {
+  color: var(--texte-doux);
+  font-weight: normal;
+  font-size: 14px;
+}
+.analyse-dev-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.analyse-dev-table td {
+  padding: 7px 4px;
+  border-bottom: 1px solid #F0E5C8;
+}
+.analyse-dev-table td:first-child {
+  color: var(--texte-doux);
+}
+.analyse-dev-table td:last-child {
+  text-align: right;
+  font-weight: 600;
+}
+.analyse-dev-table tr.souligne-sucres td:first-child {
+  padding-left: 16px;
+  font-style: italic;
+}
+.analyse-dev-table tr:last-child td {
+  border-bottom: none;
+}
+.analyse-dev-remarque {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #6B4F00;
+  line-height: 1.4;
+}
+
+/* Badges IG et indice diabète */
+.ig-badge, .ind-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ig-bas      { background: #DCFCE7; color: #166534; }
+.ig-modere   { background: #FEF3C7; color: #92400E; }
+.ig-eleve    { background: #FEE2E2; color: #991B1B; }
+.ind-ok        { background: #DCFCE7; color: #166534; }
+.ind-attention { background: #FEF3C7; color: #92400E; }
+.ind-eviter    { background: #FEE2E2; color: #991B1B; }

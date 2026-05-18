@@ -358,6 +358,18 @@
         </div>
       </div>
 
+      <!-- Section Mode développeur (caché par défaut, tap 5 fois sur ⚙️ pour révéler) -->
+      <div class="config-section config-dev" id="section-mode-dev">
+        <div class="config-section-titre">🛠️ Mode développeur</div>
+        <p class="config-section-sous">Affiche l'analyse nutritionnelle détaillée dans l'historique des repas (calories, sucres, sel, etc.).</p>
+
+        <label class="toggle-dev">
+          <input type="checkbox" id="toggle-mode-dev" onchange="basculerModeDev(this)" />
+          <span class="toggle-dev-slider"></span>
+          <span class="toggle-dev-label">Activer le tableau nutritionnel</span>
+        </label>
+      </div>
+
     </div>
   </div>
 
