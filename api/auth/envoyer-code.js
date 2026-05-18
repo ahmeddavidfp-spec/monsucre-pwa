@@ -1,12 +1,11 @@
 import { normaliserTelephone } from '../_lib/phone.js';
 import { genererCode, signerCode } from '../_lib/session.js';
+import { envoyerSMS, smsConfigured } from '../_lib/sms.js';
 
 // POST /api/auth/envoyer-code
 // Body : { telephone }
 //
-// Route legacy / utilitaire — utilisée pour le bouton "Renvoyer le code".
-// La connexion principale passe désormais par /api/auth/connexion.
-//
+// Route utilisée pour le bouton "Renvoyer le code".
 // Renvoie : { token, dev_code? }
 
 export default async function handler(req, res) {
@@ -18,45 +17,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ erreur: 'Numéro de téléphone invalide.' });
   }
 
-  const code = genererCode();
+  const code  = genererCode();
   const token = signerCode(tel, code);
 
   const devMode = ['true', '1', 'yes'].includes(
     (process.env.DEV_MODE || '').toLowerCase().trim()
   );
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken  = process.env.TWILIO_AUTH_TOKEN;
-  const from       = process.env.TWILIO_FROM;
-  const twilioConfigure = accountSid && authToken && from;
 
-  if (devMode || !twilioConfigure) {
+  if (devMode || !smsConfigured()) {
     return res.status(200).json({ token, dev_code: code });
   }
 
   try {
-    const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
-    const r = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${credentials}`,
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-          From: from,
-          To: tel,
-          Body: `Mon Sucre — Votre code de connexion est : ${code}`
-        })
-      }
-    );
-    const data = await r.json();
-    if (!r.ok) {
-      console.error('Twilio erreur:', data.message);
-      return res.status(500).json({ erreur: 'Impossible d\'envoyer le SMS. Réessayez.' });
-    }
+    await envoyerSMS(tel, `Mon Sucre — Votre code de connexion est : ${code}`);
   } catch (e) {
-    console.error('Twilio exception:', e);
+    console.error('SMS erreur (envoyer-code):', e.message);
     return res.status(500).json({ erreur: 'Impossible d\'envoyer le SMS. Réessayez.' });
   }
 
