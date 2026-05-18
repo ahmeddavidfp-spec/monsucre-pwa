@@ -395,6 +395,27 @@ input[type="time"].champ-input {
   text-align: center;
 }
 
+/* ── Code de vérification affiché (mode dev / Twilio non upgradé) ── */
+.dev-code-affiche {
+  background: #FFF8E1;
+  border: 2px dashed #F2C94C;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 18px;
+  color: #6B4F00;
+  line-height: 1.4;
+}
+.dev-code-affiche strong {
+  display: block;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #B8860B;
+  margin-top: 6px;
+}
+
 /* ── MÉDICAMENTS ────────────────────────────────────── */
 #liste-medicaments {
   display: flex;

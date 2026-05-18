@@ -1,6 +1,11 @@
 'use strict';
 
-// ── Session ───────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Session ─────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// Une "session" = { telephone, token } stockée en localStorage.
+// Le token est utilisé pour l'auth de toutes les requêtes /api/user.
+
 function getSession() {
   try { return JSON.parse(localStorage.getItem('ms_session') || 'null'); } catch { return null; }
 }
@@ -9,12 +14,115 @@ function sauverSession(data) {
 }
 function deconnecterSession() {
   localStorage.removeItem('ms_session');
-  localStorage.removeItem('ms_token');
-  localStorage.removeItem('ms_prenom');
-  localStorage.removeItem('ms_telephone');
+  localStorage.removeItem('ms_verif_token');
+  localStorage.removeItem('ms_verif_tel');
 }
 
-// ── Navigation ────────────────────────────────────────
+// Authorization header pour les appels /api/user
+function authHeader() {
+  const s = getSession();
+  return s?.token ? { 'Authorization': `Bearer ${s.token}` } : {};
+}
+
+// ════════════════════════════════════════════════════════
+// ── Données utilisateur (cache local) ──────────────────
+// ════════════════════════════════════════════════════════
+// Le serveur est la source de vérité. Le localStorage est un cache
+// rapide pour le mode offline + le rendu immédiat.
+
+function getUserLocal() {
+  try { return JSON.parse(localStorage.getItem('ms_user') || 'null'); } catch { return null; }
+}
+function sauverUserLocal(user) {
+  localStorage.setItem('ms_user', JSON.stringify(user));
+}
+
+// Champs du user, exposés via getters pour rester compatibles avec le code existant
+function getPrenom()      { return getUserLocal()?.prenom || ''; }
+function getMedicaments() { return getUserLocal()?.medicaments || []; }
+function getProcheContact() { return getUserLocal()?.proche || null; }
+function getHistorique()  { return getUserLocal()?.historique_repas || []; }
+
+// Mise à jour partielle locale + sync serveur (debouncée)
+function patchUserLocal(patch) {
+  const u = getUserLocal() || { medicaments: [], historique_repas: [] };
+  const fusion = { ...u, ...patch };
+  sauverUserLocal(fusion);
+  planifierSync(patch);
+  return fusion;
+}
+
+// ════════════════════════════════════════════════════════
+// ── Sync serveur (PUT /api/user, debouncé) ─────────────
+// ════════════════════════════════════════════════════════
+let syncTimer = null;
+let syncPatchAccumule = {};
+
+function planifierSync(patch) {
+  if (!getSession()) return;        // pas connecté → pas de sync
+  Object.assign(syncPatchAccumule, patch);
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(envoyerSync, 800);
+}
+
+async function envoyerSync() {
+  const patch = syncPatchAccumule;
+  syncPatchAccumule = {};
+  syncTimer = null;
+
+  if (Object.keys(patch).length === 0) return;
+  if (!getSession()) return;
+
+  try {
+    const r = await fetch('/api/user', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify(patch)
+    });
+    if (r.status === 401) {
+      // Session invalide → on déconnecte
+      console.warn('Session expirée, déconnexion.');
+      deconnecterSession();
+      localStorage.removeItem('ms_user');
+      allerA('ecran-inscription');
+      return;
+    }
+    if (!r.ok) {
+      console.error('Sync échec:', r.status);
+      return;
+    }
+    const data = await r.json();
+    if (data.user) sauverUserLocal(data.user);
+  } catch (e) {
+    // Réseau indisponible → on garde le cache local, on retentera plus tard
+    console.warn('Sync impossible (offline ?):', e.message);
+  }
+}
+
+// Hydrate le cache local depuis le serveur. Appelé au démarrage.
+// On évite d'écraser les modifications locales en attente de sync.
+async function hydraterDepuisServeur() {
+  if (!getSession()) return null;
+  if (syncTimer || Object.keys(syncPatchAccumule).length > 0) return null;
+  try {
+    const r = await fetch('/api/user', { headers: authHeader() });
+    if (r.status === 401) {
+      deconnecterSession();
+      localStorage.removeItem('ms_user');
+      return null;
+    }
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (data.user) sauverUserLocal(data.user);
+    return data.user;
+  } catch {
+    return null;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// ── Navigation ─────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function allerA(ecranId) {
   document.querySelectorAll('.ecran').forEach(e => e.classList.remove('actif'));
   const cible = document.getElementById(ecranId);
@@ -28,14 +136,16 @@ function allerA(ecranId) {
 
 function chargerFormulaireProche() {
   const session = getSession();
-  if (session) {
-    document.getElementById('inp-profil-prenom').value = session.prenom || '';
-    document.getElementById('inp-profil-tel').value = session.telephone || '';
-  }
+  document.getElementById('inp-profil-prenom').value = getPrenom();
+  document.getElementById('inp-profil-tel').value = session?.telephone || '';
+
   const proche = getProcheContact();
   if (proche) {
     document.getElementById('inp-proche-prenom').value = proche.prenom || '';
     document.getElementById('inp-proche-tel').value = proche.telephone || '';
+  } else {
+    document.getElementById('inp-proche-prenom').value = '';
+    document.getElementById('inp-proche-tel').value = '';
   }
   masquerZone('profil-sauve');
   masquerZone('proche-sauve');
@@ -44,69 +154,137 @@ function chargerFormulaireProche() {
 
 function sauverProfil() {
   const prenom = document.getElementById('inp-profil-prenom').value.trim();
-  const tel    = document.getElementById('inp-profil-tel').value.trim();
-  if (!prenom) return;
-
-  const session = getSession() || {};
-  sauverSession({ ...session, prenom, telephone: tel });
-
+  patchUserLocal({ prenom: prenom || null });
   const el = document.getElementById('message-bonjour');
-  if (el) el.textContent = `Bonjour ${prenom} !`;
-
+  if (el) el.textContent = prenom ? `Bonjour ${prenom} !` : messageBonjourTexte();
   afficherZone('profil-sauve');
   setTimeout(() => masquerZone('profil-sauve'), 2000);
 }
 
-// ── Inscription — Étape 1 : envoyer le code ───────────
-async function envoyerCode() {
-  const prenom    = document.getElementById('inp-prenom').value.trim();
+// ════════════════════════════════════════════════════════
+// ── Connexion (téléphone seul) ─────────────────────────
+// ════════════════════════════════════════════════════════
+// 1. L'utilisateur entre son numéro → /api/auth/connexion
+// 2. Si numéro connu → session immédiate, on rentre directement
+// 3. Si numéro inconnu → écran de vérification (code dev affiché en DEV_MODE)
+
+async function seConnecter() {
   const telephone = document.getElementById('inp-tel').value.trim();
   const erreur    = document.getElementById('inscription-erreur');
-  const btn       = document.getElementById('btn-envoyer-code');
+  const btn       = document.getElementById('btn-continuer');
 
   erreur.classList.remove('visible');
 
-  if (!prenom) return afficherErreur(erreur, 'Veuillez entrer votre prénom.');
   if (!telephone) return afficherErreur(erreur, 'Veuillez entrer votre numéro de téléphone.');
 
-  // Inscription directe sans SMS (mode développement)
-  sauverSession({ prenom, telephone });
-  document.getElementById('message-bonjour').textContent = `Bonjour ${prenom} !`;
-  allerA('ecran-accueil');
-  chargerMedicaments();
+  btn.disabled = true;
+  const texteOrig = btn.textContent;
+  btn.textContent = '⏳ Connexion…';
+
+  try {
+    const r = await fetch('/api/auth/connexion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telephone })
+    });
+    const data = await r.json();
+
+    if (!r.ok) {
+      afficherErreur(erreur, data.erreur || 'Erreur de connexion. Réessayez.');
+      return;
+    }
+
+    if (data.existe) {
+      // Utilisateur connu → session immédiate
+      sauverSession({ telephone: data.user.telephone, token: data.session });
+      sauverUserLocal(data.user);
+      entrerDansAccueil();
+    } else {
+      // Nouvel utilisateur → écran de vérification
+      localStorage.setItem('ms_verif_token', data.token);
+      localStorage.setItem('ms_verif_tel', telephone);
+      afficherEcranVerification(data.dev_code);
+    }
+  } catch {
+    afficherErreur(erreur, 'Impossible de se connecter. Vérifiez votre connexion internet.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = texteOrig;
+  }
 }
 
-// ── Inscription — Étape 2 : vérifier le code ─────────
+function afficherEcranVerification(devCode) {
+  const banniere = document.getElementById('dev-code-affiche');
+  const instruction = document.getElementById('instruction-code');
+  if (devCode) {
+    banniere.innerHTML = `Mode test — votre code est :<strong>${devCode}</strong>`;
+    banniere.classList.add('visible');
+    instruction.innerHTML = 'Entrez le code à 4 chiffres<br>affiché ci-dessous';
+  } else {
+    banniere.classList.remove('visible');
+    instruction.innerHTML = 'Entrez le code à 4 chiffres<br>reçu par SMS';
+  }
+  document.getElementById('inp-code').value = '';
+  allerA('ecran-verification');
+}
+
 async function verifierCode() {
-  const code     = document.getElementById('inp-code').value.trim();
-  const erreur   = document.getElementById('verification-erreur');
-  const prenom   = localStorage.getItem('ms_prenom') || '';
-  const tel      = localStorage.getItem('ms_telephone') || '';
-  const token    = localStorage.getItem('ms_token') || '';
+  const code   = document.getElementById('inp-code').value.trim();
+  const erreur = document.getElementById('verification-erreur');
+  const tel    = localStorage.getItem('ms_verif_tel') || '';
+  const token  = localStorage.getItem('ms_verif_token') || '';
 
   erreur.classList.remove('visible');
 
   if (code.length !== 4) return afficherErreur(erreur, 'Le code fait 4 chiffres.');
 
   try {
-    const res = await fetch('/api/auth/verifier-code', {
+    const r = await fetch('/api/auth/verifier-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prenom, telephone: tel, code, token })
+      body: JSON.stringify({ telephone: tel, code, token })
     });
-    const data = await res.json();
+    const data = await r.json();
 
-    if (!res.ok) {
+    if (!r.ok) {
       afficherErreur(erreur, data.erreur || 'Code incorrect.');
       return;
     }
 
-    sauverSession({ prenom: data.prenom, telephone: tel, session: data.session });
-    document.getElementById('message-bonjour').textContent = `Bonjour ${data.prenom} !`;
-    allerA('ecran-accueil');
+    sauverSession({ telephone: data.user.telephone, token: data.session });
+    sauverUserLocal(data.user);
+    localStorage.removeItem('ms_verif_token');
+    localStorage.removeItem('ms_verif_tel');
+    entrerDansAccueil();
   } catch {
     afficherErreur(erreur, 'Impossible de vérifier le code. Réessayez.');
   }
+}
+
+async function renvoyerCode() {
+  const tel = localStorage.getItem('ms_verif_tel') || '';
+  if (!tel) return allerA('ecran-inscription');
+
+  try {
+    const r = await fetch('/api/auth/envoyer-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telephone: tel })
+    });
+    const data = await r.json();
+    if (r.ok && data.token) {
+      localStorage.setItem('ms_verif_token', data.token);
+      afficherEcranVerification(data.dev_code);
+    }
+  } catch { /* silencieux */ }
+}
+
+function entrerDansAccueil() {
+  const prenom = getPrenom();
+  const el = document.getElementById('message-bonjour');
+  if (el) el.textContent = prenom ? `Bonjour ${prenom} !` : messageBonjourTexte();
+  allerA('ecran-accueil');
+  chargerMedicaments();
 }
 
 function afficherErreur(el, msg) {
@@ -114,17 +292,26 @@ function afficherErreur(el, msg) {
   el.classList.add('visible');
 }
 
-// ── Bonjour selon l'heure ─────────────────────────────
-function messageBonjour() {
+// ════════════════════════════════════════════════════════
+// ── Bonjour selon l'heure ──────────────────────────────
+// ════════════════════════════════════════════════════════
+function messageBonjourTexte() {
   const h = new Date().getHours();
-  let msg = 'Bonjour !';
-  if (h >= 12 && h < 18) msg = 'Bon après-midi !';
-  else if (h >= 18) msg = 'Bonsoir !';
-  const el = document.getElementById('message-bonjour');
-  if (el) el.textContent = msg;
+  if (h >= 12 && h < 18) return 'Bon après-midi !';
+  if (h >= 18) return 'Bonsoir !';
+  return 'Bonjour !';
 }
 
-// ── Photo ─────────────────────────────────────────────
+function messageBonjour() {
+  const prenom = getPrenom();
+  const txt = prenom ? `${messageBonjourTexte().replace(' !', '')} ${prenom} !` : messageBonjourTexte();
+  const el = document.getElementById('message-bonjour');
+  if (el) el.textContent = txt;
+}
+
+// ════════════════════════════════════════════════════════
+// ── Photo ──────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function ouvrirPhoto() {
   document.getElementById('input-photo').click();
 }
@@ -160,7 +347,9 @@ function lireEnBase64(fichier) {
   });
 }
 
-// ── Voix ──────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Voix ───────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 let reconnaissance = null;
 
 function commencerVoix() {
@@ -228,7 +417,9 @@ function afficherConseil(texte, description, type) {
   sauverRepas(description, texte, type);
 }
 
-// ── Historique des repas ──────────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Historique des repas ───────────────────────────────
+// ════════════════════════════════════════════════════════
 function sauverRepas(description, conseil, type) {
   const historique = getHistorique();
   historique.unshift({
@@ -238,12 +429,7 @@ function sauverRepas(description, conseil, type) {
     description: description || '',
     conseil
   });
-  // Garder max 30 repas
-  localStorage.setItem('ms_historique', JSON.stringify(historique.slice(0, 30)));
-}
-
-function getHistorique() {
-  try { return JSON.parse(localStorage.getItem('ms_historique') || '[]'); } catch { return []; }
+  patchUserLocal({ historique_repas: historique.slice(0, 30) });
 }
 
 function chargerHistorique() {
@@ -276,17 +462,15 @@ function chargerHistorique() {
   }).join('');
 }
 
-// ── Proche aidant ─────────────────────────────────────
-function getProcheContact() {
-  try { return JSON.parse(localStorage.getItem('ms_proche') || 'null'); } catch { return null; }
-}
-
+// ════════════════════════════════════════════════════════
+// ── Proche aidant ──────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function sauverProche() {
   const prenom = document.getElementById('inp-proche-prenom').value.trim();
   const tel    = document.getElementById('inp-proche-tel').value.trim();
   if (!prenom || !tel) return;
 
-  localStorage.setItem('ms_proche', JSON.stringify({ prenom, telephone: tel }));
+  patchUserLocal({ proche: { prenom, telephone: tel } });
   afficherZone('proche-sauve');
   setTimeout(() => {
     masquerZone('proche-sauve');
@@ -301,7 +485,6 @@ function chargerEcranUrgence() {
   const btn = document.getElementById('btn-alerter-proche');
   const btnTexte = document.getElementById('btn-alerter-texte');
 
-  // Réinitialiser
   btn.disabled = false;
   btnTexte.textContent = 'Prévenir ma famille';
   masquerZone('urgence-confirmation');
@@ -319,11 +502,13 @@ function chargerEcranUrgence() {
   }
 }
 
-// ── Urgence ───────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Urgence ────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 async function envoyerAlerteUrgence() {
   const proche = getProcheContact();
   const btn = document.getElementById('btn-alerter-proche');
-  const session = getSession();
+  const prenomUtilisateur = getPrenom() || 'Votre proche';
 
   btn.disabled = true;
   document.getElementById('btn-alerter-texte').textContent = 'Envoi en cours…';
@@ -334,7 +519,7 @@ async function envoyerAlerteUrgence() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         timestamp: new Date().toISOString(),
-        prenom_utilisateur: session?.prenom || 'Votre proche',
+        prenom_utilisateur: prenomUtilisateur,
         telephone_proche: proche?.telephone || ''
       })
     });
@@ -353,12 +538,11 @@ async function envoyerAlerteUrgence() {
   btn.style.display = 'none';
 }
 
-// ── Médicaments — stockage localStorage ──────────────
-function getMedicaments() {
-  try { return JSON.parse(localStorage.getItem('ms_medicaments') || '[]'); } catch { return []; }
-}
+// ════════════════════════════════════════════════════════
+// ── Médicaments ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function sauverMedicaments(liste) {
-  localStorage.setItem('ms_medicaments', JSON.stringify(liste));
+  patchUserLocal({ medicaments: liste });
 }
 
 function estDuAujourdhui(med) {
@@ -372,12 +556,15 @@ function estDuAujourdhui(med) {
 
 function reinitialiserPrisSiNouveauJour() {
   const aujourd = new Date().toDateString();
-  const meds = getMedicaments().map(m => {
+  const meds = getMedicaments();
+  let modifie = false;
+  const nouveau = meds.map(m => {
     if (m.dernierReset === aujourd) return m;
     if (!estDuAujourdhui(m)) return m;
+    modifie = true;
     return { ...m, pris: false, dernierReset: aujourd };
   });
-  sauverMedicaments(meds);
+  if (modifie) sauverMedicaments(nouveau);
 }
 
 // ── Fréquence — sélection visuelle ───────────────────
@@ -415,7 +602,6 @@ function selectionnerPeriode(btn) {
   periodeCourante = btn.dataset.periode;
 }
 
-// ── Ajouter un médicament ─────────────────────────────
 function ajouterMedicament() {
   const nom    = document.getElementById('inp-med-nom').value.trim();
   const heure  = document.getElementById('inp-med-heure').value;
@@ -486,7 +672,6 @@ function minutesMaintenant() {
   return d.getHours() * 60 + d.getMinutes();
 }
 
-// ── Charger la liste des médicaments ─────────────────
 function chargerMedicaments() {
   reinitialiserPrisSiNouveauJour();
   const liste = document.getElementById('liste-medicaments');
@@ -509,8 +694,7 @@ function chargerMedicaments() {
     return '';
   }
 
-  // Médicaments du jour en premier, puis les autres en grisé
-  const duJour   = meds.filter(m => estDuAujourdhui(m));
+  const duJour     = meds.filter(m => estDuAujourdhui(m));
   const pasAujourd = meds.filter(m => !estDuAujourdhui(m));
   const tries = [
     ...[...duJour].sort((a, b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode)),
@@ -518,24 +702,24 @@ function chargerMedicaments() {
   ];
 
   liste.innerHTML = tries.map(med => {
-    const duJour = estDuAujourdhui(med);
-    const enRetard = duJour && !med.pris && heureEnMinutes(med) + 30 <= now;
+    const dj = estDuAujourdhui(med);
+    const enRetard = dj && !med.pris && heureEnMinutes(med) + 30 <= now;
     return `
-      <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''} ${!duJour ? 'pas-aujourd' : ''}">
+      <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''} ${!dj ? 'pas-aujourd' : ''}">
         <div>
           <div class="med-nom">${med.icone} ${med.nom}</div>
           <div class="med-heure">${med.heure}${labelFrequence(med)}${enRetard ? ' <span class="med-retard">⚠️ Oublié</span>' : ''}</div>
         </div>
         <button class="med-pris ${med.pris ? 'deja-pris' : ''}"
                 onclick="marquerPris(${med.id}, this)"
-                ${med.pris || !duJour ? 'disabled' : ''}>
-          ${med.pris ? '✅ Pris' : duJour ? 'Pris' : '—'}
+                ${med.pris || !dj ? 'disabled' : ''}>
+          ${med.pris ? '✅ Pris' : dj ? 'Pris' : '—'}
         </button>
       </div>
     `;
   }).join('');
 
-  const oublies = meds.filter(m => !m.pris && heureEnMinutes(m) + 30 <= now).length;
+  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && heureEnMinutes(m) + 30 <= now).length;
   mettreAJourBadge(oublies);
 }
 
@@ -550,18 +734,19 @@ function marquerPris(id, btn) {
   const meds = getMedicaments().map(m => m.id === id ? { ...m, pris: true } : m);
   sauverMedicaments(meds);
 
-  const oublies = meds.filter(m => !m.pris && heureEnMinutes(m) + 30 <= minutesMaintenant()).length;
+  const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && heureEnMinutes(m) + 30 <= minutesMaintenant()).length;
   mettreAJourBadge(oublies);
 }
 
-// ── Badge accueil ─────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Badge accueil ──────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function mettreAJourBadge(nb) {
   const badge = document.getElementById('badge-meds');
   if (badge) {
     badge.style.display = nb > 0 ? 'flex' : 'none';
     badge.textContent = nb;
   }
-  // Badge sur l'icône de l'app (PWA installée)
   if ('setAppBadge' in navigator) {
     nb > 0
       ? navigator.setAppBadge(nb).catch(() => {})
@@ -569,7 +754,9 @@ function mettreAJourBadge(nb) {
   }
 }
 
-// ── Notifications de rappel ───────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Notifications de rappel ────────────────────────────
+// ════════════════════════════════════════════════════════
 function afficherStatutNotifications() {
   const statut = document.getElementById('notif-statut');
   const btn    = document.getElementById('btn-notif');
@@ -654,7 +841,6 @@ function planifierNotification(med) {
 
   const delai = cible.getTime() - Date.now();
 
-  // Notification à l'heure prévue
   setTimeout(() => {
     const m = getMedicaments().find(x => x.id === med.id);
     if (m && !m.pris) {
@@ -662,7 +848,6 @@ function planifierNotification(med) {
     }
   }, delai);
 
-  // Rappel 30 min après si toujours pas pris
   setTimeout(() => {
     const m = getMedicaments().find(x => x.id === med.id);
     if (m && !m.pris) {
@@ -671,7 +856,9 @@ function planifierNotification(med) {
   }, delai + 30 * 60 * 1000);
 }
 
-// ── Helpers ───────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Helpers ────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function afficherZone(id) {
   const el = document.getElementById(id);
   if (el) el.classList.add('visible');
@@ -681,25 +868,24 @@ function masquerZone(id) {
   if (el) el.classList.remove('visible');
 }
 
-// ── Vider le cache (debug) ────────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Vider le cache (debug) ─────────────────────────────
+// ════════════════════════════════════════════════════════
 async function viderCache() {
   const btn = document.querySelector('.btn-debug');
   btn.textContent = '⏳';
   btn.disabled = true;
 
   try {
-    // Vider tous les caches du service worker
     const cles = await caches.keys();
     await Promise.all(cles.map(k => caches.delete(k)));
 
-    // Désenregistrer le service worker
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(r => r.unregister()));
     }
 
     btn.textContent = '✅';
-    // Cache-busting : force le navigateur à aller chercher sur le serveur
     setTimeout(() => {
       window.location.href = '/?v=' + Date.now();
     }, 400);
@@ -710,25 +896,82 @@ async function viderCache() {
   }
 }
 
-// ── Service Worker ────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// ── Service Worker ─────────────────────────────────────
+// ════════════════════════════════════════════════════════
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
-// ── Init ──────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+// ════════════════════════════════════════════════════════
+// ── Init ───────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+// Migration depuis l'ancien format (avant la sync serveur).
+// Si on trouve les anciennes clés `ms_medicaments` / `ms_proche` / `ms_historique`
+// et qu'il n'y a pas encore de `ms_user`, on reconstitue le user à partir d'elles.
+function migrerAncienFormat() {
   const session = getSession();
-  if (session) {
-    document.getElementById('message-bonjour').textContent = `Bonjour ${session.prenom} !`;
-    allerA('ecran-accueil');
-    chargerMedicaments();
-    demanderPermissionNotifications();
-    // Vérification immédiate puis toutes les 15 min
-    verifierMedsOublies();
-    setInterval(verifierMedsOublies, 15 * 60 * 1000);
-    // Replanifier les notifications pour tous les médicaments existants
-    getMedicaments().forEach(planifierNotification);
-  } else {
+  if (!session) return;
+  if (getUserLocal()) return;        // déjà migré ou nouveau format
+
+  const oldMeds   = (() => { try { return JSON.parse(localStorage.getItem('ms_medicaments') || '[]'); } catch { return []; } })();
+  const oldProche = (() => { try { return JSON.parse(localStorage.getItem('ms_proche') || 'null'); } catch { return null; } })();
+  const oldHisto  = (() => { try { return JSON.parse(localStorage.getItem('ms_historique') || '[]'); } catch { return []; } })();
+
+  // Ancien format de session : { prenom, telephone } sans token
+  const prenomAncien = session.prenom || null;
+
+  if (oldMeds.length || oldProche || oldHisto.length || prenomAncien) {
+    sauverUserLocal({
+      telephone: session.telephone || '',
+      prenom: prenomAncien,
+      medicaments: oldMeds,
+      proche: oldProche,
+      historique_repas: oldHisto.slice(0, 30)
+    });
+  }
+
+  // Nettoyage des anciennes clés
+  localStorage.removeItem('ms_medicaments');
+  localStorage.removeItem('ms_proche');
+  localStorage.removeItem('ms_historique');
+  localStorage.removeItem('ms_prenom');
+  localStorage.removeItem('ms_telephone');
+  localStorage.removeItem('ms_token');
+
+  // Si la session ancienne n'a pas de token → on force la reconnexion
+  // (le user sera "reconnu" instantanément côté serveur si son numéro existe en KV,
+  //  sinon il passera par la vérification une dernière fois)
+  if (session && !session.token) {
+    deconnecterSession();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  migrerAncienFormat();
+  const session = getSession();
+
+  if (!session) {
     allerA('ecran-inscription');
+    return;
+  }
+
+  // On affiche l'accueil immédiatement avec le cache local
+  entrerDansAccueil();
+  demanderPermissionNotifications();
+  verifierMedsOublies();
+  setInterval(verifierMedsOublies, 15 * 60 * 1000);
+  getMedicaments().forEach(planifierNotification);
+
+  // Sync serveur en arrière-plan (hydrate le cache)
+  const userServeur = await hydraterDepuisServeur();
+  if (userServeur) {
+    // Re-render avec les données serveur (au cas où elles diffèrent)
+    const prenom = getPrenom();
+    const el = document.getElementById('message-bonjour');
+    if (el) el.textContent = prenom ? `Bonjour ${prenom} !` : messageBonjourTexte();
+    if (document.getElementById('ecran-accueil').classList.contains('actif')) {
+      chargerMedicaments();
+    }
   }
 });

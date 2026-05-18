@@ -29,22 +29,17 @@
     </div>
 
     <div class="contenu-ecran">
-      <p class="instruction">Pour commencer, qui êtes-vous ?</p>
-
-      <div class="champ-group">
-        <label class="champ-label" for="inp-prenom">Votre prénom</label>
-        <input class="champ-input" type="text" id="inp-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
-      </div>
+      <p class="instruction">Entrez votre numéro de téléphone pour commencer.</p>
 
       <div class="champ-group">
         <label class="champ-label" for="inp-tel">Votre numéro de téléphone</label>
-        <input class="champ-input" type="tel" id="inp-tel" placeholder="Ex : +32 470 00 00 00" autocomplete="tel" />
+        <input class="champ-input" type="tel" id="inp-tel" placeholder="Ex : 0470 00 00 00" autocomplete="tel" inputmode="tel" />
       </div>
 
       <div id="inscription-erreur" class="erreur-msg zone-cachee"></div>
 
-      <button class="btn-confirmer" id="btn-envoyer-code" onclick="envoyerCode()">
-        Recevoir mon code par SMS →
+      <button class="btn-confirmer" id="btn-continuer" onclick="seConnecter()">
+        Continuer →
       </button>
     </div>
   </div>
@@ -57,10 +52,12 @@
     </div>
 
     <div class="contenu-ecran">
-      <p class="instruction">Entrez le code à 4 chiffres<br>reçu par SMS</p>
+      <p class="instruction" id="instruction-code">Entrez le code à 4 chiffres<br>reçu par SMS</p>
+
+      <div id="dev-code-affiche" class="dev-code-affiche zone-cachee"></div>
 
       <div class="code-group">
-        <input class="champ-code" type="tel" id="inp-code" maxlength="4" placeholder="0000" inputmode="numeric" />
+        <input class="champ-code" type="tel" id="inp-code" maxlength="4" placeholder="0000" inputmode="numeric" autocomplete="one-time-code" />
       </div>
 
       <div id="verification-erreur" class="erreur-msg zone-cachee"></div>
@@ -69,7 +66,7 @@
         ✅ Valider mon code
       </button>
 
-      <button class="btn-secondaire" onclick="envoyerCode()">
+      <button class="btn-secondaire" onclick="renvoyerCode()">
         Renvoyer le code
       </button>
     </div>
