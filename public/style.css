@@ -1,30 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Palette senior-friendly : plus vive, plus contrastée */
-  --primaire:        #0B6650;
-  --primaire-clair:  #D6F0E8;
-  --rouge:           #CC1F1F;
-  --vert:            #147A35;
-  --gris-clair:      #F4F4F4;
-  --texte:           #111111;
-  --texte-doux:      #445560;
+  /* Palette Apple Health — senior-friendly */
+  --fond:            #F4F6F5;
+  --carte:           #E8F3EC;
+  --blanc:           #FFFFFF;
+  --accent:          #4F8A6D;
+  --accent-sombre:   #3A6B55;
+  --accent-clair:    #E8F3EC;
+  --sos:             #D64545;
+  --sos-clair:       #FDF2F2;
+  --texte:           #1E1E1E;
+  --texte-doux:      #6B7280;
 
-  /* Sections */
-  --repas-couleur:   #D96500;
-  --repas-clair:     #FFF1E0;
-  --meds-couleur:    #1450C4;
-  --meds-clair:      #E8EEFF;
+  /* Compat ← ancien système */
+  --primaire:        #4F8A6D;
+  --primaire-clair:  #E8F3EC;
+  --rouge:           #D64545;
+  --vert:            #3A7D5C;
+  --gris-clair:      #F4F6F5;
 
-  /* Glycémie */
-  --glyc-couleur:    #7B22C8;
-  --glyc-clair:      #F3EAFF;
+  /* Sections écrans secondaires */
+  --repas-couleur:   #D97706;
+  --repas-clair:     #FEF3C7;
+  --meds-couleur:    #2563EB;
+  --meds-clair:      #EFF6FF;
+  --glyc-couleur:    #7C3AED;
+  --glyc-clair:      #F5F3FF;
 }
 
 html, body {
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #EEF5F2;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+  background: var(--fond);
   color: var(--texte);
   overflow: hidden;
 }
@@ -43,13 +53,9 @@ html, body {
 
 /* ── HEADER ACCUEIL ──────────────────────────────────── */
 .entete {
-  background:
-    linear-gradient(rgba(8, 68, 52, 0.84), rgba(8, 68, 52, 0.78)),
-    url('/public/images/header-seniors.jpg') center 30% / cover no-repeat,
-    url('/public/images/header-seniors.svg') center 30% / cover no-repeat,
-    var(--primaire);
+  background: linear-gradient(160deg, #4F8A6D 0%, #3A6B55 100%);
   color: white;
-  padding: 36px 24px 28px;
+  padding: 48px 24px 36px;
   text-align: center;
   position: relative;
 }
@@ -57,17 +63,17 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .btn-settings {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.18);
   border: none;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   font-size: 22px;
   cursor: pointer;
   display: flex;
@@ -79,11 +85,11 @@ html, body {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.18);
   border: none;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   font-size: 20px;
   cursor: pointer;
   display: flex;
@@ -91,75 +97,74 @@ html, body {
   justify-content: center;
   color: white;
 }
-.logo { width: 60px; height: 60px; margin-bottom: 4px; }
-.entete h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.3px; }
-.bonjour { font-size: 19px; opacity: 0.93; font-weight: 500; }
+.logo { width: 54px; height: 54px; margin-bottom: 4px; }
+.entete h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+.bonjour { font-size: 17px; opacity: 0.88; font-weight: 400; margin-top: 2px; }
 
 /* ── BOUTONS PRINCIPAUX ACCUEIL ─────────────────────── */
 .boutons-principaux {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px 18px 12px;
+  gap: 14px;
+  padding: 24px 20px 16px;
 }
 
 .btn-principal {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
   border: none;
-  border-radius: 20px;
-  border-left: 8px solid transparent;
-  padding: 22px 22px;
+  border-radius: 24px;
+  padding: 24px 24px;
+  min-height: 76px;
   font-size: 22px;
   font-weight: 700;
   color: var(--texte);
-  box-shadow: 0 3px 14px rgba(0,0,0,0.10);
+  background: var(--blanc);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
   cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
+  transition: transform 0.12s, box-shadow 0.12s;
   width: 100%;
   text-align: left;
 }
-.btn-principal:active { transform: scale(0.97); }
+.btn-principal:active {
+  transform: scale(0.97);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
 
-.btn-principal.btn-repas {
-  background: var(--repas-clair);
-  border-left-color: var(--repas-couleur);
-}
-.btn-principal.btn-meds {
-  background: var(--meds-clair);
-  border-left-color: var(--meds-couleur);
-}
+.btn-principal.btn-repas { background: var(--blanc); }
+.btn-principal.btn-meds  { background: var(--blanc); }
 
 .btn-urgence-home {
   display: flex;
   align-items: center;
-  gap: 18px;
-  background: #FDECEA;
+  gap: 20px;
+  background: var(--sos-clair);
   border: none;
-  border-radius: 20px;
-  border-left: 8px solid var(--rouge);
-  padding: 22px 22px;
+  border-radius: 24px;
+  border-left: 6px solid var(--sos);
+  padding: 24px 24px;
+  min-height: 76px;
   font-size: 22px;
   font-weight: 700;
-  color: var(--rouge);
-  box-shadow: 0 3px 14px rgba(204,31,31,0.15);
+  color: var(--sos);
+  box-shadow: 0 2px 16px rgba(214,69,69,0.10);
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: transform 0.12s;
   width: 100%;
   text-align: left;
 }
 .btn-urgence-home:active { transform: scale(0.97); }
 
-.btn-icone { font-size: 30px; flex-shrink: 0; }
-.btn-texte { line-height: 1.2; }
+.btn-icone { font-size: 36px; flex-shrink: 0; }
+.btn-texte { line-height: 1.25; }
 
 /* ── GRILLE APPELS URGENCE (4 boutons) ──────────────── */
 .grille-appels {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 0 18px 20px;
+  gap: 12px;
+  padding: 0 20px 28px;
   margin-top: auto;
 }
 .btn-appel {
@@ -167,25 +172,25 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
   border: none;
-  border-radius: 18px;
-  padding: 16px 10px;
+  border-radius: 20px;
+  padding: 18px 10px;
   font-weight: 800;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.1s;
-  min-height: 80px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: transform 0.12s, box-shadow 0.12s;
+  min-height: 84px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.13);
 }
-.btn-appel:active { transform: scale(0.96); }
-.btn-appel-numero { font-size: 22px; }
-.btn-appel-label  { font-size: 13px; font-weight: 600; opacity: 0.9; }
-.btn-appel.rouge  { background: #CC1F1F; color: white; }
-.btn-appel.vert   { background: #147A35; color: white; }
-.btn-appel.bleu   { background: #1450C4; color: white; }
-.btn-appel.violet { background: #7B22C8; color: white; }
-.btn-appel.non-configure { background: #D5DDE8; color: #5A6A7A; box-shadow: none; }
+.btn-appel:active { transform: scale(0.95); }
+.btn-appel-numero { font-size: 22px; letter-spacing: -0.3px; }
+.btn-appel-label  { font-size: 12px; font-weight: 600; opacity: 0.88; text-align: center; }
+.btn-appel.rouge  { background: #D64545; color: white; }
+.btn-appel.vert   { background: #3A7D5C; color: white; }
+.btn-appel.bleu   { background: #4F8A6D; color: white; }
+.btn-appel.violet { background: #3D7060; color: white; }
+.btn-appel.non-configure { background: #E4EBE8; color: #7A9090; box-shadow: none; }
 
 /* ── HEADERS INTÉRIEURS ──────────────────────────────── */
 .entete-ecran {
@@ -968,3 +973,64 @@ input[type="time"].champ-input {
 .ind-ok        { background: #DCFCE7; color: #14532D; }
 .ind-attention { background: #FEF3C7; color: #78350F; }
 .ind-eviter    { background: #FEE2E2; color: #7F1D1D; }
+
+/* ── MODE NUIT SYSTÈME (prefers-color-scheme: dark) ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond:          #191E1C;
+    --carte:         #222C28;
+    --blanc:         #253028;
+    --texte:         #EDF2EF;
+    --texte-doux:    #8FA89F;
+    --accent-clair:  #222C28;
+    --primaire-clair:#222C28;
+    --sos-clair:     #3A1E1E;
+    --gris-clair:    #191E1C;
+    --repas-clair:   #2D2412;
+    --meds-clair:    #1A2138;
+    --glyc-clair:    #281C3C;
+  }
+  html, body { background: var(--fond); }
+  .ecran { background: var(--fond); }
+  .entete {
+    background: linear-gradient(160deg, #3A6B55 0%, #2C5042 100%);
+  }
+  .btn-principal {
+    background: var(--blanc);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.32);
+    color: var(--texte);
+  }
+  .btn-urgence-home { background: var(--sos-clair); }
+  .config-section, .conseil-card, .historique-carte,
+  .calendrier, .proche-info, .texte-reconnu,
+  .glycemie-input-zone, .scan-resultat {
+    background: var(--blanc);
+    border-color: #354540;
+    color: var(--texte);
+  }
+  .champ-input, .champ-code {
+    background: var(--blanc);
+    color: var(--texte);
+    border-color: #354540;
+  }
+  .btn-appel.non-configure { background: #2C3830; color: #7A9A90; }
+  .btn-frequence, .btn-jour, .btn-periode { background: var(--blanc); border-color: #354540; }
+  .btn-frequence, .btn-jour { color: var(--texte-doux); }
+  .med-carte.matin { background: #2D2412; }
+  .med-carte.midi  { background: #1A2138; }
+  .med-carte.soir  { background: #281C3C; }
+  .med-carte.nuit  { background: #1E2340; }
+  .glycemie-reference { background: #222C28; }
+  .calendrier { background: var(--blanc); }
+  .cal-numero { color: var(--texte); }
+  .analyse-dev { background: #2D2412; border-color: #8B6800; }
+  .dev-code-affiche { background: #2D2412; border-color: #8B6800; color: #E8C84A; }
+}
+
+/* ── MODE NUIT INTELLIGENT (heure : 21h–6h) ──────── */
+body.mode-nuit-heure .entete {
+  background: linear-gradient(160deg, #2D5040 0%, #1E3A2C 100%);
+}
+body.mode-nuit-heure {
+  filter: brightness(0.96);
+}

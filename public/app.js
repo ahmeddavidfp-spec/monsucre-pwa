@@ -264,6 +264,7 @@ async function renvoyerCode() {
 }
 
 function entrerDansAccueil() {
+  appliquerModeHeure();
   const el = document.getElementById('message-bonjour');
   if (el) el.textContent = messageBonjourComplet();
   allerA('ecran-accueil');
@@ -282,15 +283,20 @@ function afficherErreur(el, msg) {
 function messageBonjourComplet() {
   const h      = new Date().getHours();
   const prenom = getPrenom();
-  const nom    = prenom ? ` ${prenom}` : '';
+  const nom    = prenom ? `, ${prenom}` : '';
 
-  if (h >= 5  && h < 9)  return `Bonjour${nom} ! Avez-vous bien dormi ? 🌅`;
-  if (h >= 9  && h < 12) return `Bonjour${nom} ! Belle matinée ! ☀️`;
-  if (h >= 12 && h < 14) return `Bon appétit${nom} ! 🍽️`;
-  if (h >= 14 && h < 18) return `Bon après-midi${nom} ! 🌤️`;
-  if (h >= 18 && h < 21) return `Bonsoir${nom} ! Bonne soirée ! 🌆`;
-  if (h >= 21)           return `Bonsoir${nom} ! Il est l'heure de se reposer. 🌙`;
-  return `Bonjour${nom} !`;
+  if (h >= 5  && h < 8)  return `Bonjour${nom} 🌅  Avez-vous bien dormi ?`;
+  if (h >= 8  && h < 12) return `Bonjour${nom} ☀️  Comment vous sentez-vous ?`;
+  if (h >= 12 && h < 14) return `C'est l'heure de manger${nom} 🍽️`;
+  if (h >= 14 && h < 17) return `Bonne après-midi${nom} 🌤️  Tout va bien ?`;
+  if (h >= 17 && h < 20) return `Bonsoir${nom} 🌆  Belle soirée à vous !`;
+  if (h >= 20)           return `Bonsoir${nom} 🌙  Pensez à bien vous reposer.`;
+  return `Bonne nuit${nom} 🌜  Dormez bien.`;
+}
+
+function appliquerModeHeure() {
+  const h = new Date().getHours();
+  document.body.classList.toggle('mode-nuit-heure', h < 6 || h >= 21);
 }
 
 // ════════════════════════════════════════════════════════
