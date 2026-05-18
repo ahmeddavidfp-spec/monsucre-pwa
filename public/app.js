@@ -557,9 +557,16 @@ function marquerPris(id, btn) {
 // ── Badge accueil ─────────────────────────────────────
 function mettreAJourBadge(nb) {
   const badge = document.getElementById('badge-meds');
-  if (!badge) return;
-  badge.style.display = nb > 0 ? 'flex' : 'none';
-  badge.textContent = nb;
+  if (badge) {
+    badge.style.display = nb > 0 ? 'flex' : 'none';
+    badge.textContent = nb;
+  }
+  // Badge sur l'icône de l'app (PWA installée)
+  if ('setAppBadge' in navigator) {
+    nb > 0
+      ? navigator.setAppBadge(nb).catch(() => {})
+      : navigator.clearAppBadge().catch(() => {});
+  }
 }
 
 // ── Notifications de rappel ───────────────────────────
