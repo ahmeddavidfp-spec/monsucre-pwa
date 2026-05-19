@@ -121,10 +121,11 @@ function allerA(ecranId) {
   if (cible) cible.classList.add('actif');
   window.scrollTo(0, 0);
 
-  if (ecranId === 'ecran-urgence')    chargerEcranUrgence();
-  if (ecranId === 'ecran-proche')     chargerFormulaireProche();
-  if (ecranId === 'ecran-historique') chargerHistorique();
-  if (ecranId === 'ecran-glycemie')   reinitGlyc();
+  if (ecranId === 'ecran-urgence')      chargerEcranUrgence();
+  if (ecranId === 'ecran-proche')       chargerFormulaireProche();
+  if (ecranId === 'ecran-historique')   chargerHistorique();
+  if (ecranId === 'ecran-glycemie')     reinitGlyc();
+  if (ecranId === 'ecran-medicaments')  chargerMedicaments();
 }
 
 function chargerFormulaireProche() {
