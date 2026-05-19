@@ -1184,7 +1184,15 @@ async function analyserMedicamentPhoto(input) {
     const data = await r.json();
     if (data.nom) {
       document.getElementById('inp-med-nom').value = data.nom;
-      resultat.innerHTML = `<span class="scan-ok">✅ Détecté : ${data.nom}${data.instructions ? '<br><small>' + data.instructions + '</small>' : ''}</span>`;
+      if (data.instructions && document.getElementById('inp-med-posologie')) {
+        document.getElementById('inp-med-posologie').value = data.instructions;
+      }
+      resultat.innerHTML = `
+        <div class="scan-ok">
+          <div class="scan-ok-nom">✅ ${data.nom}</div>
+          ${data.indication ? `<div class="scan-indication">💡 ${data.indication}</div>` : ''}
+          ${data.instructions ? `<div class="scan-posologie">📋 ${data.instructions}</div>` : ''}
+        </div>`;
     } else {
       resultat.innerHTML = '<span class="scan-err">❌ Médicament non reconnu. Entrez le nom manuellement.</span>';
     }

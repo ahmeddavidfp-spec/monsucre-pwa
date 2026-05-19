@@ -862,7 +862,25 @@ input[type="time"].champ-input {
   border: 2px solid #C8DEDA;
   line-height: 1.4;
 }
-.scan-ok  { color: var(--vert); font-weight: 700; }
+.scan-ok       { color: var(--vert); }
+.scan-ok-nom   { font-size: 18px; font-weight: 800; color: var(--vert); margin-bottom: 8px; }
+.scan-indication {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--texte);
+  background: #EEF7F4;
+  border-left: 4px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.scan-posologie {
+  font-size: 14px;
+  color: var(--texte-doux);
+  margin-top: 6px;
+  font-style: italic;
+}
 .scan-err { color: var(--rouge); }
 
 /* ── CALENDRIER HISTORIQUE ──────────────────────────── */

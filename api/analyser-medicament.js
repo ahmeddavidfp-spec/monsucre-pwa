@@ -2,8 +2,8 @@
 // Body : { image, type }
 //
 // Identifie un médicament sur une photo.
-// Renvoie : { nom, dosage, instructions }
-// Si non reconnu : { nom: null, dosage: null, instructions: null }
+// Renvoie : { nom, dosage, instructions, indication }
+// Si non reconnu : { nom: null, dosage: null, instructions: null, indication: null }
 
 const INSTRUCTION = `Tu es un assistant médical. Identifie le médicament visible sur cette photo (boîte, blister, flacon ou comprimé).
 Renvoie UNIQUEMENT un objet JSON valide, sans markdown, sans texte avant ou après.
@@ -12,11 +12,12 @@ Si tu identifies un médicament :
 {
   "nom": "Nom complet du médicament avec dosage si visible (ex: Metformine 500mg, Aspirine 100mg)",
   "dosage": "Dosage seul si visible (ex: 500mg, 100mcg) ou null",
-  "instructions": "Posologie visible sur l'emballage (ex: 1 comprimé le matin) ou null"
+  "instructions": "Posologie visible sur l'emballage (ex: 1 comprimé le matin) ou null",
+  "indication": "Explication simple et courte de l'utilité du médicament pour un patient senior (max 2 phrases, langage simple, ex: 'Ce médicament aide à contrôler le taux de sucre dans le sang. Il est utilisé pour traiter le diabète de type 2.')"
 }
 
 Si ce n'est pas un médicament ou si tu ne peux pas identifier :
-{ "nom": null, "dosage": null, "instructions": null }
+{ "nom": null, "dosage": null, "instructions": null, "indication": null }
 
 N'écris RIEN d'autre que le JSON.`;
 
@@ -46,7 +47,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 200,
+        max_tokens: 400,
         temperature: 0,
         messages: [{
           role: 'user',
@@ -62,9 +63,10 @@ export default async function handler(req, res) {
     const parsed = extraireJson(brut);
 
     return res.status(200).json({
-      nom: parsed?.nom || null,
-      dosage: parsed?.dosage || null,
-      instructions: parsed?.instructions || null
+      nom:          parsed?.nom          || null,
+      dosage:       parsed?.dosage       || null,
+      instructions: parsed?.instructions || null,
+      indication:   parsed?.indication   || null
     });
   } catch (e) {
     console.error('analyser-medicament erreur:', e);
