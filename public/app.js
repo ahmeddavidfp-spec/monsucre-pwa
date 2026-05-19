@@ -1416,21 +1416,26 @@ function chargerMedicaments() {
 let _insulinePrisId  = null;
 let _insulinePrisBtn = null;
 
+function _modalInsuline(visible) {
+  const el = document.getElementById('modal-insuline');
+  if (el) el.style.display = visible ? 'flex' : 'none';
+}
+
 function demanderUnites(id, btn) {
   _insulinePrisId  = id;
   _insulinePrisBtn = btn;
   document.getElementById('inp-unites-insuline').value = '';
-  afficherZone('modal-insuline');
+  _modalInsuline(true);
   setTimeout(() => document.getElementById('inp-unites-insuline').focus(), 150);
 }
 function confirmerUnites() {
   const unites = parseInt(document.getElementById('inp-unites-insuline').value, 10) || null;
-  masquerZone('modal-insuline');
+  _modalInsuline(false);
   _marquerPrisAvecUnites(_insulinePrisId, _insulinePrisBtn, unites);
   _insulinePrisId = null; _insulinePrisBtn = null;
 }
 function annulerUnites() {
-  masquerZone('modal-insuline');
+  _modalInsuline(false);
   _marquerPrisAvecUnites(_insulinePrisId, _insulinePrisBtn, null);
   _insulinePrisId = null; _insulinePrisBtn = null;
 }

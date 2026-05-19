@@ -1575,12 +1575,11 @@ body.mode-nuit-heure {
   inset: 0;
   background: rgba(0,0,0,0.5);
   z-index: 9000;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 24px;
 }
-.modal-insuline-fond.zone-cachee { display: none !important; }
 .modal-insuline-boite {
   background: white;
   border-radius: 24px;
