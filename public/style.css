@@ -1400,6 +1400,22 @@ input[type="time"].champ-input {
 }
 .btn-renew-session:active { background: #E6F5ED; }
 
+.btn-reinit-compte {
+  display: block;
+  width: 100%;
+  background: #FFF4E5;
+  border: 2px solid #E07800;
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #E07800;
+  cursor: pointer;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.btn-reinit-compte:active { background: #FFE5C0; }
+
 .btn-deconnexion {
   display: block;
   width: 100%;

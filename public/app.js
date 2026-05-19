@@ -156,6 +156,41 @@ function chargerFormulaireProche() {
 }
 
 // ════════════════════════════════════════════════════════
+// ── Réinitialisation compte ────────────────────────────
+// ════════════════════════════════════════════════════════
+async function reinitialiserCompte() {
+  const tel = getSession()?.telephone;
+  if (!tel) return;
+  if (!confirm('⚠️ Réinitialiser le compte ?\n\nTout sera supprimé : médicaments, repas, contacts proches, historique.\nSeul le numéro de téléphone est conservé.\n\nCette action est irréversible.')) return;
+
+  // Réinitialiser côté serveur (Redis)
+  try {
+    await fetch('/api/user', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prenom: null,
+        medicaments: [],
+        proche: null,
+        proche2: null,
+        historique_repas: [],
+        prises_medicaments: []
+      })
+    });
+  } catch (e) {
+    console.error('Erreur reset serveur:', e);
+  }
+
+  // Réinitialiser localement — garder uniquement la session et le téléphone
+  const userVide = { telephone: tel, prenom: null, medicaments: [], proche: null, proche2: null, historique_repas: [], prises_medicaments: [] };
+  sauverUserLocal(userVide);
+
+  alert('✅ Compte réinitialisé. L\'application va redémarrer.');
+  allerA('ecran-accueil');
+  chargerMedicaments();
+}
+
+// ════════════════════════════════════════════════════════
 // ── Déconnexion ────────────────────────────────────────
 // ════════════════════════════════════════════════════════
 function seDeconnecter() {
