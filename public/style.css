@@ -690,10 +690,7 @@ input[type="time"].champ-input {
 }
 
 /* Couleurs par période (fond global) */
-.med-carte.matin { background: #E08C00; }
-.med-carte.midi  { background: #1450C4; }
-.med-carte.soir  { background: #7B10BB; }
-.med-carte.nuit  { background: #3949AB; }
+/* La couleur de période est portée uniquement par .med-carte-header */
 
 .med-nom  { font-size: 20px; font-weight: 800; color: var(--texte); }
 .med-posologie { font-size: 14px; color: var(--texte-doux); margin-top: 3px; font-style: italic; }
