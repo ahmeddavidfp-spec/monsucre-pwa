@@ -1380,8 +1380,9 @@ function chargerMedicaments() {
   reinitialiserPrisSiNouveauJour();
   const liste = document.getElementById('liste-medicaments');
   const meds  = getMedicaments();
-  if (meds.length === 0) {
-    liste.innerHTML = '<p class="chargement-meds">Aucun médicament enregistré.</p>';
+  const medsNonDesactives = meds.filter(m => !m.desactive);
+  if (medsNonDesactives.length === 0) {
+    liste.innerHTML = '<p class="chargement-meds">Aucun médicament actif. Utilisez le bouton + pour en ajouter.</p>';
     mettreAJourBadge(0);
     return;
   }
@@ -1397,8 +1398,9 @@ function chargerMedicaments() {
     return '';
   };
 
-  const duJour     = meds.filter(m =>  estDuAujourdhui(m));
-  const pasAujourd = meds.filter(m => !estDuAujourdhui(m));
+  const medsActifs = meds.filter(m => !m.desactive);
+  const duJour     = medsActifs.filter(m =>  estDuAujourdhui(m));
+  const pasAujourd = medsActifs.filter(m => !estDuAujourdhui(m));
   const tries = [
     ...[...duJour    ].sort((a,b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode)),
     ...[...pasAujourd].sort((a,b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode))
