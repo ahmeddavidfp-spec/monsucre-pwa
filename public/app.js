@@ -1354,6 +1354,11 @@ function migrerAncienFormat() {
 // ── Init ───────────────────────────────────────────────
 // ════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
+  // Verrouille l'orientation en portrait (PWA + navigateurs compatibles)
+  try {
+    if (screen?.orientation?.lock) await screen.orientation.lock('portrait');
+  } catch (_) { /* ignoré si non supporté (iOS Safari) */ }
+
   migrerAncienFormat();
   const session = getSession();
   if (!session) { allerA('ecran-inscription'); return; }

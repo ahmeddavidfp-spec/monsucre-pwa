@@ -1167,6 +1167,27 @@ input[type="time"].champ-input {
 .ind-attention { background: #FEF3C7; color: #78350F; }
 .ind-eviter    { background: #FEE2E2; color: #7F1D1D; }
 
+/* ── BLOCAGE ORIENTATION PAYSAGE ── */
+@media (orientation: landscape) and (max-height: 600px) {
+  body::before {
+    content: "↩ Veuillez tourner votre téléphone en mode portrait.";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F4F6F5;
+    color: #1E1E1E;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    padding: 32px;
+    line-height: 1.5;
+  }
+  #app, .ecran { visibility: hidden; }
+}
+
 /* ── MODE NUIT SYSTÈME (prefers-color-scheme: dark) ── */
 @media (prefers-color-scheme: dark) {
   :root {
