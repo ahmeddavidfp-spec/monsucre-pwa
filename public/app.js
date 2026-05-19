@@ -307,15 +307,20 @@ function afficherOngletRapport(tab, u) {
   } else if (tab === 'medicaments') {
     const prises = [...(u.prises_medicaments || [])].reverse();
     if (!prises.length) { corps.innerHTML = '<p class="rapport-vide">Aucune prise enregistrée.</p>'; return; }
+    const hasInsuline = prises.some(p => p.unites != null);
     corps.innerHTML = `
       <table class="rapport-table">
-        <thead><tr><th>Date</th><th>Médicament</th><th>Période</th><th>Heure</th></tr></thead>
-        <tbody>${prises.map(p => `<tr>
-          <td>${fmt(p.ts)}</td>
-          <td>${p.icone || '💊'} ${p.nom}</td>
-          <td>${p.periode || '—'}</td>
-          <td>${p.heure || '—'}</td>
-        </tr>`).join('')}</tbody>
+        <thead><tr><th>Date</th><th>Médicament</th><th>Période</th>${hasInsuline ? '<th>Unités</th>' : ''}</tr></thead>
+        <tbody>${prises.map(p => {
+          const d = new Date(p.ts);
+          const dateHeure = d.toLocaleDateString('fr-BE', { day:'numeric', month:'short' }) + ' ' + d.toLocaleTimeString('fr-BE', { hour:'2-digit', minute:'2-digit' });
+          return `<tr>
+            <td>${dateHeure}</td>
+            <td>${p.icone || '💊'} ${p.nom}</td>
+            <td>${p.periode || '—'}</td>
+            ${hasInsuline ? `<td>${p.unites != null ? `<strong>${p.unites} U</strong>` : '—'}</td>` : ''}
+          </tr>`;
+        }).join('')}</tbody>
       </table>`;
   }
 }
@@ -1511,6 +1516,39 @@ function ouvrirFicheMed(id) {
   document.getElementById('fiche-suppr-confirm').style.display = 'none';
   const btnSuppr = document.querySelector('.btn-fiche-supprimer');
   if (btnSuppr) btnSuppr.style.display = '';
+
+  // Historique injections insuline
+  const histZone = document.getElementById('fiche-insuline-historique');
+  const histListe = document.getElementById('fiche-insuline-liste');
+  if (histZone && histListe) {
+    if (med.insuline) {
+      const prises = (getUserLocal()?.prises_medicaments || [])
+        .filter(p => p.id === med.id)
+        .reverse()
+        .slice(0, 30);
+
+      if (prises.length === 0) {
+        histListe.innerHTML = '<p class="fiche-insuline-vide">Aucune injection enregistrée.</p>';
+      } else {
+        histListe.innerHTML = prises.map(p => {
+          const d = new Date(p.ts);
+          const date = d.toLocaleDateString('fr-BE', { weekday:'short', day:'numeric', month:'short' });
+          const heure = d.toLocaleTimeString('fr-BE', { hour:'2-digit', minute:'2-digit' });
+          const unites = p.unites ? `<span class="insuline-unites">${p.unites} U</span>` : '<span class="insuline-unites-nc">—</span>';
+          return `<div class="insuline-ligne">
+            <div class="insuline-dt">
+              <div class="insuline-date">${date}</div>
+              <div class="insuline-heure">${heure}</div>
+            </div>
+            ${unites}
+          </div>`;
+        }).join('');
+      }
+      histZone.style.display = 'block';
+    } else {
+      histZone.style.display = 'none';
+    }
+  }
 
   allerA('ecran-fiche-med');
 }
