@@ -248,74 +248,84 @@
     </div>
     <div class="contenu-ecran">
 
-      <button class="btn-action" onclick="ouvrirScanMedicament()">
-        <span class="btn-icone">📷</span>
-        <span class="btn-texte">Scanner la boîte du médicament</span>
+      <!-- Scanner compact -->
+      <button class="btn-scan-compact" onclick="ouvrirScanMedicament()">
+        📷 Scanner la boîte
       </button>
       <input type="file" id="input-scan-med" accept="image/*" capture="environment" style="display:none" onchange="analyserMedicamentPhoto(this)" />
       <div id="scan-med-resultat" class="scan-resultat zone-cachee"></div>
 
+      <!-- Étape 1 : Nom -->
       <div class="champ-group">
         <label class="champ-label" for="inp-med-nom">Nom du médicament</label>
-        <input class="champ-input" type="text" id="inp-med-nom" placeholder="Ex : Metformine" />
+        <input class="champ-input" type="text" id="inp-med-nom" placeholder="Ex : Metformine" autocomplete="off" />
       </div>
 
+      <!-- Étape 2 : Quand ? -->
       <div class="champ-group">
-        <label class="champ-label">À quelle fréquence ?</label>
-        <div class="frequence-grid">
-          <button class="btn-frequence selectionne" data-freq="quotidien" onclick="selectionnerFrequence(this)">📅 Chaque jour</button>
-          <button class="btn-frequence" data-freq="hebdomadaire" onclick="selectionnerFrequence(this)">📆 Par semaine</button>
-          <button class="btn-frequence" data-freq="mensuel" onclick="selectionnerFrequence(this)">🗓️ Par mois</button>
-        </div>
-      </div>
-
-      <div class="champ-group zone-cachee" id="zone-jour-semaine">
-        <label class="champ-label">Quel jour de la semaine ?</label>
-        <div class="jours-grid">
-          <button class="btn-jour" data-jour="1" onclick="selectionnerJourSemaine(this)">Lun</button>
-          <button class="btn-jour" data-jour="2" onclick="selectionnerJourSemaine(this)">Mar</button>
-          <button class="btn-jour" data-jour="3" onclick="selectionnerJourSemaine(this)">Mer</button>
-          <button class="btn-jour" data-jour="4" onclick="selectionnerJourSemaine(this)">Jeu</button>
-          <button class="btn-jour" data-jour="5" onclick="selectionnerJourSemaine(this)">Ven</button>
-          <button class="btn-jour" data-jour="6" onclick="selectionnerJourSemaine(this)">Sam</button>
-          <button class="btn-jour" data-jour="0" onclick="selectionnerJourSemaine(this)">Dim</button>
-        </div>
-      </div>
-
-      <div class="champ-group zone-cachee" id="zone-jour-mois">
-        <label class="champ-label" for="inp-jour-mois">Quel jour du mois ?</label>
-        <input class="champ-input" type="number" id="inp-jour-mois" min="1" max="31" placeholder="Ex : 15" inputmode="numeric" />
-      </div>
-
-      <div class="champ-group">
-        <label class="champ-label">Quand le prendre ?</label>
+        <label class="champ-label">Quand le prendre ?<span class="champ-hint-inline"> (plusieurs choix possibles)</span></label>
         <div class="periode-grid">
-          <button class="btn-periode matin"  data-periode="matin"  onclick="selectionnerPeriode(this)">🌅 Matin</button>
-          <button class="btn-periode midi"   data-periode="midi"   onclick="selectionnerPeriode(this)">☀️ Midi</button>
-          <button class="btn-periode soir"   data-periode="soir"   onclick="selectionnerPeriode(this)">🌆 Soir</button>
-          <button class="btn-periode nuit"   data-periode="nuit"   onclick="selectionnerPeriode(this)">🌙 Nuit</button>
+          <button class="btn-periode matin" data-periode="matin" onclick="selectionnerPeriode(this)">🌅<br><span>Matin</span></button>
+          <button class="btn-periode midi"  data-periode="midi"  onclick="selectionnerPeriode(this)">☀️<br><span>Midi</span></button>
+          <button class="btn-periode soir"  data-periode="soir"  onclick="selectionnerPeriode(this)">🌆<br><span>Soir</span></button>
+          <button class="btn-periode nuit"  data-periode="nuit"  onclick="selectionnerPeriode(this)">🌙<br><span>Nuit</span></button>
         </div>
       </div>
 
-      <div class="champ-group">
-        <label class="champ-label" for="inp-med-heure">Heure exacte (optionnel)</label>
-        <input class="champ-input" type="time" id="inp-med-heure" />
-      </div>
+      <!-- Étape 3 : Insuline -->
+      <label class="carte-insuline-label" id="carte-insuline-label">
+        <input type="checkbox" id="inp-med-insuline" onchange="toggleCarteInsuline(this)" />
+        <div class="carte-insuline-inner">
+          <span class="carte-insuline-icone">💉</span>
+          <div>
+            <div class="carte-insuline-titre">Piqûre d'insuline</div>
+            <div class="carte-insuline-sous">Cochez si c'est une injection</div>
+          </div>
+          <span class="carte-insuline-check" id="carte-insuline-check">○</span>
+        </div>
+      </label>
 
-      <div class="champ-group">
-        <label class="champ-label" for="inp-med-posologie">Posologie (optionnel)</label>
-        <input class="champ-input" type="text" id="inp-med-posologie" placeholder="Ex : 1 comprimé · 500 mg" />
-      </div>
-
-      <div class="champ-group">
-        <label class="champ-toggle-label">
-          <input type="checkbox" id="inp-med-insuline" />
-          <span>💉 C'est une piqûre d'insuline</span>
-        </label>
+      <!-- Options avancées -->
+      <button class="btn-options-avancees" onclick="toggleOptionsAvancees(this)" type="button">
+        <span>⚙️ Options avancées</span><span class="chevron-options">›</span>
+      </button>
+      <div id="zone-options-avancees" style="display:none">
+        <div class="champ-group">
+          <label class="champ-label">Fréquence</label>
+          <div class="frequence-grid">
+            <button class="btn-frequence selectionne" data-freq="quotidien" onclick="selectionnerFrequence(this)">📅 Chaque jour</button>
+            <button class="btn-frequence" data-freq="hebdomadaire" onclick="selectionnerFrequence(this)">📆 Semaine</button>
+            <button class="btn-frequence" data-freq="mensuel" onclick="selectionnerFrequence(this)">🗓️ Mois</button>
+          </div>
+        </div>
+        <div class="champ-group" id="zone-jour-semaine" style="display:none">
+          <label class="champ-label">Quel jour ?</label>
+          <div class="jours-grid">
+            <button class="btn-jour" data-jour="1" onclick="selectionnerJourSemaine(this)">Lun</button>
+            <button class="btn-jour" data-jour="2" onclick="selectionnerJourSemaine(this)">Mar</button>
+            <button class="btn-jour" data-jour="3" onclick="selectionnerJourSemaine(this)">Mer</button>
+            <button class="btn-jour" data-jour="4" onclick="selectionnerJourSemaine(this)">Jeu</button>
+            <button class="btn-jour" data-jour="5" onclick="selectionnerJourSemaine(this)">Ven</button>
+            <button class="btn-jour" data-jour="6" onclick="selectionnerJourSemaine(this)">Sam</button>
+            <button class="btn-jour" data-jour="0" onclick="selectionnerJourSemaine(this)">Dim</button>
+          </div>
+        </div>
+        <div class="champ-group" id="zone-jour-mois" style="display:none">
+          <label class="champ-label" for="inp-jour-mois">Quel jour du mois ?</label>
+          <input class="champ-input" type="number" id="inp-jour-mois" min="1" max="31" placeholder="Ex : 15" inputmode="numeric" />
+        </div>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-med-heure">Heure exacte</label>
+          <input class="champ-input" type="time" id="inp-med-heure" />
+        </div>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-med-posologie">Posologie</label>
+          <input class="champ-input" type="text" id="inp-med-posologie" placeholder="Ex : 1 comprimé · 500 mg" />
+        </div>
       </div>
 
       <div id="med-erreur" class="erreur-msg zone-cachee"></div>
-      <button class="btn-confirmer" onclick="ajouterMedicament()">✅ Enregistrer</button>
+      <button class="btn-confirmer" onclick="ajouterMedicament()">✅ Enregistrer le médicament</button>
     </div>
   </div>
 

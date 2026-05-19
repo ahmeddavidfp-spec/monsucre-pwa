@@ -829,6 +829,81 @@ input[type="time"].champ-input {
   background: var(--meds-clair);
 }
 
+/* ── Scanner compact ──────────────────────────────────── */
+.btn-scan-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  background: white;
+  border: 2.5px solid var(--accent);
+  border-radius: 14px;
+  color: var(--accent);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: background 0.15s;
+}
+.btn-scan-compact:active { background: var(--accent-clair); }
+
+/* ── Carte insuline ───────────────────────────────────── */
+.carte-insuline-label {
+  display: block;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+.carte-insuline-label input[type="checkbox"] { display: none; }
+.carte-insuline-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  border: 2.5px solid #D0E8E0;
+  border-radius: 16px;
+  padding: 16px 18px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.carte-insuline-label.active .carte-insuline-inner {
+  border-color: #1A6FB0;
+  background: #E8F3FF;
+}
+.carte-insuline-icone { font-size: 32px; flex-shrink: 0; }
+.carte-insuline-titre { font-size: 18px; font-weight: 700; color: var(--texte); }
+.carte-insuline-sous  { font-size: 14px; color: var(--texte-doux); margin-top: 2px; }
+.carte-insuline-check { font-size: 22px; margin-left: auto; }
+
+/* ── Options avancées ─────────────────────────────────── */
+.btn-options-avancees {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--texte-doux);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 4px;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 4px;
+}
+.chevron-options {
+  font-size: 22px;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+#zone-options-avancees {
+  background: #F8FAF9;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.champ-hint-inline { font-size: 13px; font-weight: 400; color: var(--texte-doux); margin-left: 6px; }
+
 .periode-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -844,6 +919,8 @@ input[type="time"].champ-input {
   transition: border-color 0.15s, transform 0.1s;
   text-align: center;
 }
+.btn-periode { font-size: 22px; line-height: 1.4; }
+.btn-periode span { display: block; font-size: 16px; font-weight: 700; margin-top: 4px; }
 .btn-periode:active { transform: scale(0.96); }
 .btn-periode.matin { background: #FFF8E1; color: #8B5E00; }
 .btn-periode.midi  { background: #E3F2FD; color: #0D47A1; }

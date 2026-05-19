@@ -1238,9 +1238,23 @@ function selectionnerFrequence(btn) {
   frequenceCourante = btn.dataset.freq;
   const zoneS = document.getElementById('zone-jour-semaine');
   const zoneM = document.getElementById('zone-jour-mois');
-  if (frequenceCourante === 'hebdomadaire') { zoneS.classList.add('visible'); zoneM.classList.remove('visible'); }
-  else if (frequenceCourante === 'mensuel') { zoneM.classList.add('visible'); zoneS.classList.remove('visible'); }
-  else { zoneS.classList.remove('visible'); zoneM.classList.remove('visible'); }
+  if (zoneS) zoneS.style.display = frequenceCourante === 'hebdomadaire' ? 'block' : 'none';
+  if (zoneM) zoneM.style.display = frequenceCourante === 'mensuel'      ? 'block' : 'none';
+}
+
+function toggleOptionsAvancees(btn) {
+  const zone = document.getElementById('zone-options-avancees');
+  const chevron = btn.querySelector('.chevron-options');
+  const ouvert = zone.style.display !== 'none';
+  zone.style.display = ouvert ? 'none' : 'block';
+  if (chevron) chevron.style.transform = ouvert ? '' : 'rotate(90deg)';
+}
+
+function toggleCarteInsuline(checkbox) {
+  const check = document.getElementById('carte-insuline-check');
+  if (check) check.textContent = checkbox.checked ? '✅' : '○';
+  const label = document.getElementById('carte-insuline-label');
+  if (label) label.classList.toggle('active', checkbox.checked);
 }
 
 function selectionnerJourSemaine(btn) {
@@ -1306,9 +1320,13 @@ function ajouterMedicament() {
   const res = document.getElementById('scan-med-resultat');
   if (res) { res.classList.remove('visible'); res.innerHTML = ''; }
   document.querySelectorAll('.btn-periode, .btn-frequence, .btn-jour').forEach(b => b.classList.remove('selectionne'));
-  document.querySelector('.btn-frequence[data-freq="quotidien"]').classList.add('selectionne');
-  document.getElementById('zone-jour-semaine').classList.remove('visible');
-  document.getElementById('zone-jour-mois').classList.remove('visible');
+  document.querySelector('.btn-frequence[data-freq="quotidien"]')?.classList.add('selectionne');
+  const zS = document.getElementById('zone-jour-semaine'); if (zS) zS.style.display = 'none';
+  const zM = document.getElementById('zone-jour-mois');    if (zM) zM.style.display = 'none';
+  const zO = document.getElementById('zone-options-avancees'); if (zO) zO.style.display = 'none';
+  const optBtn = document.querySelector('.btn-options-avancees .chevron-options'); if (optBtn) optBtn.style.transform = '';
+  const insCheck = document.getElementById('carte-insuline-check'); if (insCheck) insCheck.textContent = '○';
+  const insLabel = document.getElementById('carte-insuline-label'); if (insLabel) insLabel.classList.remove('active');
   periodesCourantes = []; frequenceCourante = 'quotidien'; jourSemaineCourant = null;
 
   allerA('ecran-medicaments');
