@@ -79,7 +79,7 @@ html, body {
 .logo-btn:active { transform: scale(0.92); opacity: 0.8; }
 .logo { width: 54px; height: 54px; margin-bottom: 4px; }
 .entete h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
-.bonjour { font-size: 17px; opacity: 0.88; font-weight: 400; margin-top: 2px; }
+.bonjour { font-size: 24px; opacity: 0.95; font-weight: 600; margin-top: 6px; line-height: 1.3; }
 
 /* ── BOUTONS PRINCIPAUX ACCUEIL ─────────────────────── */
 .boutons-principaux {
