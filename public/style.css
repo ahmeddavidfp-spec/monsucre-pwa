@@ -610,7 +610,7 @@ input[type="time"].champ-input {
   transition: opacity 0.3s, transform 0.1s;
   overflow: hidden;
 }
-.med-carte.pris { opacity: 0.45; }
+.med-carte.pris .med-carte-corps { opacity: 0.45; }
 
 /* ── En-tête colorée horizontale ─────────────────────── */
 .med-carte-header {
@@ -732,8 +732,10 @@ input[type="time"].champ-input {
 
 .med-carte.en-retard .med-carte-header { background: var(--rouge) !important; }
 .med-carte.en-retard .med-nom { color: var(--rouge); }
-.med-carte.pas-aujourd { opacity: 0.28; }
-.med-carte.desactive   { opacity: 0.35; filter: grayscale(0.6); }
+.med-carte.pas-aujourd .med-carte-corps { opacity: 0.28; }
+.med-carte.pas-aujourd .med-carte-header { opacity: 0.5; }
+.med-carte.desactive .med-carte-corps   { opacity: 0.35; filter: grayscale(0.6); }
+.med-carte.desactive .med-carte-header  { opacity: 0.5; filter: grayscale(0.5); }
 
 /* Carte cliquable */
 .med-carte { cursor: pointer; }
