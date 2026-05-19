@@ -1111,10 +1111,12 @@ function sauverProche2() {
 
 function chargerEcranUrgence() {
   const proche   = getProcheContact();
+  const proche2  = getProcheContact2();
   const infoEl   = document.getElementById('urgence-proche-info');
-  const pasEl    = document.getElementById('urgence-pas-de-proche');
   const btn      = document.getElementById('btn-alerter-proche');
   const btnTexte = document.getElementById('btn-alerter-texte');
+  const btnAppel = document.getElementById('btn-appeler-proche');
+  const btnAppelTexte = document.getElementById('btn-appeler-texte');
 
   btn.disabled = false;
   btnTexte.textContent = 'Prévenir ma famille';
@@ -1122,14 +1124,22 @@ function chargerEcranUrgence() {
   btn.style.display = '';
 
   if (proche) {
-    infoEl.innerHTML = `Votre proche aidant : <strong>${proche.prenom}</strong><br>${proche.telephone}`;
+    let infoHtml = `Votre proche aidant : <strong>${proche.prenom}</strong><br>${proche.telephone}`;
+    if (proche2) infoHtml += `<br>Proche 2 : <strong>${proche2.prenom}</strong> · ${proche2.telephone}`;
+    infoEl.innerHTML = infoHtml;
     afficherZone('urgence-proche-info');
     masquerZone('urgence-pas-de-proche');
     btnTexte.textContent = `Prévenir ${proche.prenom}`;
+
+    // Bouton d'appel direct — on appelle le proche principal
+    btnAppel.href = `tel:${proche.telephone}`;
+    btnAppelTexte.textContent = `Appeler ${proche.prenom}`;
+    afficherZone('btn-appeler-proche');
   } else {
     masquerZone('urgence-proche-info');
     afficherZone('urgence-pas-de-proche');
     btn.disabled = true;
+    masquerZone('btn-appeler-proche');
   }
 }
 
