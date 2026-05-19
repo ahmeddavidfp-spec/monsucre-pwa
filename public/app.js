@@ -1607,6 +1607,7 @@ function toggleDesactiverMed() {
     m.id === _ficheMedId ? { ...m, desactive: !m.desactive } : m
   );
   sauverMedicaments(meds);
+  chargerMedicaments();
   // Rouvre la fiche pour refléter le nouveau statut
   ouvrirFicheMed(_ficheMedId);
 }
