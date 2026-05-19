@@ -752,6 +752,13 @@ async function envoyerRepas() {
   }
 }
 
+function fermerConseil() {
+  masquerZone('zone-conseil');
+  masquerZone('zone-analyse');
+  const igZone = document.getElementById('repas-ig-zone');
+  if (igZone) igZone.style.display = 'none';
+}
+
 function afficherConseil(texte, description, type, analyse, thumbnail) {
   masquerZone('zone-analyse');
   document.getElementById('texte-conseil').textContent = texte;
@@ -1243,9 +1250,11 @@ function selectionnerPeriode(btn) {
 
 function ajouterMedicament() {
   if (estSeniorOnly()) return; // verrouillé
-  const nom    = document.getElementById('inp-med-nom').value.trim();
-  const heure  = document.getElementById('inp-med-heure').value;
-  const erreur = document.getElementById('med-erreur');
+  const nom      = document.getElementById('inp-med-nom').value.trim();
+  const heure    = document.getElementById('inp-med-heure').value;
+  const posologie = document.getElementById('inp-med-posologie')?.value.trim() || '';
+  const insuline  = document.getElementById('inp-med-insuline')?.checked || false;
+  const erreur   = document.getElementById('med-erreur');
   erreur.classList.remove('visible');
   if (!nom)           return afficherErreur(erreur, 'Entrez le nom du médicament.');
   if (!periodeCourante) return afficherErreur(erreur, 'Choisissez quand le prendre (matin, midi…).');
@@ -1259,10 +1268,12 @@ function ajouterMedicament() {
   const labels = { matin:'Matin', midi:'Midi', soir:'Soir', nuit:'Nuit' };
   const med = {
     id: Date.now(), nom, periode: periodeCourante,
-    heure: heure || labels[periodeCourante], icone: icones[periodeCourante],
+    heure: heure || labels[periodeCourante], icone: insuline ? '💉' : icones[periodeCourante],
     frequence: frequenceCourante,
     jourSemaine: frequenceCourante === 'hebdomadaire' ? jourSemaineCourant : null,
     jourMois: frequenceCourante === 'mensuel' ? parseInt(document.getElementById('inp-jour-mois').value, 10) : null,
+    posologie: posologie || null,
+    insuline: insuline || false,
     pris: false, dernierReset: null
   };
   const meds = getMedicaments();
@@ -1274,6 +1285,8 @@ function ajouterMedicament() {
   document.getElementById('inp-med-nom').value  = '';
   document.getElementById('inp-med-heure').value = '';
   document.getElementById('inp-jour-mois').value = '';
+  if (document.getElementById('inp-med-posologie')) document.getElementById('inp-med-posologie').value = '';
+  if (document.getElementById('inp-med-insuline'))  document.getElementById('inp-med-insuline').checked = false;
   const res = document.getElementById('scan-med-resultat');
   if (res) { res.classList.remove('visible'); res.innerHTML = ''; }
   document.querySelectorAll('.btn-periode, .btn-frequence, .btn-jour').forEach(b => b.classList.remove('selectionne'));
@@ -1337,8 +1350,9 @@ function chargerMedicaments() {
          onclick="ouvrirFicheMed(${med.id})">
       <div class="med-carte-top">
         <div>
-          <div class="med-nom">${med.icone} ${med.nom}${med.desactive ? ' <span style="font-size:13px;font-weight:600;color:#999">— désactivé</span>' : ''}</div>
+          <div class="med-nom">${med.icone} ${med.nom}${med.desactive ? ' <span style="font-size:13px;font-weight:600;color:#999">— désactivé</span>' : ''}${med.insuline ? ' <span class="med-badge-insuline">💉 Insuline</span>' : ''}</div>
           <div class="med-heure">${med.heure}${labelFrequence(med)}${enRetard ? ' <span class="med-retard">⚠️ Oublié !</span>' : ''}</div>
+          ${med.posologie ? `<div class="med-posologie">${med.posologie}</div>` : ''}
         </div>
       </div>
       <button class="btn-med-pris ${med.pris ? 'deja-pris' : ''}"
@@ -1359,7 +1373,36 @@ function chargerMedicaments() {
   mettreAJourBadge(oublies);
 }
 
+// ── Modal unités insuline ─────────────────────────────
+let _insulinePrisId  = null;
+let _insulinePrisBtn = null;
+
+function demanderUnites(id, btn) {
+  _insulinePrisId  = id;
+  _insulinePrisBtn = btn;
+  document.getElementById('inp-unites-insuline').value = '';
+  afficherZone('modal-insuline');
+  setTimeout(() => document.getElementById('inp-unites-insuline').focus(), 150);
+}
+function confirmerUnites() {
+  const unites = parseInt(document.getElementById('inp-unites-insuline').value, 10) || null;
+  masquerZone('modal-insuline');
+  _marquerPrisAvecUnites(_insulinePrisId, _insulinePrisBtn, unites);
+  _insulinePrisId = null; _insulinePrisBtn = null;
+}
+function annulerUnites() {
+  masquerZone('modal-insuline');
+  _marquerPrisAvecUnites(_insulinePrisId, _insulinePrisBtn, null);
+  _insulinePrisId = null; _insulinePrisBtn = null;
+}
+
 function marquerPris(id, btn) {
+  const medCheck = getMedicaments().find(m => m.id === id);
+  if (medCheck?.insuline) { demanderUnites(id, btn); return; }
+  _marquerPrisAvecUnites(id, btn, null);
+}
+
+function _marquerPrisAvecUnites(id, btn, unites) {
   btn.textContent = '✅ Pris — bien joué !';
   btn.classList.add('deja-pris');
   btn.disabled = true;
@@ -1376,7 +1419,9 @@ function marquerPris(id, btn) {
   const med    = meds.find(m => m.id === id);
   if (med) {
     const prises  = getUserLocal()?.prises_medicaments || [];
-    prises.push({ ts: Date.now(), id: med.id, nom: med.nom, icone: med.icone || '💊', periode: med.periode, heure: med.heure || '' });
+    const prise = { ts: Date.now(), id: med.id, nom: med.nom, icone: med.icone || '💊', periode: med.periode, heure: med.heure || '' };
+    if (unites) prise.unites = unites;
+    prises.push(prise);
     patchUserLocal({ prises_medicaments: prises.slice(-200) });
   }
 
@@ -1405,6 +1450,11 @@ function ouvrirFicheMed(id) {
   document.getElementById('fiche-med-icone').textContent   = med.icone || '💊';
   document.getElementById('fiche-med-nom').textContent     = med.nom;
   document.getElementById('fiche-med-detail').textContent  = detail;
+  const posEl = document.getElementById('fiche-med-posologie');
+  if (posEl) {
+    if (med.posologie) { posEl.textContent = '💊 ' + med.posologie; posEl.style.display = ''; }
+    else posEl.style.display = 'none';
+  }
 
   const badge = document.getElementById('fiche-med-statut-badge');
   const btnD  = document.getElementById('btn-fiche-desactiver');

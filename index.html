@@ -173,7 +173,7 @@
         <div class="conseil-card">
           <div id="repas-ig-zone" style="display:none"></div>
           <p id="texte-conseil" class="conseil-texte"></p>
-          <button class="btn-bravo" onclick="allerA('ecran-bravo')">✅ Merci !</button>
+          <button class="btn-bravo" onclick="fermerConseil()">✅ Merci !</button>
         </div>
       </div>
 
@@ -302,6 +302,18 @@
         <input class="champ-input" type="time" id="inp-med-heure" />
       </div>
 
+      <div class="champ-group">
+        <label class="champ-label" for="inp-med-posologie">Posologie (optionnel)</label>
+        <input class="champ-input" type="text" id="inp-med-posologie" placeholder="Ex : 1 comprimé · 500 mg" />
+      </div>
+
+      <div class="champ-group">
+        <label class="champ-toggle-label">
+          <input type="checkbox" id="inp-med-insuline" />
+          <span>💉 C'est une piqûre d'insuline</span>
+        </label>
+      </div>
+
       <div id="med-erreur" class="erreur-msg zone-cachee"></div>
       <button class="btn-confirmer" onclick="ajouterMedicament()">✅ Enregistrer</button>
     </div>
@@ -321,6 +333,7 @@
         <div class="fiche-med-info">
           <div class="fiche-med-nom" id="fiche-med-nom">—</div>
           <div class="fiche-med-detail" id="fiche-med-detail">—</div>
+          <div class="fiche-med-posologie" id="fiche-med-posologie" style="display:none"></div>
         </div>
         <div id="fiche-med-statut-badge" class="fiche-med-statut-badge"></div>
       </div>
@@ -508,6 +521,18 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- MODAL UNITÉS INSULINE -->
+  <div id="modal-insuline" class="modal-insuline-fond zone-cachee" onclick="annulerUnites()">
+    <div class="modal-insuline-boite" onclick="event.stopPropagation()">
+      <div class="modal-insuline-icone">💉</div>
+      <p class="modal-insuline-titre">Piqûre d'insuline</p>
+      <p class="modal-insuline-sous">Combien d'unités avez-vous injectées ?</p>
+      <input type="number" id="inp-unites-insuline" class="champ-input" min="1" max="200" inputmode="numeric" placeholder="Ex : 10" />
+      <button class="btn-confirmer" onclick="confirmerUnites()">✅ Confirmer</button>
+      <button class="btn-secondaire" onclick="annulerUnites()">Passer sans indiquer</button>
     </div>
   </div>
 

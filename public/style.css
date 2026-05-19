@@ -615,6 +615,8 @@ input[type="time"].champ-input {
 .med-carte.nuit  { background: #E8EAF6; border-left-color: #3949AB; }
 
 .med-nom  { font-size: 20px; font-weight: 800; color: var(--texte); }
+.med-posologie { font-size: 14px; color: var(--texte-doux); margin-top: 3px; font-style: italic; }
+.med-badge-insuline { font-size: 12px; font-weight: 700; background: #E0F0FF; color: #1A6FB0; border-radius: 6px; padding: 1px 7px; vertical-align: middle; margin-left: 4px; }
 .med-heure {
   font-size: 15px;
   color: var(--texte-doux);
@@ -676,6 +678,7 @@ input[type="time"].champ-input {
 .fiche-med-info  { flex: 1; }
 .fiche-med-nom   { font-size: 22px; font-weight: 800; color: var(--texte); }
 .fiche-med-detail{ font-size: 15px; color: var(--texte-doux); margin-top: 4px; }
+.fiche-med-posologie { font-size: 14px; color: var(--texte-doux); margin-top: 6px; font-style: italic; }
 .fiche-med-statut-badge {
   position: absolute;
   top: 14px; right: 14px;
@@ -1428,6 +1431,52 @@ body.mode-nuit-heure {
   font-size: 16px;
   padding: 40px 20px;
 }
+
+/* ── Toggle label (insuline) ──────────────────────────── */
+.champ-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--texte);
+  cursor: pointer;
+  padding: 4px 0;
+}
+.champ-toggle-label input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── Modal unités insuline ─────────────────────────────── */
+.modal-insuline-fond {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-insuline-fond.zone-cachee { display: none !important; }
+.modal-insuline-boite {
+  background: white;
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+}
+.modal-insuline-icone { font-size: 48px; margin-bottom: 8px; }
+.modal-insuline-titre { font-size: 22px; font-weight: 800; color: var(--texte); margin-bottom: 6px; }
+.modal-insuline-sous  { font-size: 16px; color: var(--texte-doux); margin-bottom: 20px; }
+.modal-insuline-boite .champ-input { text-align: center; font-size: 28px; font-weight: 700; margin-bottom: 16px; }
+.modal-insuline-boite .btn-confirmer { margin-bottom: 8px; }
 
 /* ═══════════════════════════════════════════════════════
    COULEURS DU HEADER SELON L'HEURE
