@@ -65,38 +65,17 @@ html, body {
   align-items: center;
   gap: 8px;
 }
-.btn-settings {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255,255,255,0.18);
+/* Goutte-bouton admin */
+.logo-btn {
+  background: none;
   border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 22px;
+  padding: 0;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-.btn-debug {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(255,255,255,0.18);
-  border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+  transition: transform 0.15s, opacity 0.15s;
+  display: block;
 }
+.logo-btn:active { transform: scale(0.92); opacity: 0.8; }
 .logo { width: 54px; height: 54px; margin-bottom: 4px; }
 .entete h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
 .bonjour { font-size: 17px; opacity: 0.88; font-weight: 400; margin-top: 2px; }
@@ -1098,6 +1077,22 @@ input[type="time"].champ-input {
 .toggle-dev input:checked + .toggle-dev-slider { background: var(--repas-couleur); }
 .toggle-dev input:checked + .toggle-dev-slider::after { transform: translateX(22px); }
 .toggle-dev-label { font-size: 16px; color: var(--texte); }
+
+.btn-renew-session {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.btn-renew-session:active { background: #E6F5ED; }
 
 .btn-deconnexion {
   display: block;

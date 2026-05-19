@@ -1311,8 +1311,8 @@ function afficherZone(id) { const el = document.getElementById(id); if (el) el.c
 function masquerZone(id)  { const el = document.getElementById(id); if (el) el.classList.remove('visible'); }
 
 async function viderCache() {
-  const btn = document.querySelector('.btn-debug');
-  btn.textContent = '⏳'; btn.disabled = true;
+  const btn = document.querySelector('.btn-renew-session');
+  if (btn) { btn.textContent = '⏳ En cours…'; btn.disabled = true; }
   try {
     const cles = await caches.keys();
     await Promise.all(cles.map(k => caches.delete(k)));
@@ -1320,11 +1320,11 @@ async function viderCache() {
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r => r.unregister()));
     }
-    btn.textContent = '✅';
-    setTimeout(() => { window.location.href = '/?v=' + Date.now(); }, 400);
+    if (btn) btn.textContent = '✅ Session renouvelée !';
+    setTimeout(() => { window.location.href = '/?v=' + Date.now(); }, 600);
   } catch {
-    btn.textContent = '❌'; btn.disabled = false;
-    setTimeout(() => { btn.textContent = '🔄'; }, 2000);
+    if (btn) { btn.textContent = '❌ Erreur'; btn.disabled = false; }
+    setTimeout(() => { if (btn) { btn.textContent = '🔄 Renouveler la session'; btn.disabled = false; } }, 2000);
   }
 }
 
