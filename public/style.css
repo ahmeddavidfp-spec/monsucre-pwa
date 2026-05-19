@@ -1235,21 +1235,7 @@ input[type="time"].champ-input {
   #app, .ecran { visibility: hidden; }
 }
 
-/* ── COULEURS DU HEADER SELON L'HEURE ─────────────── */
-/* Nuit  21h–5h  : forêt sombre */
-body.heure-nuit        .entete { background: linear-gradient(160deg, #2D5040 0%, #1E3A2C 100%); }
-/* Aube  5h–8h   : pêche dorée */
-body.heure-aube        .entete { background: linear-gradient(160deg, #F2A96E 0%, #E8906A 100%); }
-/* Matin 8h–12h  : vert menthe doux */
-body.heure-matin       .entete { background: linear-gradient(160deg, #5EAF88 0%, #429A70 100%); }
-/* Midi  12h–14h : vert émeraude (défaut) */
-body.heure-midi        .entete { background: linear-gradient(160deg, #4F8A6D 0%, #3A6B55 100%); }
-/* Après-midi 14h–18h : bleu ciel pastel */
-body.heure-aprem       .entete { background: linear-gradient(160deg, #5B9EC4 0%, #4080A8 100%); }
-/* Soir  18h–20h : orange ambre chaleureux */
-body.heure-soir        .entete { background: linear-gradient(160deg, #C8805A 0%, #B06A44 100%); }
-/* Crépuscule 20h–21h : lavande douce */
-body.heure-crepuscule  .entete { background: linear-gradient(160deg, #8878C4 0%, #6858A8 100%); }
+/* (couleurs heure déplacées en fin de fichier pour priorité maximale) */
 
 /* ── CARTE BIEN-ÊTRE ─────────────────────────────────── */
 .carte-bienetre {
@@ -1373,3 +1359,29 @@ body.mode-nuit-heure .entete {
 body.mode-nuit-heure {
   filter: brightness(0.96);
 }
+
+/* ═══════════════════════════════════════════════════════
+   COULEURS DU HEADER SELON L'HEURE
+   Placé en dernier pour toujours gagner sur dark mode etc.
+   ═══════════════════════════════════════════════════════ */
+
+/* 🌑 Nuit       21h – 5h  : forêt nocturne */
+body.heure-nuit       .entete { background: linear-gradient(160deg, #2D5040 0%, #1E3A2C 100%) !important; }
+
+/* 🌅 Aube        5h – 8h  : pêche-abricot */
+body.heure-aube       .entete { background: linear-gradient(160deg, #F2A070 0%, #E07858 100%) !important; }
+
+/* ☀️ Matin       8h – 12h : bleu ciel doux */
+body.heure-matin      .entete { background: linear-gradient(160deg, #5A9EC8 0%, #3D7EB0 100%) !important; }
+
+/* 🌿 Midi       12h – 14h : vert émeraude */
+body.heure-midi       .entete { background: linear-gradient(160deg, #4F8A6D 0%, #3A6B55 100%) !important; }
+
+/* 🌤 Après-midi 14h – 18h : bleu-indigo pastel */
+body.heure-aprem      .entete { background: linear-gradient(160deg, #5870C8 0%, #4058B0 100%) !important; }
+
+/* 🍂 Soir       18h – 20h : ambre chaud */
+body.heure-soir       .entete { background: linear-gradient(160deg, #C87848 0%, #A85E30 100%) !important; }
+
+/* 🌆 Crépuscule 20h – 21h : lavande douce */
+body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, #6A58A8 100%) !important; }
