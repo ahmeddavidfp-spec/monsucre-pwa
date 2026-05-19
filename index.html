@@ -461,6 +461,18 @@
           <span class="toggle-dev-slider"></span>
           <span class="toggle-dev-label">Activer le tableau nutritionnel</span>
         </label>
+
+        <!-- Verrouillage médicaments Senior Only -->
+        <div class="senior-only-bloc">
+          <div class="senior-only-titre">🔒 Mode Senior Only</div>
+          <p class="senior-only-desc">Lorsqu'il est activé, le senior ne peut plus ajouter, modifier ni supprimer de médicament.</p>
+          <label class="toggle-senior">
+            <input type="checkbox" id="toggle-senior-only" onchange="basculerSeniorOnly(this)" />
+            <span class="toggle-senior-slider"></span>
+            <span class="toggle-senior-label" id="label-senior-only">Désactivé</span>
+          </label>
+        </div>
+
         <button class="btn-renew-session" onclick="viderCache()">🔄 Renouveler la session</button>
         <button class="btn-deconnexion" onclick="seDeconnecter()">🚪 Se déconnecter</button>
 

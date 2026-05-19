@@ -147,6 +147,11 @@ function chargerFormulaireProche() {
 
   const toggle = document.getElementById('toggle-mode-dev');
   if (toggle) toggle.checked = estModeDevActif();
+
+  const toggleSenior = document.getElementById('toggle-senior-only');
+  const labelSenior  = document.getElementById('label-senior-only');
+  if (toggleSenior) toggleSenior.checked = estSeniorOnly();
+  if (labelSenior)  labelSenior.textContent = estSeniorOnly() ? '✅ Activé — médicaments verrouillés' : 'Désactivé';
 }
 
 // ════════════════════════════════════════════════════════
@@ -231,6 +236,19 @@ async function supprimerUtilisateur(telephone) {
 function estModeDevActif() {
   return localStorage.getItem('ms_mode_dev') === 'true';
 }
+
+// ── Senior Only : verrouillage médicaments ────────────
+function estSeniorOnly() {
+  return localStorage.getItem('ms_senior_only') === 'true';
+}
+function basculerSeniorOnly(checkbox) {
+  localStorage.setItem('ms_senior_only', checkbox.checked ? 'true' : 'false');
+  const label = document.getElementById('label-senior-only');
+  if (label) label.textContent = checkbox.checked ? '✅ Activé — médicaments verrouillés' : 'Désactivé';
+  // Recharge l'écran médicaments si actif pour cacher/montrer les boutons
+  if (document.getElementById('ecran-medicaments').classList.contains('actif')) chargerMedicaments();
+}
+
 function basculerModeDev(checkbox) {
   if (checkbox.checked) {
     localStorage.setItem('ms_mode_dev', 'true');
@@ -1131,6 +1149,7 @@ function selectionnerPeriode(btn) {
 }
 
 function ajouterMedicament() {
+  if (estSeniorOnly()) return; // verrouillé
   const nom    = document.getElementById('inp-med-nom').value.trim();
   const heure  = document.getElementById('inp-med-heure').value;
   const erreur = document.getElementById('med-erreur');
@@ -1238,6 +1257,11 @@ function chargerMedicaments() {
   });
 
   liste.innerHTML = html;
+
+  // Masquer/afficher le bouton Ajouter selon le mode Senior Only
+  const btnAjouter = document.querySelector('#ecran-medicaments .btn-action');
+  if (btnAjouter) btnAjouter.style.display = estSeniorOnly() ? 'none' : '';
+
   const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && !m.desactive && heureEnMinutes(m) + 30 <= now).length;
   mettreAJourBadge(oublies);
 }
@@ -1260,6 +1284,7 @@ function marquerPris(id, btn) {
 let _ficheMedId = null;
 
 function ouvrirFicheMed(id) {
+  if (estSeniorOnly()) return; // verrouillé — lecture seule interdite aussi
   const med = getMedicaments().find(m => m.id === id);
   if (!med) return;
   _ficheMedId = id;
