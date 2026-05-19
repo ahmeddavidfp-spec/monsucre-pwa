@@ -327,29 +327,33 @@ function afficherOngletRapport(tab, u) {
 }
 
 // ════════════════════════════════════════════════════════
-// ── Mode développeur ──────────────────────────────────
-// ════════════════════════════════════════════════════════
-function estModeDevActif() {
-  return localStorage.getItem('ms_mode_dev') === 'true';
+// ── Clés localStorage par utilisateur ─────────────────
+function cleUser(suffixe) {
+  const tel = getSession()?.telephone || 'anonyme';
+  return `${suffixe}_${tel}`;
 }
 
-// ── Senior Only : verrouillage médicaments ────────────
+// ── Mode développeur ───────────────────────────────────
+function estModeDevActif() {
+  return localStorage.getItem(cleUser('ms_mode_dev')) === 'true';
+}
+
+// ── Senior Only : verrouillage médicaments ─────────────
 function estSeniorOnly() {
-  return localStorage.getItem('ms_senior_only') === 'true';
+  return localStorage.getItem(cleUser('ms_senior_only')) === 'true';
 }
 function basculerSeniorOnly(checkbox) {
-  localStorage.setItem('ms_senior_only', checkbox.checked ? 'true' : 'false');
+  localStorage.setItem(cleUser('ms_senior_only'), checkbox.checked ? 'true' : 'false');
   const label = document.getElementById('label-senior-only');
   if (label) label.textContent = checkbox.checked ? '✅ Activé — médicaments verrouillés' : 'Désactivé';
-  // Recharge l'écran médicaments si actif pour cacher/montrer les boutons
   if (document.getElementById('ecran-medicaments').classList.contains('actif')) chargerMedicaments();
 }
 
 function basculerModeDev(checkbox) {
   if (checkbox.checked) {
-    localStorage.setItem('ms_mode_dev', 'true');
+    localStorage.setItem(cleUser('ms_mode_dev'), 'true');
   } else {
-    localStorage.removeItem('ms_mode_dev');
+    localStorage.removeItem(cleUser('ms_mode_dev'));
   }
   if (document.getElementById('ecran-historique').classList.contains('actif')) {
     chargerHistorique();
