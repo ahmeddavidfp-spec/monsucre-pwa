@@ -1366,6 +1366,9 @@ function marquerPris(id, btn) {
   const meds = getMedicaments().map(m => m.id === id ? { ...m, pris: true } : m);
   sauverMedicaments(meds);
 
+  // Annule les notifications en attente dans le SW pour ce médicament
+  swController().then(sw => { if (sw) sw.postMessage({ type: 'ANNULER_NOTIF', medId: id }); });
+
   // Enregistre la prise dans l'historique
   const med    = meds.find(m => m.id === id);
   if (med) {
@@ -1510,9 +1513,21 @@ async function activerNotifications() {
 }
 function demanderPermissionNotifications() { afficherStatutNotifications(); }
 
-function envoyerNotification(titre, corps) {
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(titre, { body: corps, icon: '/public/icons/icon-192.png' });
+async function swController() {
+  if (!('serviceWorker' in navigator)) return null;
+  if (navigator.serviceWorker.controller) return navigator.serviceWorker.controller;
+  // Attend l'activation si le SW vient d'être installé
+  const reg = await navigator.serviceWorker.ready.catch(() => null);
+  return reg?.active || null;
+}
+
+async function envoyerNotification(titre, corps, tag) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const sw = await swController();
+  if (sw) {
+    sw.postMessage({ type: 'SHOW_NOTIF', titre, corps, tag: tag || 'monsucre-notif' });
+  } else {
+    new Notification(titre, { body: corps, icon: '/public/icons/icon.svg' });
   }
 }
 
@@ -1529,21 +1544,47 @@ function verifierMedsOublies() {
   envoyerNotification('Mon Sucre 💊 — Rappel', corps);
 }
 
-function planifierNotification(med) {
-  if (!('Notification' in window)) return;
+async function planifierNotification(med) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (med.desactive) return;
+
   const cible = new Date();
   const mins  = heureEnMinutes(med);
   cible.setHours(Math.floor(mins / 60), mins % 60, 0, 0);
   if (cible <= new Date()) cible.setDate(cible.getDate() + 1);
   const delai = cible.getTime() - Date.now();
-  setTimeout(() => {
-    const m = getMedicaments().find(x => x.id === med.id);
-    if (m && !m.pris) envoyerNotification('Mon Sucre 💊', `N'oubliez pas de prendre : ${m.nom}`);
-  }, delai);
-  setTimeout(() => {
-    const m = getMedicaments().find(x => x.id === med.id);
-    if (m && !m.pris) envoyerNotification('Mon Sucre ⚠️ Rappel', `Vous n'avez pas encore pris : ${m.nom} !`);
-  }, delai + 30 * 60 * 1000);
+
+  const sw = await swController();
+
+  if (sw) {
+    // Planifie via le Service Worker (résiste au background iOS/Android)
+    sw.postMessage({
+      type: 'PLANIFIER_NOTIF',
+      medId: med.id,
+      slot:  'rappel',
+      titre: 'Mon Sucre 💊',
+      corps: `N'oubliez pas de prendre : ${med.nom}`,
+      delai
+    });
+    sw.postMessage({
+      type: 'PLANIFIER_NOTIF',
+      medId: med.id,
+      slot:  'oubli',
+      titre: 'Mon Sucre ⚠️ Rappel',
+      corps: `Vous n'avez toujours pas pris : ${med.nom} !`,
+      delai: delai + 30 * 60 * 1000
+    });
+  } else {
+    // Fallback : setTimeout dans la page (marche uniquement si l'app est ouverte)
+    setTimeout(() => {
+      const m = getMedicaments().find(x => x.id === med.id);
+      if (m && !m.pris && !m.desactive) envoyerNotification('Mon Sucre 💊', `N'oubliez pas de prendre : ${m.nom}`);
+    }, delai);
+    setTimeout(() => {
+      const m = getMedicaments().find(x => x.id === med.id);
+      if (m && !m.pris && !m.desactive) envoyerNotification('Mon Sucre ⚠️ Rappel', `Vous n'avez toujours pas pris : ${m.nom} !`);
+    }, delai + 30 * 60 * 1000);
+  }
 }
 
 // ════════════════════════════════════════════════════════
