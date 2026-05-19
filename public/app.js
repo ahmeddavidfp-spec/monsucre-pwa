@@ -1241,11 +1241,16 @@ function selectionnerJourSemaine(btn) {
   jourSemaineCourant = parseInt(btn.dataset.jour, 10);
 }
 
-let periodeCourante = null;
+let periodesCourantes = [];
 function selectionnerPeriode(btn) {
-  document.querySelectorAll('.btn-periode').forEach(b => b.classList.remove('selectionne'));
-  btn.classList.add('selectionne');
-  periodeCourante = btn.dataset.periode;
+  const p = btn.dataset.periode;
+  if (periodesCourantes.includes(p)) {
+    periodesCourantes = periodesCourantes.filter(x => x !== p);
+    btn.classList.remove('selectionne');
+  } else {
+    periodesCourantes.push(p);
+    btn.classList.add('selectionne');
+  }
 }
 
 function ajouterMedicament() {
@@ -1256,8 +1261,8 @@ function ajouterMedicament() {
   const insuline  = document.getElementById('inp-med-insuline')?.checked || false;
   const erreur   = document.getElementById('med-erreur');
   erreur.classList.remove('visible');
-  if (!nom)           return afficherErreur(erreur, 'Entrez le nom du médicament.');
-  if (!periodeCourante) return afficherErreur(erreur, 'Choisissez quand le prendre (matin, midi…).');
+  if (!nom)                       return afficherErreur(erreur, 'Entrez le nom du médicament.');
+  if (periodesCourantes.length === 0) return afficherErreur(erreur, 'Choisissez quand le prendre (matin, midi…).');
   if (frequenceCourante === 'hebdomadaire' && jourSemaineCourant === null)
     return afficherErreur(erreur, 'Choisissez le jour de la semaine.');
   if (frequenceCourante === 'mensuel') {
@@ -1266,20 +1271,23 @@ function ajouterMedicament() {
   }
   const icones = { matin:'🌅', midi:'☀️', soir:'🌆', nuit:'🌙' };
   const labels = { matin:'Matin', midi:'Midi', soir:'Soir', nuit:'Nuit' };
-  const med = {
-    id: Date.now(), nom, periode: periodeCourante,
-    heure: heure || labels[periodeCourante], icone: insuline ? '💉' : icones[periodeCourante],
-    frequence: frequenceCourante,
-    jourSemaine: frequenceCourante === 'hebdomadaire' ? jourSemaineCourant : null,
-    jourMois: frequenceCourante === 'mensuel' ? parseInt(document.getElementById('inp-jour-mois').value, 10) : null,
-    posologie: posologie || null,
-    insuline: insuline || false,
-    pris: false, dernierReset: null
-  };
   const meds = getMedicaments();
-  meds.push(med);
+  // Crée une entrée par période sélectionnée
+  periodesCourantes.forEach((periode, idx) => {
+    const med = {
+      id: Date.now() + idx, nom, periode,
+      heure: heure || labels[periode], icone: insuline ? '💉' : icones[periode],
+      frequence: frequenceCourante,
+      jourSemaine: frequenceCourante === 'hebdomadaire' ? jourSemaineCourant : null,
+      jourMois: frequenceCourante === 'mensuel' ? parseInt(document.getElementById('inp-jour-mois').value, 10) : null,
+      posologie: posologie || null,
+      insuline: insuline || false,
+      pris: false, dernierReset: null
+    };
+    meds.push(med);
+    planifierNotification(med);
+  });
   sauverMedicaments(meds);
-  planifierNotification(med);
 
   // Reset formulaire
   document.getElementById('inp-med-nom').value  = '';
@@ -1293,7 +1301,7 @@ function ajouterMedicament() {
   document.querySelector('.btn-frequence[data-freq="quotidien"]').classList.add('selectionne');
   document.getElementById('zone-jour-semaine').classList.remove('visible');
   document.getElementById('zone-jour-mois').classList.remove('visible');
-  periodeCourante = null; frequenceCourante = 'quotidien'; jourSemaineCourant = null;
+  periodesCourantes = []; frequenceCourante = 'quotidien'; jourSemaineCourant = null;
 
   allerA('ecran-medicaments');
   chargerMedicaments();
