@@ -610,8 +610,9 @@ input[type="time"].champ-input {
   transition: opacity 0.3s, transform 0.1s;
   overflow: hidden;
 }
-.med-carte.pris .med-carte-corps { opacity: 0.45; }
-.med-carte.pris .med-nom { opacity: 1; color: var(--texte) !important; }
+.med-carte.pris .med-posologie,
+.med-carte.pris .med-freq-tag { opacity: 0.45; }
+.med-carte.pris .med-carte-corps { background: #F5F5F5; }
 
 /* ── En-tête colorée horizontale ─────────────────────── */
 .med-carte-header {
