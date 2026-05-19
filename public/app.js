@@ -186,23 +186,31 @@ async function chargerListeUtilisateurs() {
       return;
     }
 
+    _usersAdmin = data.users;  // cache pour le rapport
     conteneur.innerHTML = data.users.map(u => {
       const date   = u.cree_le ? new Date(u.cree_le).toLocaleDateString('fr-BE') : '—';
       const prenom = u.prenom || '(sans prénom)';
       const nbMeds = (u.medicaments || []).length;
       const nbRepas= (u.historique_repas || []).length;
+      const tel    = u.telephone.replace(/'/g, '');
       return `
-        <div style="background:white;border-radius:16px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.07);display:flex;align-items:center;gap:12px">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:17px;font-weight:800;color:var(--texte)">${prenom}</div>
-            <div style="font-size:13px;color:var(--texte-doux);margin-top:2px">${u.telephone}</div>
-            <div style="font-size:12px;color:var(--texte-doux);margin-top:2px">
-              Inscrit le ${date} · ${nbMeds} méd. · ${nbRepas} repas
+        <div style="background:white;border-radius:16px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:17px;font-weight:800;color:var(--texte)">${prenom}</div>
+              <div style="font-size:13px;color:var(--texte-doux);margin-top:2px">${u.telephone}</div>
+              <div style="font-size:12px;color:var(--texte-doux);margin-top:2px">
+                Inscrit le ${date} · ${nbMeds} méd. · ${nbRepas} repas
+              </div>
             </div>
+            <button onclick="supprimerUtilisateur('${tel}')"
+              style="background:var(--sos-clair);border:none;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:700;color:var(--sos);cursor:pointer;flex-shrink:0">
+              🗑️
+            </button>
           </div>
-          <button onclick="supprimerUtilisateur('${u.telephone}')"
-            style="background:var(--sos-clair);border:none;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:700;color:var(--sos);cursor:pointer;flex-shrink:0">
-            🗑️ Supprimer
+          <button onclick="ouvrirRapportAdmin('${tel}')"
+            style="width:100%;margin-top:10px;background:#F0F7F4;border:none;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:700;color:var(--accent);cursor:pointer;text-align:left">
+            📊 Voir le rapport de suivi
           </button>
         </div>`;
     }).join('');
@@ -227,6 +235,88 @@ async function supprimerUtilisateur(telephone) {
     }
   } catch {
     alert('Erreur réseau.');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// ── Rapport admin ──────────────────────────────────────
+// ════════════════════════════════════════════════════════
+let _usersAdmin = [];
+
+function ouvrirRapportAdmin(tel) {
+  const u = _usersAdmin.find(x => x.telephone === tel);
+  if (!u) return;
+
+  const prenom = u.prenom || u.telephone;
+  document.getElementById('rapport-titre').textContent = `📊 ${prenom}`;
+
+  // ── Onglet actif par défaut : repas
+  afficherOngletRapport('repas', u);
+
+  // Boutons onglets
+  document.querySelectorAll('.rapport-tab').forEach(btn => {
+    btn.onclick = () => { afficherOngletRapport(btn.dataset.tab, u); };
+  });
+
+  allerA('ecran-admin-rapport');
+}
+
+function afficherOngletRapport(tab, u) {
+  document.querySelectorAll('.rapport-tab').forEach(b => b.classList.toggle('actif', b.dataset.tab === tab));
+  const corps = document.getElementById('rapport-corps');
+
+  const fmt = ts => {
+    const d = new Date(ts);
+    return d.toLocaleDateString('fr-BE', { day:'2-digit', month:'2-digit' }) + ' ' +
+           d.toLocaleTimeString('fr-BE', { hour:'2-digit', minute:'2-digit' });
+  };
+
+  if (tab === 'repas') {
+    const repas = [...(u.historique_repas || [])].reverse();
+    if (!repas.length) { corps.innerHTML = '<p class="rapport-vide">Aucun repas enregistré.</p>'; return; }
+    corps.innerHTML = `
+      <table class="rapport-table">
+        <thead><tr><th>Date</th><th>Type</th><th>Plat / Conseil</th><th>IG</th><th>Indice</th></tr></thead>
+        <tbody>${repas.map(r => {
+          const ig = r.analyse?.index_glycemique ? ({ bas:'🟢 Bas', modere:'🟡 Modéré', eleve:'🔴 Élevé' })[r.analyse.index_glycemique] || '—' : '—';
+          const id = r.analyse?.indice_diabete   ? ({ ok:'✅ OK', attention:'⚠️', eviter:'🚫' })[r.analyse.indice_diabete] || '—' : '—';
+          const plat = r.analyse?.plat || r.conseil?.slice(0, 40) || '—';
+          return `<tr>
+            <td>${fmt(r.ts || r.id)}</td>
+            <td>${r.type === 'photo' ? '📷' : '🎤'}</td>
+            <td class="rapport-td-long">${plat}</td>
+            <td>${ig}</td>
+            <td>${id}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+
+  } else if (tab === 'humeurs') {
+    const humeurs = [...(u.bien_etre || [])].reverse();
+    if (!humeurs.length) { corps.innerHTML = '<p class="rapport-vide">Aucune humeur enregistrée.</p>'; return; }
+    corps.innerHTML = `
+      <table class="rapport-table">
+        <thead><tr><th>Date</th><th>Réponse</th><th>Question</th></tr></thead>
+        <tbody>${humeurs.map(h => `<tr>
+          <td>${fmt(h.ts)}</td>
+          <td style="text-align:center;font-size:22px">${h.reponse === 'ok' ? '👍' : '👎'}</td>
+          <td class="rapport-td-long">${h.question || '—'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+
+  } else if (tab === 'medicaments') {
+    const prises = [...(u.prises_medicaments || [])].reverse();
+    if (!prises.length) { corps.innerHTML = '<p class="rapport-vide">Aucune prise enregistrée.</p>'; return; }
+    corps.innerHTML = `
+      <table class="rapport-table">
+        <thead><tr><th>Date</th><th>Médicament</th><th>Période</th><th>Heure</th></tr></thead>
+        <tbody>${prises.map(p => `<tr>
+          <td>${fmt(p.ts)}</td>
+          <td>${p.icone || '💊'} ${p.nom}</td>
+          <td>${p.periode || '—'}</td>
+          <td>${p.heure || '—'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
   }
 }
 
@@ -1272,8 +1362,18 @@ function marquerPris(id, btn) {
   btn.disabled = true;
   const carte = btn.closest('.med-carte');
   if (carte) { carte.classList.add('pris'); carte.classList.remove('en-retard'); }
+
   const meds = getMedicaments().map(m => m.id === id ? { ...m, pris: true } : m);
   sauverMedicaments(meds);
+
+  // Enregistre la prise dans l'historique
+  const med    = meds.find(m => m.id === id);
+  if (med) {
+    const prises  = getUserLocal()?.prises_medicaments || [];
+    prises.push({ ts: Date.now(), id: med.id, nom: med.nom, icone: med.icone || '💊', periode: med.periode, heure: med.heure || '' });
+    patchUserLocal({ prises_medicaments: prises.slice(-200) });
+  }
+
   const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && !m.desactive && heureEnMinutes(m) + 30 <= minutesMaintenant()).length;
   mettreAJourBadge(oublies);
 }

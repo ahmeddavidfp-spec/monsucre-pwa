@@ -37,7 +37,8 @@ export async function setUser(telephone, user) {
     proche: user.proche || null,
     proche2: user.proche2 || null,
     historique_repas: Array.isArray(user.historique_repas) ? user.historique_repas.slice(0, 60) : [],
-    bien_etre: Array.isArray(user.bien_etre) ? user.bien_etre.slice(-90) : [],
+    bien_etre:           Array.isArray(user.bien_etre)           ? user.bien_etre.slice(-90)           : [],
+    prises_medicaments:  Array.isArray(user.prises_medicaments)  ? user.prises_medicaments.slice(-200) : [],
     cree_le: user.cree_le || now,
     modifie_le: now
   };
@@ -62,7 +63,8 @@ export async function mettreAJourUser(telephone, patch) {
   if (patch.proche !== undefined)           fusion.proche = patch.proche;
   if (patch.proche2 !== undefined)          fusion.proche2 = patch.proche2;
   if (patch.historique_repas !== undefined) fusion.historique_repas = patch.historique_repas;
-  if (patch.bien_etre !== undefined)        fusion.bien_etre = patch.bien_etre;
+  if (patch.bien_etre !== undefined)           fusion.bien_etre           = patch.bien_etre;
+  if (patch.prises_medicaments !== undefined)  fusion.prises_medicaments  = patch.prises_medicaments;
 
   return await setUser(telephone, fusion);
 }

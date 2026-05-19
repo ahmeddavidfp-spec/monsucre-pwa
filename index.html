@@ -350,6 +350,29 @@
     </div>
   </div>
 
+  <!-- ÉCRAN RAPPORT ADMIN -->
+  <div id="ecran-admin-rapport" class="ecran">
+    <div class="entete-ecran">
+      <button class="btn-retour" onclick="allerA('ecran-proche')">← Retour</button>
+      <h2 id="rapport-titre">📊 Rapport</h2>
+    </div>
+    <div class="contenu-ecran" style="padding:0">
+
+      <!-- Onglets -->
+      <div class="rapport-tabs">
+        <button class="rapport-tab actif" data-tab="repas">🍽️ Repas</button>
+        <button class="rapport-tab" data-tab="humeurs">💛 Humeurs</button>
+        <button class="rapport-tab" data-tab="medicaments">💊 Médics</button>
+      </div>
+
+      <!-- Corps du tableau -->
+      <div class="rapport-corps-wrap">
+        <div id="rapport-corps"></div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ÉCRAN 4 : URGENCE -->
   <div id="ecran-urgence" class="ecran">
     <div class="entete-ecran">

@@ -1360,6 +1360,75 @@ body.mode-nuit-heure {
   filter: brightness(0.96);
 }
 
+/* ── RAPPORT ADMIN ───────────────────────────────────── */
+.rapport-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--fond);
+  border-bottom: 2px solid #E0E8E4;
+  padding: 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.rapport-tab {
+  flex: 1;
+  padding: 14px 8px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texte-doux);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.rapport-tab.actif {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.rapport-corps-wrap {
+  overflow-x: auto;
+  padding: 16px 12px 32px;
+}
+.rapport-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 420px;
+}
+.rapport-table thead tr {
+  background: var(--accent);
+  color: white;
+}
+.rapport-table th {
+  padding: 10px 10px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.rapport-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #EEF2F0;
+  vertical-align: top;
+  white-space: nowrap;
+}
+.rapport-table .rapport-td-long {
+  white-space: normal;
+  max-width: 180px;
+  word-break: break-word;
+}
+.rapport-table tbody tr:nth-child(even) { background: #F8FBF9; }
+.rapport-table tbody tr:hover { background: #EEF7F2; }
+.rapport-vide {
+  text-align: center;
+  color: var(--texte-doux);
+  font-size: 16px;
+  padding: 40px 20px;
+}
+
 /* ═══════════════════════════════════════════════════════
    COULEURS DU HEADER SELON L'HEURE
    Placé en dernier pour toujours gagner sur dark mode etc.
