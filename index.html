@@ -342,6 +342,14 @@
 
       <div id="med-erreur" class="erreur-msg zone-cachee"></div>
       <button class="btn-confirmer" onclick="ajouterMedicament()">✅ Enregistrer le médicament</button>
+
+      <!-- Liste de tous les médicaments enregistrés -->
+      <div style="margin-top: 12px;">
+        <button class="btn-liste-meds-toggle" onclick="toggleListeMedsEnregistres(this)" type="button">
+          📋 Mes médicaments enregistrés <span class="chevron-options">›</span>
+        </button>
+        <div id="liste-meds-enregistres" style="display:none; margin-top:8px;"></div>
+      </div>
     </div>
   </div>
 

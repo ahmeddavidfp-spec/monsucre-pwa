@@ -1255,6 +1255,35 @@ function toggleOptionsAvancees(btn) {
   if (chevron) chevron.style.transform = ouvert ? '' : 'rotate(90deg)';
 }
 
+function toggleListeMedsEnregistres(btn) {
+  const zone = document.getElementById('liste-meds-enregistres');
+  const chevron = btn.querySelector('.chevron-options');
+  const ouvert = zone.style.display !== 'none';
+  if (ouvert) {
+    zone.style.display = 'none';
+    if (chevron) chevron.style.transform = '';
+    return;
+  }
+  // Construire la liste
+  const meds = getMedicaments();
+  const iconesPeriode = { matin:'🌅', midi:'☀️', soir:'🌆', nuit:'🌙' };
+  const labelsPeriode = { matin:'Matin', midi:'Midi', soir:'Soir', nuit:'Nuit' };
+  if (!meds.length) {
+    zone.innerHTML = '<div style="text-align:center;color:#999;padding:12px;font-size:15px;">Aucun médicament enregistré</div>';
+  } else {
+    zone.innerHTML = meds.map(m => `
+      <div class="liste-med-item ${m.desactive ? 'desactive' : ''}" onclick="ouvrirFicheMed(${m.id})">
+        <span class="liste-med-periode" style="background:${{'matin':'#E08C00','midi':'#1450C4','soir':'#7B10BB','nuit':'#3949AB'}[m.periode]||'#888'}">
+          ${iconesPeriode[m.periode]||'💊'} ${labelsPeriode[m.periode]||m.periode}
+        </span>
+        <span class="liste-med-nom">${m.nom}${m.insuline?' 💉':''}</span>
+        ${m.desactive ? '<span class="liste-med-statut">⏸ désactivé</span>' : ''}
+      </div>`).join('');
+  }
+  zone.style.display = 'block';
+  if (chevron) chevron.style.transform = 'rotate(90deg)';
+}
+
 function toggleCarteInsuline(checkbox) {
   const check = document.getElementById('carte-insuline-check');
   if (check) check.textContent = checkbox.checked ? '✅' : '○';
