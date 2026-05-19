@@ -611,6 +611,7 @@ input[type="time"].champ-input {
   overflow: hidden;
 }
 .med-carte.pris .med-carte-corps { opacity: 0.45; }
+.med-carte.pris .med-nom { opacity: 1; color: var(--texte) !important; }
 
 /* ── En-tête colorée horizontale ─────────────────────── */
 .med-carte-header {
