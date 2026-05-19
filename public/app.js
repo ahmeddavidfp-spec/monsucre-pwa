@@ -1491,6 +1491,8 @@ function ouvrirFicheMed(id) {
 
   // Réinitialise la zone de suppression
   document.getElementById('fiche-suppr-confirm').style.display = 'none';
+  const btnSuppr = document.querySelector('.btn-fiche-supprimer');
+  if (btnSuppr) btnSuppr.style.display = '';
 
   allerA('ecran-fiche-med');
 }
