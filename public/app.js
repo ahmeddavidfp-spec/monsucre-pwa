@@ -797,10 +797,10 @@ function afficherConseil(texte, description, type, analyse, thumbnail) {
 // ── Glycémie saisie directe (carte dans écran repas) ───
 // ════════════════════════════════════════════════════════
 function indicateurGlycTexte(val) {
-  if (isNaN(val))  return { texte: '', cls: '' };
-  if (val < 4.0)   return { texte: '🔴 Hypoglycémie — Mangez quelque chose de sucré !', cls: 'glyc-ind-bas' };
-  if (val <= 7.0)  return { texte: '🟢 Normal — Bonne glycémie !', cls: 'glyc-ind-ok' };
-  if (val <= 10.0) return { texte: '🟡 Élevé — Attention à ce que vous mangez.', cls: 'glyc-ind-elevee' };
+  if (isNaN(val))   return { texte: '', cls: '' };
+  if (val < 70)     return { texte: '🔴 Hypoglycémie — Mangez quelque chose de sucré !', cls: 'glyc-ind-bas' };
+  if (val <= 126)   return { texte: '🟢 Normal — Bonne glycémie !', cls: 'glyc-ind-ok' };
+  if (val <= 180)   return { texte: '🟡 Élevé — Attention à ce que vous mangez.', cls: 'glyc-ind-elevee' };
   return { texte: '🔴 Très élevé — Consultez votre médecin.', cls: 'glyc-ind-tres-elevee' };
 }
 
@@ -816,9 +816,9 @@ function mettreAJourIndicateurGlycRepas() {
 }
 
 function sauverGlycemieRepas() {
-  const valeur = parseFloat(document.getElementById('inp-glycemie-repas')?.value);
-  if (isNaN(valeur) || valeur < 1 || valeur > 40) {
-    alert('Valeur invalide. Entrez une valeur entre 1 et 40 mmol/L.');
+  const valeur = parseInt(document.getElementById('inp-glycemie-repas')?.value, 10);
+  if (isNaN(valeur) || valeur < 20 || valeur > 600) {
+    alert('Valeur invalide. Entrez une valeur entre 20 et 600 mg/dL.');
     return;
   }
   const historique = getHistorique();
@@ -826,8 +826,8 @@ function sauverGlycemieRepas() {
     id:     Date.now(),
     date:   new Date().toISOString(),
     type:   'glycemie',
-    valeur: Math.round(valeur * 10) / 10,
-    unite:  'mmol/L'
+    valeur: valeur,
+    unite:  'mg/dL'
   });
   patchUserLocal({ historique_repas: historique.slice(0, 60) });
   syncUserServeur();
@@ -852,17 +852,17 @@ function reinitGlyc() {
 }
 
 function mettreAJourIndicateurGlyc() {
-  const val = parseFloat(document.getElementById('inp-glycemie').value);
+  const val = parseInt(document.getElementById('inp-glycemie').value, 10);
   const ind = document.getElementById('glycemie-indicateur');
   if (!ind) return;
   if (isNaN(val)) { ind.textContent = ''; ind.className = 'glycemie-indicateur'; return; }
-  if (val < 4.0) {
+  if (val < 70) {
     ind.textContent = '🔴 Hypoglycémie — Consultez rapidement !';
     ind.className = 'glycemie-indicateur glyc-ind-bas';
-  } else if (val <= 7.0) {
+  } else if (val <= 126) {
     ind.textContent = '🟢 Normal — Très bien !';
     ind.className = 'glycemie-indicateur glyc-ind-ok';
-  } else if (val <= 10.0) {
+  } else if (val <= 180) {
     ind.textContent = '🟡 Élevé — Soyez attentif.';
     ind.className = 'glycemie-indicateur glyc-ind-elevee';
   } else {
@@ -872,11 +872,11 @@ function mettreAJourIndicateurGlyc() {
 }
 
 function sauverGlychemie() {
-  const valeur = parseFloat(document.getElementById('inp-glycemie').value);
+  const valeur = parseInt(document.getElementById('inp-glycemie').value, 10);
   const erreur = document.getElementById('glycemie-erreur');
   erreur.classList.remove('visible');
-  if (isNaN(valeur) || valeur < 1 || valeur > 40) {
-    afficherErreur(erreur, 'Valeur invalide. Entrez une valeur entre 1 et 40 mmol/L.');
+  if (isNaN(valeur) || valeur < 20 || valeur > 600) {
+    afficherErreur(erreur, 'Valeur invalide. Entrez une valeur entre 20 et 600 mg/dL.');
     return;
   }
   const historique = getHistorique();
@@ -884,8 +884,8 @@ function sauverGlychemie() {
     id: Date.now(),
     date: new Date().toISOString(),
     type: 'glycemie',
-    valeur: Math.round(valeur * 10) / 10,
-    unite: 'mmol/L'
+    valeur: valeur,
+    unite: 'mg/dL'
   });
   patchUserLocal({ historique_repas: historique.slice(0, 60) });
   allerA('ecran-bravo');
@@ -1001,8 +1001,11 @@ function rendreEntreeHistorique(repas) {
 
   if (repas.type === 'glycemie') {
     const v   = repas.valeur;
-    const cls = v < 4 ? 'glyc-bas' : v <= 7 ? 'glyc-ok' : v <= 10 ? 'glyc-haut' : 'glyc-tres-haut';
-    const ico = v < 4 ? '🔴' : v <= 7 ? '🟢' : v <= 10 ? '🟡' : '🔴';
+    // Support ancien format mmol/L (valeurs < 40) + nouveau mg/dL
+    const estMgDL = (repas.unite === 'mg/dL' || v > 40);
+    const vRef    = estMgDL ? v : v * 18; // normalise en mg/dL pour la comparaison
+    const cls = vRef < 70 ? 'glyc-bas' : vRef <= 126 ? 'glyc-ok' : vRef <= 180 ? 'glyc-haut' : 'glyc-tres-haut';
+    const ico = vRef < 70 ? '🔴' : vRef <= 126 ? '🟢' : vRef <= 180 ? '🟡' : '🔴';
     return `<div class="historique-carte glycemie-carte ${cls}">
       <div class="historique-entete">
         <span class="historique-icone">📊</span>

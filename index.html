@@ -147,10 +147,10 @@
       <div class="glyc-saisie-carte">
         <div class="glyc-saisie-titre">📟 Ma glycémie mesurée</div>
         <div class="glyc-saisie-ligne">
-          <input type="number" id="inp-glycemie-repas" step="0.1" min="1" max="40"
-                 placeholder="Ex : 6.5" inputmode="decimal" class="glyc-saisie-input"
+          <input type="number" id="inp-glycemie-repas" step="1" min="20" max="600"
+                 placeholder="Ex : 120" inputmode="numeric" class="glyc-saisie-input"
                  oninput="mettreAJourIndicateurGlycRepas()" />
-          <span class="glyc-saisie-unite">mmol/L</span>
+          <span class="glyc-saisie-unite">mg/dL</span>
         </div>
         <div id="glyc-repas-indicateur" class="glycemie-indicateur" style="min-height:0"></div>
         <button class="btn-confirmer" onclick="sauverGlycemieRepas()" style="margin-top:10px">
@@ -191,19 +191,19 @@
       <p class="instruction">Quelle est votre valeur ?</p>
 
       <div class="glycemie-input-zone">
-        <input type="number" id="inp-glycemie" step="0.1" min="1" max="40"
-               placeholder="6.5" inputmode="decimal" class="champ-glycemie"
+        <input type="number" id="inp-glycemie" step="1" min="20" max="600"
+               placeholder="120" inputmode="numeric" class="champ-glycemie"
                oninput="mettreAJourIndicateurGlyc()" />
-        <span class="glycemie-unite">mmol/L</span>
+        <span class="glycemie-unite">mg/dL</span>
       </div>
 
       <div id="glycemie-indicateur" class="glycemie-indicateur"></div>
 
       <div class="glycemie-reference">
-        🔴 Hypoglycémie : &lt; 4.0 mmol/L<br>
-        🟢 Normal : 4.0 – 7.0 mmol/L<br>
-        🟡 Élevé : 7.0 – 10.0 mmol/L<br>
-        🔴 Très élevé : &gt; 10.0 mmol/L
+        🔴 Hypoglycémie : &lt; 70 mg/dL<br>
+        🟢 Normal : 70 – 126 mg/dL<br>
+        🟡 Élevé : 126 – 180 mg/dL<br>
+        🔴 Très élevé : &gt; 180 mg/dL
       </div>
 
       <div id="glycemie-erreur" class="erreur-msg zone-cachee"></div>
