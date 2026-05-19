@@ -139,18 +139,18 @@ html, body {
 .btn-icone { font-size: 36px; flex-shrink: 0; }
 .btn-texte { line-height: 1.25; }
 
-/* ── GRILLE APPELS URGENCE (liste verticale) ─────────── */
+/* ── GRILLE APPELS URGENCE (4 boutons) ───────────────── */
 .grille-appels {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
   padding: 0 20px 28px;
 }
 .btn-appel {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 5px;
   border: none;
   border-radius: 20px;
@@ -159,41 +159,29 @@ html, body {
   cursor: pointer;
   text-decoration: none;
   transition: transform 0.12s;
-  min-height: 72px;
-  gap: 16px;
+  min-height: 100px;
+  gap: 6px;
   text-decoration: none;
   cursor: pointer;
   border: none;
-  text-align: left;
+  text-align: center;
   background: white;
-  border-radius: 18px;
-  padding: 16px 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border-radius: 20px;
+  padding: 18px 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
-.btn-appel:active { transform: scale(0.97); }
-.btn-appel-left {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.btn-appel-right {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.btn-appel-numero { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
-.btn-appel-label  { font-size: 14px; font-weight: 500; opacity: 0.75; }
-.btn-appel.rouge  .btn-appel-left { background: #FDEAEA; color: #C0392B; }
+.btn-appel:active { transform: scale(0.96); }
+.btn-appel-left { display: none; }
+.btn-appel-right { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.btn-appel-numero { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
+.btn-appel-label  { font-size: 13px; font-weight: 600; opacity: 0.8; }
+.btn-appel.rouge  { background: #FDF1F1; }
 .btn-appel.rouge  .btn-appel-numero, .btn-appel.rouge  .btn-appel-label { color: #C0392B; }
-.btn-appel.vert   .btn-appel-left { background: #E6F4EE; color: #2E7D5A; }
-.btn-appel.vert   .btn-appel-numero, .btn-appel.vert   .btn-appel-label { color: #2E7D5A; }
-.btn-appel.bleu   .btn-appel-left { background: #E8F0FD; color: #2A5BAD; }
+.btn-appel.vert   { background: #EFF8F3; }
+.btn-appel.vert   .btn-appel-numero, .btn-appel.vert   .btn-appel-label { color: #1E6E45; }
+.btn-appel.bleu   { background: #EEF4FD; }
 .btn-appel.bleu   .btn-appel-numero, .btn-appel.bleu   .btn-appel-label { color: #2A5BAD; }
-.btn-appel.non-configure { opacity: 0.45; pointer-events: none; }
+.btn-appel.non-configure { opacity: 0.4; pointer-events: none; background: #F0F0F0; }
 
 /* ── HEADERS INTÉRIEURS ──────────────────────────────── */
 .entete-ecran {
