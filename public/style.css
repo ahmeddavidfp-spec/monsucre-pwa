@@ -614,7 +614,7 @@ input[type="time"].champ-input {
 
 .med-carte {
   border-radius: 20px;
-  padding: 16px 18px 14px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -622,8 +622,35 @@ input[type="time"].champ-input {
   position: relative;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   transition: opacity 0.3s;
+  overflow: hidden;
 }
 .med-carte.pris { opacity: 0.45; }
+
+/* Bande colorée gauche avec période verticale */
+.med-carte-bande {
+  width: 46px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.med-periode-vert {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: white;
+  opacity: 0.92;
+}
+.med-carte-corps {
+  flex: 1;
+  padding: 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
 .med-carte-top {
   display: flex;
   align-items: flex-start;
@@ -632,10 +659,14 @@ input[type="time"].champ-input {
 }
 
 /* Couleurs par période */
-.med-carte.matin { background: #FFF8E1; border-left-color: #E08C00; }
-.med-carte.midi  { background: #E3F2FD; border-left-color: #1450C4; }
-.med-carte.soir  { background: #F3E5F5; border-left-color: #8B00CC; }
-.med-carte.nuit  { background: #E8EAF6; border-left-color: #3949AB; }
+.med-carte.matin { background: #FFF8E1; }
+.med-carte.midi  { background: #E8F2FD; }
+.med-carte.soir  { background: #F5EEFF; }
+.med-carte.nuit  { background: #ECEEF8; }
+.med-carte.matin .med-carte-bande { background: #E08C00; }
+.med-carte.midi  .med-carte-bande { background: #1450C4; }
+.med-carte.soir  .med-carte-bande { background: #7B10BB; }
+.med-carte.nuit  .med-carte-bande { background: #3949AB; }
 
 .med-nom  { font-size: 20px; font-weight: 800; color: var(--texte); }
 .med-posologie { font-size: 14px; color: var(--texte-doux); margin-top: 3px; font-style: italic; }
@@ -676,7 +707,7 @@ input[type="time"].champ-input {
 .med-carte.soir  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #8B00CC; }
 .med-carte.nuit  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #3949AB; }
 
-.med-carte.en-retard { border-left-width: 9px; }
+.med-carte.en-retard .med-carte-bande { background: var(--rouge) !important; }
 .med-carte.en-retard .med-nom { color: var(--rouge); }
 .med-carte.pas-aujourd { opacity: 0.28; }
 .med-carte.desactive   { opacity: 0.35; filter: grayscale(0.6); }
@@ -1491,6 +1522,7 @@ input[type="time"].champ-input {
   .med-carte.midi  { background: #1A2138; }
   .med-carte.soir  { background: #281C3C; }
   .med-carte.nuit  { background: #1E2340; }
+  .med-carte-bande { opacity: 0.85; }
   .glycemie-reference { background: #222C28; }
   .calendrier { background: var(--blanc); }
   .cal-numero { color: var(--texte); }

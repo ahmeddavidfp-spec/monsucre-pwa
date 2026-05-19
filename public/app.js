@@ -1384,21 +1384,23 @@ function chargerMedicaments() {
     }
     const dj       = estDuAujourdhui(med);
     const enRetard = dj && !med.pris && heureEnMinutes(med) + 30 <= now;
+    const periodeLabels = { matin:'Matin', midi:'Midi', soir:'Soir', nuit:'Nuit' };
     html += `
     <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''} ${!dj ? 'pas-aujourd' : ''} ${med.desactive ? 'desactive' : ''}"
          onclick="ouvrirFicheMed(${med.id})">
-      <div class="med-carte-top">
-        <div>
-          <div class="med-nom">${med.icone} ${med.nom}${med.desactive ? ' <span style="font-size:13px;font-weight:600;color:#999">— désactivé</span>' : ''}${med.insuline ? ' <span class="med-badge-insuline">💉 Insuline</span>' : ''}</div>
-          <div class="med-heure">${med.heure}${labelFrequence(med)}${enRetard ? ' <span class="med-retard">⚠️ Oublié !</span>' : ''}</div>
-          ${med.posologie ? `<div class="med-posologie">${med.posologie}</div>` : ''}
-        </div>
+      <div class="med-carte-bande">
+        <span class="med-periode-vert">${periodeLabels[med.periode] || med.periode}</span>
       </div>
-      <button class="btn-med-pris ${med.pris ? 'deja-pris' : ''}"
-              onclick="event.stopPropagation(); marquerPris(${med.id}, this)"
-              ${med.pris || !dj || med.desactive ? 'disabled' : ''}>
-        ${med.pris ? '✅ Pris — bien joué !' : med.desactive ? '⏸ Désactivé' : dj ? '✔ Marquer comme pris' : '—'}
-      </button>
+      <div class="med-carte-corps">
+        <div class="med-nom">${med.nom}${med.desactive ? ' <span style="font-size:13px;font-weight:600;color:#aaa">— désactivé</span>' : ''}${med.insuline ? ' <span class="med-badge-insuline">💉</span>' : ''}</div>
+        ${med.heure && med.heure !== periodeLabels[med.periode] ? `<div class="med-heure">${med.heure}${labelFrequence(med)}${enRetard ? ' <span class="med-retard">⚠️ Oublié !</span>' : ''}</div>` : (enRetard ? `<div class="med-heure"><span class="med-retard">⚠️ Oublié !</span></div>` : (labelFrequence(med) ? `<div class="med-heure">${labelFrequence(med).trim()}</div>` : ''))}
+        ${med.posologie ? `<div class="med-posologie">${med.posologie}</div>` : ''}
+        <button class="btn-med-pris ${med.pris ? 'deja-pris' : ''}"
+                onclick="event.stopPropagation(); marquerPris(${med.id}, this)"
+                ${med.pris || !dj || med.desactive ? 'disabled' : ''}>
+          ${med.pris ? '✅ Pris — bien joué !' : med.desactive ? '⏸ Désactivé' : dj ? '✔ Marquer comme pris' : '—'}
+        </button>
+      </div>
     </div>`;
   });
 
