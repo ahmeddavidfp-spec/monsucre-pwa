@@ -1527,22 +1527,28 @@ function ouvrirFicheMed(id) {
   const histListe = document.getElementById('fiche-insuline-liste');
   if (histZone && histListe) {
     if (med.insuline) {
+      // Regroupe toutes les injections du même médicament (par nom)
+      // car un med multi-périodes génère plusieurs entrées avec des IDs différents
+      const nomMed = med.nom.toLowerCase();
       const prises = (getUserLocal()?.prises_medicaments || [])
-        .filter(p => p.id === med.id)
+        .filter(p => p.nom?.toLowerCase() === nomMed)
         .reverse()
-        .slice(0, 30);
+        .slice(0, 60);
 
       if (prises.length === 0) {
         histListe.innerHTML = '<p class="fiche-insuline-vide">Aucune injection enregistrée.</p>';
       } else {
+        const iconesPeriode = { matin:'🌅', midi:'☀️', soir:'🌆', nuit:'🌙' };
         histListe.innerHTML = prises.map(p => {
           const d = new Date(p.ts);
           const date = d.toLocaleDateString('fr-BE', { weekday:'short', day:'numeric', month:'short' });
           const heure = d.toLocaleTimeString('fr-BE', { hour:'2-digit', minute:'2-digit' });
-          const unites = p.unites ? `<span class="insuline-unites">${p.unites} U</span>` : '<span class="insuline-unites-nc">—</span>';
+          const icone = iconesPeriode[p.periode] || '💉';
+          const periodeLabel = p.periode ? `<span class="insuline-periode">${icone} ${p.periode}</span>` : '';
+          const unites = p.unites ? `<span class="insuline-unites">${p.unites} U</span>` : '<span class="insuline-unites-nc">— U</span>';
           return `<div class="insuline-ligne">
             <div class="insuline-dt">
-              <div class="insuline-date">${date}</div>
+              <div class="insuline-date">${date} ${periodeLabel}</div>
               <div class="insuline-heure">${heure}</div>
             </div>
             ${unites}
