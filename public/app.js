@@ -352,6 +352,7 @@ function entrerDansAccueil() {
   allerA('ecran-accueil');
   chargerMedicaments();
   mettreAJourBoutonsAppel();
+  afficherQuestionBienEtre();
 }
 
 function afficherErreur(el, msg) {
@@ -376,9 +377,125 @@ function messageBonjourComplet() {
   return `Bonne nuit${nom} 🌜  Dormez bien.`;
 }
 
+// ════════════════════════════════════════════════════════
+// ── Couleur du header selon l'heure ───────────────────
+// ════════════════════════════════════════════════════════
+const PERIODES_HEURE = ['heure-nuit','heure-aube','heure-matin','heure-midi','heure-aprem','heure-soir','heure-crepuscule'];
+
 function appliquerModeHeure() {
   const h = new Date().getHours();
   document.body.classList.toggle('mode-nuit-heure', h < 6 || h >= 21);
+
+  // Classe colorée selon la plage horaire
+  let periode;
+  if      (h >= 21 || h <  5)  periode = 'heure-nuit';
+  else if (h >= 5  && h <  8)  periode = 'heure-aube';
+  else if (h >= 8  && h < 12)  periode = 'heure-matin';
+  else if (h >= 12 && h < 14)  periode = 'heure-midi';
+  else if (h >= 14 && h < 18)  periode = 'heure-aprem';
+  else if (h >= 18 && h < 20)  periode = 'heure-soir';
+  else                          periode = 'heure-crepuscule';
+
+  PERIODES_HEURE.forEach(p => document.body.classList.remove(p));
+  document.body.classList.add(periode);
+}
+
+// ════════════════════════════════════════════════════════
+// ── Question bien-être quotidienne ────────────────────
+// ════════════════════════════════════════════════════════
+const QUESTIONS_BIENETRE = [
+  { q: 'Comment vous sentez-vous en ce moment ?', e: '💛' },
+  { q: 'Avez-vous bien dormi cette nuit ?',        e: '🌙' },
+  { q: 'Êtes-vous de bonne humeur aujourd\'hui ?', e: '😊' },
+  { q: 'Vous sentez-vous en forme ce matin ?',     e: '🌅' },
+  { q: 'Avez-vous mangé quelque chose de bon ?',   e: '🍳' },
+  { q: 'Êtes-vous au chaud et confortable ?',      e: '🏠' },
+  { q: 'Avez-vous bu assez d\'eau aujourd\'hui ?', e: '💧' },
+  { q: 'Avez-vous eu de bonnes nouvelles aujourd\'hui ?', e: '📬' },
+  { q: 'Faites-vous quelque chose d\'agréable ?',  e: '🌸' },
+  { q: 'Avez-vous parlé à quelqu\'un de cher ?',   e: '💬' },
+  { q: 'Vous sentez-vous calme et serein(e) ?',    e: '🍃' },
+  { q: 'Avez-vous pris le temps de vous reposer ?',e: '☕' },
+  { q: 'La journée se passe bien pour vous ?',     e: '🌈' },
+  { q: 'Avez-vous souri aujourd\'hui ?',           e: '😄' },
+  { q: 'Êtes-vous bien entouré(e) ?',              e: '🤗' },
+  { q: 'Vous sentez-vous d\'attaque pour la journée ?', e: '⚡' },
+  { q: 'Avez-vous fait une petite promenade ?',    e: '🌿' },
+  { q: 'La météo est agréable pour vous aujourd\'hui ?', e: '☀️' },
+  { q: 'Avez-vous quelque chose de sympa prévu ?', e: '🎉' },
+  { q: 'Prenez-vous bien soin de vous ?',          e: '💖' },
+];
+
+const REPONSES_OUI = [
+  'Quelle belle nouvelle, ça me réjouit ! 🌟',
+  'Super ! Profitez bien de cette belle journée 🌈',
+  'Fantastique ! Continuez comme ça 💪',
+  'Voilà qui fait chaud au cœur ! ☀️',
+  'Merveilleux ! Vous méritez ça 🌸',
+];
+const REPONSES_NON = [
+  'Merci de me le dire… Prenez bien soin de vous 💙',
+  'Je suis là avec vous. N\'hésitez pas à appeler un proche 🤗',
+  'Ça ira mieux bientôt. Courage ! 💛',
+  'Soyez doux(ce) avec vous-même aujourd\'hui 🍃',
+  'Pensez à vous reposer. Je veille sur vous 💜',
+];
+
+function questionDuJour() {
+  const d   = new Date();
+  const idx = (d.getFullYear() * 366 + d.getMonth() * 31 + d.getDate()) % QUESTIONS_BIENETRE.length;
+  return QUESTIONS_BIENETRE[idx];
+}
+
+function afficherQuestionBienEtre() {
+  const carte = document.getElementById('carte-bienetre');
+  if (!carte) return;
+
+  // Vérifie si déjà répondu aujourd'hui
+  const today    = new Date().toDateString();
+  const dejaDone = localStorage.getItem('ms_bienetre_date') === today;
+  if (dejaDone) { carte.style.display = 'none'; return; }
+
+  const { q, e } = questionDuJour();
+  const el = document.getElementById('bienetre-question');
+  if (el) el.innerHTML = `<span class="bienetre-emoji">${e}</span>${q}`;
+
+  carte.style.display = 'block';
+  // Animation d'entrée
+  carte.classList.remove('bienetre-visible');
+  requestAnimationFrame(() => requestAnimationFrame(() => carte.classList.add('bienetre-visible')));
+}
+
+async function repondreBienEtre(reponse) {
+  const today = new Date().toDateString();
+  localStorage.setItem('ms_bienetre_date', today);
+
+  // Affiche la réponse chaleureuse
+  const btns   = document.getElementById('bienetre-btns');
+  const merci  = document.getElementById('bienetre-merci');
+  if (btns)  btns.style.display  = 'none';
+  if (merci) {
+    const pool   = reponse === 'ok' ? REPONSES_OUI : REPONSES_NON;
+    merci.textContent = pool[Math.floor(Math.random() * pool.length)];
+    merci.style.display = 'block';
+  }
+
+  // Envoie au serveur (silencieux en cas d'erreur)
+  try {
+    const { q } = questionDuJour();
+    await fetch('/api/bien-etre', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify({ reponse, question: q })
+    });
+  } catch { /* silencieux */ }
+
+  // Ferme la carte après 2,5s
+  setTimeout(() => {
+    const carte = document.getElementById('carte-bienetre');
+    if (carte) carte.classList.remove('bienetre-visible');
+    setTimeout(() => { if (carte) carte.style.display = 'none'; }, 350);
+  }, 2500);
 }
 
 // ════════════════════════════════════════════════════════

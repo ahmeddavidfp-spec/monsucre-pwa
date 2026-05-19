@@ -17,7 +17,8 @@ export const redis = new Redis({
 //   prenom:           "Marie",                  // optionnel
 //   medicaments:      [...],                    // tableau
 //   proche:           { prenom, telephone },    // ou null
-//   historique_repas: [...],                    // max 30 entrées
+//   historique_repas: [...],                    // max 60 entrées
+//   bien_etre:        [...],                    // max 90 entrées { ts, question, reponse }
 //   cree_le:          1747579200000,            // timestamp ms
 //   modifie_le:       1747579200000             // timestamp ms
 // }
@@ -36,6 +37,7 @@ export async function setUser(telephone, user) {
     proche: user.proche || null,
     proche2: user.proche2 || null,
     historique_repas: Array.isArray(user.historique_repas) ? user.historique_repas.slice(0, 60) : [],
+    bien_etre: Array.isArray(user.bien_etre) ? user.bien_etre.slice(-90) : [],
     cree_le: user.cree_le || now,
     modifie_le: now
   };
@@ -60,6 +62,7 @@ export async function mettreAJourUser(telephone, patch) {
   if (patch.proche !== undefined)           fusion.proche = patch.proche;
   if (patch.proche2 !== undefined)          fusion.proche2 = patch.proche2;
   if (patch.historique_repas !== undefined) fusion.historique_repas = patch.historique_repas;
+  if (patch.bien_etre !== undefined)        fusion.bien_etre = patch.bien_etre;
 
   return await setUser(telephone, fusion);
 }

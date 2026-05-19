@@ -72,6 +72,16 @@
       </div>
     </div>
 
+    <!-- Carte bien-être quotidienne -->
+    <div id="carte-bienetre" class="carte-bienetre" style="display:none">
+      <div class="bienetre-question" id="bienetre-question">Comment vous sentez-vous aujourd'hui ?</div>
+      <div class="bienetre-btns" id="bienetre-btns">
+        <button class="bienetre-btn bienetre-oui" onclick="repondreBienEtre('ok')">👍</button>
+        <button class="bienetre-btn bienetre-non" onclick="repondreBienEtre('ko')">👎</button>
+      </div>
+      <div class="bienetre-merci" id="bienetre-merci" style="display:none"></div>
+    </div>
+
     <div class="boutons-principaux">
       <button class="btn-principal btn-repas" onclick="allerA('ecran-repas')">
         <span class="btn-icone">🍽️</span>

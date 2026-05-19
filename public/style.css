@@ -54,6 +54,7 @@ html, body {
 /* ── HEADER ACCUEIL ──────────────────────────────────── */
 .entete {
   background: linear-gradient(160deg, #4F8A6D 0%, #3A6B55 100%);
+  transition: background 0.8s ease;
   color: white;
   padding: 48px 24px 36px;
   text-align: center;
@@ -1181,6 +1182,84 @@ input[type="time"].champ-input {
     line-height: 1.5;
   }
   #app, .ecran { visibility: hidden; }
+}
+
+/* ── COULEURS DU HEADER SELON L'HEURE ─────────────── */
+/* Nuit  21h–5h  : forêt sombre */
+body.heure-nuit        .entete { background: linear-gradient(160deg, #2D5040 0%, #1E3A2C 100%); }
+/* Aube  5h–8h   : pêche dorée */
+body.heure-aube        .entete { background: linear-gradient(160deg, #F2A96E 0%, #E8906A 100%); }
+/* Matin 8h–12h  : vert menthe doux */
+body.heure-matin       .entete { background: linear-gradient(160deg, #5EAF88 0%, #429A70 100%); }
+/* Midi  12h–14h : vert émeraude (défaut) */
+body.heure-midi        .entete { background: linear-gradient(160deg, #4F8A6D 0%, #3A6B55 100%); }
+/* Après-midi 14h–18h : bleu ciel pastel */
+body.heure-aprem       .entete { background: linear-gradient(160deg, #5B9EC4 0%, #4080A8 100%); }
+/* Soir  18h–20h : orange ambre chaleureux */
+body.heure-soir        .entete { background: linear-gradient(160deg, #C8805A 0%, #B06A44 100%); }
+/* Crépuscule 20h–21h : lavande douce */
+body.heure-crepuscule  .entete { background: linear-gradient(160deg, #8878C4 0%, #6858A8 100%); }
+
+/* ── CARTE BIEN-ÊTRE ─────────────────────────────────── */
+.carte-bienetre {
+  margin: -12px 16px 12px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 24px;
+  padding: 20px 20px 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-12px) scale(0.97);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.carte-bienetre.bienetre-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.bienetre-emoji {
+  display: block;
+  font-size: 36px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.bienetre-question {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--texte);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.bienetre-btns {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+.bienetre-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  font-size: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+}
+.bienetre-btn:active { transform: scale(0.88); }
+.bienetre-oui { background: #E8F8EE; }
+.bienetre-non { background: #FEF0F0; }
+.bienetre-merci {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 8px 0 4px;
+  line-height: 1.4;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── MODE NUIT SYSTÈME (prefers-color-scheme: dark) ── */
