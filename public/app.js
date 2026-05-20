@@ -220,10 +220,38 @@ function basculerTTS(provider) {
 // ── Navigation ─────────────────────────────────────────
 // ════════════════════════════════════════════════════════
 // UX-F1 : message Bravo contextualisé selon l'action
-function afficherBravo(message) {
+// messageVocal (optionnel) est joué après la navigation (allerA coupe l'audio, d'où le setTimeout)
+function afficherBravo(message, messageVocal) {
   const el = document.getElementById('bravo-texte');
   if (el) el.textContent = message || "C'est noté. Continuez comme ça !";
   allerA('ecran-bravo');
+  if (messageVocal) setTimeout(() => _jouerTexteVocal(messageVocal), 150);
+}
+
+// Génère un commentaire vocal adapté à la valeur de glycémie (mg/dL)
+function _texteCommentaireGlycemie(valeur) {
+  const prenom = getPrenom();
+  const p = prenom ? `${prenom}, ` : '';
+
+  if (valeur < 70) {
+    return `${p}votre glycémie est de ${valeur} milligrammes par décilitre. `
+      + `C'est en dessous de la normale — on appelle ça une hypoglycémie. `
+      + `Prenez un peu de sucre maintenant, un verre de jus de fruit ou quelques bonbons, `
+      + `et reposez-vous. Si vous ne vous sentez pas mieux dans quelques minutes, appelez votre médecin.`;
+  }
+  if (valeur <= 126) {
+    return `${p}votre glycémie est de ${valeur} milligrammes par décilitre. `
+      + `C'est une très bonne valeur, dans la zone normale. Bravo, continuez comme ça !`;
+  }
+  if (valeur <= 180) {
+    return `${p}votre glycémie est de ${valeur} milligrammes par décilitre. `
+      + `C'est un peu élevé. Essayez d'éviter les sucreries lors de votre prochain repas `
+      + `et pensez à boire de l'eau. Votre médecin suit cela avec vous.`;
+  }
+  return `${p}votre glycémie est de ${valeur} milligrammes par décilitre. `
+    + `C'est assez élevé. Essayez de vous reposer, buvez de l'eau, `
+    + `et signalez cette valeur à votre médecin lors de votre prochaine consultation. `
+    + `N'hésitez pas à utiliser le bouton "Besoin d'aide" si vous ne vous sentez pas bien.`;
 }
 
 function allerA(ecranId) {
@@ -1492,6 +1520,9 @@ function sauverGlycemieRepas() {
   if (conf) { conf.classList.add('visible'); setTimeout(() => conf.classList.remove('visible'), 2500); }
   document.getElementById('inp-glycemie-repas').value = '';
   mettreAJourIndicateurGlycRepas();
+
+  // Feedback vocal
+  _jouerTexteVocal(_texteCommentaireGlycemie(valeur));
 }
 
 // ════════════════════════════════════════════════════════
@@ -1543,7 +1574,7 @@ function sauverGlycemie() {
     unite: 'mg/dL'
   });
   patchUserLocal({ historique_repas: historique.slice(0, 60) });
-  afficherBravo('Votre glycémie est enregistrée. Continuez comme ça !');
+  afficherBravo('Votre glycémie est enregistrée. Continuez comme ça !', _texteCommentaireGlycemie(valeur));
 }
 
 // ════════════════════════════════════════════════════════
