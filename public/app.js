@@ -534,14 +534,24 @@ function _preparerSalutationVocale() {
 function _texteeSalutation() {
   const prenom = getPrenom() || '';
   const h = new Date().getHours();
-  let salut;
-  if      (h >= 5  && h < 12) salut = 'Bonjour';
-  else if (h >= 12 && h < 18) salut = 'Bon après-midi';
-  else if (h >= 18 && h < 22) salut = 'Bonsoir';
-  else salut = 'Bonjour';
-  return `${salut}${prenom ? ' ' + prenom : ''} ! `
-       + `Comment vous sentez-vous aujourd'hui ? `
-       + `Pensez à appuyer sur le pouce en haut ou le pouce en bas.`;
+  let message;
+  if (h >= 5 && h < 12) {
+    message = `Bonjour${prenom ? ' ' + prenom : ''} ! `
+            + `Nous sommes heureux de vous retrouver ce matin. `
+            + `Comment vous sentez-vous aujourd'hui ? `
+            + `N'hésitez pas à nous le dire en appuyant sur le pouce en haut, ou le pouce en bas.`;
+  } else if (h >= 12 && h < 18) {
+    message = `Bonjour${prenom ? ' ' + prenom : ''} ! `
+            + `Nous espérons que votre journée se passe bien. `
+            + `Comment vous sentez-vous en ce moment ? `
+            + `Dites-le nous en appuyant sur le pouce en haut, ou le pouce en bas.`;
+  } else {
+    message = `Bonsoir${prenom ? ' ' + prenom : ''} ! `
+            + `Nous espérons que vous avez passé une belle journée. `
+            + `Comment vous sentez-vous ce soir ? `
+            + `Dites-le nous en appuyant sur le pouce en haut, ou le pouce en bas.`;
+  }
+  return message;
 }
 
 async function _parlerSalutation(texteOverride) {
@@ -572,7 +582,11 @@ async function _parlerSalutation(texteOverride) {
       const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
       const source = audioCtx.createBufferSource();
       source.buffer = audioBuffer;
-      source.connect(audioCtx.destination);
+      // Boost volume
+      const gain = audioCtx.createGain();
+      gain.gain.value = 1.8;
+      source.connect(gain);
+      gain.connect(audioCtx.destination);
       source.onended = () => {
         localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
         audioCtx.close();

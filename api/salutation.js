@@ -26,10 +26,10 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'tts-1',
-        voice: 'nova',
+        model: 'tts-1-hd',
+        voice: 'shimmer',
         input: texte,
-        speed: 0.92
+        speed: 0.95
       })
     });
 
