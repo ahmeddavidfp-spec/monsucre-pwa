@@ -325,7 +325,7 @@ async function chargerListeUtilisateurs() {
     const data = await r.json();
 
     if (!r.ok) {
-      conteneur.innerHTML = `<p style="color:var(--sos);font-size:15px">Erreur : ${data.erreur}</p>`;
+      conteneur.innerHTML = `<p style="color:var(--sos);font-size:15px">Erreur : ${esc(data.erreur)}</p>`;
       return;
     }
 
@@ -569,6 +569,7 @@ async function seConnecter() {
       body: JSON.stringify({ telephone })
     });
     const data = await r.json();
+    if (r.status === 429) { afficherErreur(erreur, data.erreur || 'Trop de tentatives. Attendez une minute.'); return; }
     if (!r.ok) { afficherErreur(erreur, data.erreur || 'Erreur de connexion.'); return; }
     if (data.existe) {
       sauverSession({ telephone: data.user.telephone, token: data.session });
@@ -637,6 +638,11 @@ async function renvoyerCode() {
       body: JSON.stringify({ telephone: tel })
     });
     const data = await r.json();
+    if (r.status === 429) {
+      const errEl = document.getElementById('verification-erreur');
+      if (errEl) afficherErreur(errEl, data.erreur || 'Trop de tentatives. Attendez une minute.');
+      return;
+    }
     if (r.ok && data.token) {
       localStorage.setItem('ms_verif_token', data.token);
       afficherEcranVerification(data.dev_code);

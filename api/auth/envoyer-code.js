@@ -1,6 +1,7 @@
 import { normaliserTelephone } from '../_lib/phone.js';
 import { genererCode, signerCode } from '../_lib/session.js';
 import { envoyerSMS, smsConfigured } from '../_lib/sms.js';
+import { rateLimitSMS } from '../_lib/ratelimit.js';
 
 // POST /api/auth/envoyer-code
 // Body : { telephone }
@@ -26,6 +27,12 @@ export default async function handler(req, res) {
 
   if (devMode || !smsConfigured()) {
     return res.status(200).json({ token, dev_code: code });
+  }
+
+  // Rate limit : 1 SMS par minute par numéro
+  const autorise = await rateLimitSMS(tel);
+  if (!autorise) {
+    return res.status(429).json({ erreur: 'Trop de tentatives. Attendez une minute avant de réessayer.' });
   }
 
   try {

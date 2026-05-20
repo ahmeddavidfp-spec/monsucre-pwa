@@ -16,12 +16,14 @@ export default async function handler(req, res) {
 
   const { telephone_utilisateur } = req.body;
   const tel   = normaliserTelephone(telephone_proche);
+  // Sanitisation anti-injection SMS : tronque + supprime les retours à la ligne
+  const prenomSafe = String(prenom_utilisateur || 'Votre proche').slice(0, 50).replace(/[\r\n]/g, ' ');
   const heure = new Date(timestamp).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
   const telSenior = telephone_utilisateur ? ` (${telephone_utilisateur})` : '';
-  const msg   = `URGENT : ${prenom_utilisateur} ne se sent pas bien. Bouton urgence appuyé à ${heure}. Contactez-le rapidement.${telSenior}`;
+  const msg   = `URGENT : ${prenomSafe} ne se sent pas bien. Bouton urgence appuyé à ${heure}. Contactez-le rapidement.${telSenior}`;
 
   if (!smsConfigured()) {
-    console.log(`[DEV] SMS urgence pour ${prenom_utilisateur} → ${tel} : ${msg}`);
+    console.log(`[DEV] SMS urgence pour ${prenomSafe} → ${tel} : ${msg}`);
     return res.status(200).json({ ok: true, dev: true });
   }
 

@@ -50,6 +50,9 @@ export default async function handler(req, res) {
       if (!Array.isArray(patch.medicaments)) {
         return res.status(400).json({ erreur: 'medicaments doit être un tableau.' });
       }
+      if (patch.medicaments.length > 200) {
+        return res.status(400).json({ erreur: 'Trop de médicaments (max 200).' });
+      }
       champsAutorises.medicaments = patch.medicaments;
     }
     if ('proche' in patch) {
@@ -84,17 +87,26 @@ export default async function handler(req, res) {
       if (!Array.isArray(patch.historique_repas)) {
         return res.status(400).json({ erreur: 'historique_repas doit être un tableau.' });
       }
+      if (patch.historique_repas.length > 120) {
+        return res.status(400).json({ erreur: 'Trop d\'entrées dans historique_repas (max 120).' });
+      }
       champsAutorises.historique_repas = patch.historique_repas;
     }
     if ('prises_medicaments' in patch) {
       if (!Array.isArray(patch.prises_medicaments)) {
         return res.status(400).json({ erreur: 'prises_medicaments doit être un tableau.' });
       }
+      if (patch.prises_medicaments.length > 500) {
+        return res.status(400).json({ erreur: 'Trop d\'entrées dans prises_medicaments (max 500).' });
+      }
       champsAutorises.prises_medicaments = patch.prises_medicaments;
     }
     if ('bien_etre' in patch) {
       if (!Array.isArray(patch.bien_etre)) {
         return res.status(400).json({ erreur: 'bien_etre doit être un tableau.' });
+      }
+      if (patch.bien_etre.length > 200) {
+        return res.status(400).json({ erreur: 'Trop d\'entrées dans bien_etre (max 200).' });
       }
       champsAutorises.bien_etre = patch.bien_etre;
     }
