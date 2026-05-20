@@ -450,14 +450,23 @@
       <h2>Besoin d'aide</h2>
     </div>
     <div class="contenu-ecran urgence-contenu">
+
+      <!-- Message rassurant -->
+      <div class="urgence-rassurant">
+        <div class="urgence-coeur">🤍</div>
+        <p class="urgence-rassurant-texte">Vous n'êtes pas seul.<br>Je suis là avec vous.</p>
+      </div>
+
       <div id="urgence-proche-info" class="proche-info zone-cachee"></div>
       <p id="urgence-pas-de-proche" class="instruction urgence-message zone-cachee">
         Aucun proche configuré.<br>Ajoutez un proche d'abord.
       </p>
+
       <button class="btn-urgence-gros" id="btn-alerter-proche" onclick="envoyerAlerteUrgence()">
-        <span class="btn-icone">📱</span>
+        <span class="btn-icone">📞</span>
         <span id="btn-alerter-texte" class="btn-texte">Prévenir ma famille</span>
       </button>
+
       <div id="urgence-confirmation" class="zone-cachee">
         <div class="conseil-card" style="text-align:center;margin-top:16px;">
           <p class="bravo-texte" style="font-size:20px;">✅ Votre proche a été prévenu.</p>
@@ -465,6 +474,7 @@
           <button class="btn-bravo" style="margin-top:20px;" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
         </div>
       </div>
+
       <button class="btn-secondaire" onclick="allerA('ecran-proche')">⚙️ Configurer mon proche aidant</button>
       <button class="btn-secondaire" onclick="allerA('ecran-accueil')">Je vais mieux, retour à l'accueil</button>
     </div>

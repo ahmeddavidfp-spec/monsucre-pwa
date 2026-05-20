@@ -462,6 +462,34 @@ html, body {
 .urgence-contenu { align-items: center; justify-content: center; text-align: center; }
 .urgence-message { color: var(--texte-doux); margin-bottom: 16px; }
 
+.urgence-rassurant {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);
+  border-radius: 20px;
+  padding: 24px 20px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.urgence-coeur {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 10px;
+  animation: battre 1.4s ease-in-out infinite;
+}
+.urgence-rassurant-texte {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c5f8a;
+  line-height: 1.5;
+  margin: 0;
+}
+@keyframes battre {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.18); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.12); }
+  56%       { transform: scale(1); }
+}
+
 .proche-info {
   background: white;
   border-radius: 16px;

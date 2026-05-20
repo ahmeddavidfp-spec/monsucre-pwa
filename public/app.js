@@ -1331,11 +1331,59 @@ function chargerEcranUrgence() {
     infoEl.innerHTML = `Votre proche aidant : <strong>${proche.prenom}</strong><br>${proche.telephone}`;
     afficherZone('urgence-proche-info');
     masquerZone('urgence-pas-de-proche');
-    btnTexte.textContent = `Prévenir ${proche.prenom}`;
+    btnTexte.textContent = `Appeler ${proche.prenom}`;
   } else {
     masquerZone('urgence-proche-info');
     afficherZone('urgence-pas-de-proche');
     btn.disabled = true;
+  }
+
+  // Message vocal rassurant automatique (le tap "Besoin d'aide" = geste iOS valide)
+  _parlerUrgence();
+}
+
+function _texteUrgence() {
+  const prenomUser  = getPrenom();
+  const proche      = getProcheContact();
+  const nomProche   = proche?.prenom || 'votre proche';
+
+  const intro = prenomUser
+    ? `Ne vous inquiétez pas, ${prenomUser}. Vous n'êtes pas seul.`
+    : `Ne vous inquiétez pas. Vous n'êtes pas seul.`;
+
+  const corps = proche
+    ? `Je suis là avec vous. ${nomProche} peut venir vous aider. Appuyez sur le bouton pour que j'appelle ${nomProche} maintenant.`
+    : `Je suis là avec vous. Restez calme. Vous pouvez configurer un proche aidant pour qu'il soit prévenu rapidement.`;
+
+  return `${intro} ${corps}`;
+}
+
+async function _parlerUrgence() {
+  const texte = _texteUrgence();
+  let audioCtx;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+  } catch(e) { return; }
+  try {
+    const resp = await fetch('/api/salutation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify({ texte })
+    });
+    if (!resp.ok) return;
+    const ab  = await resp.arrayBuffer();
+    const buf = await audioCtx.decodeAudioData(ab);
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 1.8;
+    src.connect(gain);
+    gain.connect(audioCtx.destination);
+    src.onended = () => audioCtx.close();
+    src.start(0);
+  } catch(e) {
+    try { audioCtx.close(); } catch(_) {}
   }
 }
 
