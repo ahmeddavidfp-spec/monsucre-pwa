@@ -77,7 +77,7 @@
   <div id="ecran-accueil" class="ecran">
     <div class="entete">
       <div class="entete-inner">
-        <button class="logo-btn" onclick="allerA('ecran-proche')" title="Paramètres" aria-label="Paramètres">
+        <button class="logo-btn" onclick="ouvrirParametres()" title="Paramètres" aria-label="Paramètres">
           <svg class="logo" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,0.15)"/>
             <path d="M30 10 C30 10 16 21 16 32 C16 39.732 22.268 46 30 46 C37.732 46 44 39.732 44 32 C44 21 30 10 30 10Z" fill="white"/>
@@ -491,6 +491,7 @@
   </div>
 
   <!-- ÉCRAN 6 : PARAMÈTRES -->
+  <!-- ══ PARAMÈTRES (aidant) ══════════════════════════════ -->
   <div id="ecran-proche" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-accueil')">← Retour</button>
@@ -502,14 +503,14 @@
       <div class="config-section">
         <div class="config-section-titre">👤 Mon profil</div>
         <div class="champ-group">
-          <label class="champ-label" for="inp-profil-prenom">Mon prénom</label>
+          <label class="champ-label" for="inp-profil-prenom">Prénom du patient</label>
           <input class="champ-input" type="text" id="inp-profil-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
         </div>
         <div class="champ-group">
-          <label class="champ-label" for="inp-profil-tel">Mon numéro de téléphone</label>
+          <label class="champ-label" for="inp-profil-tel">Numéro de téléphone</label>
           <input class="champ-input" type="tel" id="inp-profil-tel" placeholder="Ex : +32 470 00 00 00" autocomplete="tel" />
         </div>
-        <button class="btn-confirmer" onclick="sauverProfil()">✅ Enregistrer mon profil</button>
+        <button class="btn-confirmer" onclick="sauverProfil()">✅ Enregistrer le profil</button>
         <div id="profil-sauve" class="config-confirmation zone-cachee">✅ Profil mis à jour !</div>
       </div>
 
@@ -526,7 +527,7 @@
       <!-- Proche aidant 1 -->
       <div class="config-section">
         <div class="config-section-titre">🤝 Proche aidant 1</div>
-        <p class="config-section-sous">Qui prévenir en cas d'urgence (SMS + bouton appel) ?</p>
+        <p class="config-section-sous">Prévenu en cas d'urgence (SMS + bouton appel rapide)</p>
         <div class="champ-group">
           <label class="champ-label" for="inp-proche-prenom">Prénom</label>
           <input class="champ-input" type="text" id="inp-proche-prenom" placeholder="Ex : Pierre" />
@@ -555,39 +556,76 @@
         <div id="proche2-sauve" class="config-confirmation zone-cachee">✅ Proche 2 enregistré !</div>
       </div>
 
-      <!-- Mode développeur -->
+      <!-- Code PIN -->
+      <div class="config-section">
+        <div class="config-section-titre">🔑 Code PIN aidant</div>
+        <p class="config-section-sous">Protège l'accès aux paramètres contre une ouverture accidentelle par le patient.</p>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-pin">Code à 4 chiffres</label>
+          <input class="champ-input" type="tel" id="inp-pin" maxlength="4" inputmode="numeric" placeholder="Ex : 1234" />
+        </div>
+        <button class="btn-confirmer" onclick="sauverPin()">✅ Définir le code PIN</button>
+        <div id="pin-sauve" class="config-confirmation zone-cachee">✅ Code PIN enregistré !</div>
+      </div>
+
+      <!-- Accès DEV -->
+      <div class="config-section" style="border-left:4px solid #888">
+        <div class="config-section-titre" style="color:#555">🛠️ Zone développeur</div>
+        <p class="config-section-sous">Paramètres avancés, diagnostics, gestion des utilisateurs.</p>
+        <button class="btn-dev-acces" onclick="allerA('ecran-dev')">🛠️ Ouvrir la zone développeur →</button>
+      </div>
+
+      <!-- Déconnexion -->
+      <button class="btn-deconnexion" onclick="seDeconnecter()">🚪 Se déconnecter</button>
+
+    </div>
+  </div>
+
+  <!-- ══ ZONE DÉVELOPPEUR ══════════════════════════════════ -->
+  <div id="ecran-dev" class="ecran">
+    <div class="entete-ecran" style="background:#444">
+      <button class="btn-retour" onclick="allerA('ecran-proche')">← Retour</button>
+      <h2>🛠️ Développeur</h2>
+    </div>
+    <div class="contenu-ecran">
+
+      <!-- Mode DEV -->
       <div class="config-section config-dev" id="section-mode-dev">
         <div class="config-section-titre">🛠️ Mode développeur</div>
-        <p class="config-section-sous">Affiche le tableau nutritionnel détaillé dans l'historique.</p>
+        <p class="config-section-sous">Tableau nutritionnel détaillé + voix à chaque lancement.</p>
         <label class="toggle-dev">
           <input type="checkbox" id="toggle-mode-dev" onchange="basculerModeDev(this)" />
           <span class="toggle-dev-slider"></span>
-          <span class="toggle-dev-label">Activer le tableau nutritionnel</span>
+          <span class="toggle-dev-label">Activer le mode développeur</span>
         </label>
+      </div>
 
-        <!-- Verrouillage médicaments Senior Only -->
-        <div class="senior-only-bloc">
-          <div class="senior-only-titre">🔒 Mode Senior Only</div>
-          <p class="senior-only-desc">Lorsqu'il est activé, le senior ne peut plus ajouter, modifier ni supprimer de médicament.</p>
-          <label class="toggle-senior">
-            <input type="checkbox" id="toggle-senior-only" onchange="basculerSeniorOnly(this)" />
-            <span class="toggle-senior-slider"></span>
-            <span class="toggle-senior-label" id="label-senior-only">Désactivé</span>
-          </label>
-        </div>
+      <!-- Senior Only -->
+      <div class="config-section">
+        <div class="config-section-titre">🔒 Mode Senior Only</div>
+        <p class="config-section-sous">Lorsqu'il est activé, le senior ne peut plus ajouter, modifier ni supprimer de médicament.</p>
+        <label class="toggle-senior">
+          <input type="checkbox" id="toggle-senior-only" onchange="basculerSeniorOnly(this)" />
+          <span class="toggle-senior-slider"></span>
+          <span class="toggle-senior-label" id="label-senior-only">Désactivé</span>
+        </label>
+      </div>
 
+      <!-- Actions -->
+      <div class="config-section">
+        <div class="config-section-titre">⚙️ Actions</div>
+        <button class="btn-renew-session" onclick="testerVoix()">🔊 Tester la voix</button>
         <button class="btn-renew-session" onclick="viderCache()">🔄 Renouveler la session</button>
         <button class="btn-reinit-compte" onclick="reinitialiserCompte()">🗑️ Réinitialiser le compte</button>
-        <button class="btn-renew-session" onclick="testerVoix()" style="margin-bottom:8px">🔊 Tester la voix</button>
-        <button class="btn-deconnexion" onclick="seDeconnecter()">🚪 Se déconnecter</button>
+      </div>
 
-        <div style="margin-top:20px;border-top:1px solid #DDD;padding-top:16px">
-          <div class="config-section-titre" style="margin-bottom:10px">👥 Utilisateurs enregistrés</div>
-          <button class="btn-action" onclick="chargerListeUtilisateurs()" style="font-size:16px;padding:14px 18px">
-            🔄 Charger la liste
-          </button>
-          <div id="liste-admin-users" style="margin-top:12px;display:flex;flex-direction:column;gap:10px"></div>
-        </div>
+      <!-- Utilisateurs -->
+      <div class="config-section">
+        <div class="config-section-titre">👥 Utilisateurs enregistrés</div>
+        <button class="btn-action" onclick="chargerListeUtilisateurs()" style="font-size:16px;padding:14px 18px">
+          🔄 Charger la liste
+        </button>
+        <div id="liste-admin-users" style="margin-top:12px;display:flex;flex-direction:column;gap:10px"></div>
       </div>
 
     </div>
@@ -602,6 +640,34 @@
       <input type="number" id="inp-unites-insuline" class="champ-input" min="1" max="200" inputmode="numeric" placeholder="Ex : 10" />
       <button class="btn-confirmer" onclick="confirmerUnites()">✅ Confirmer</button>
       <button class="btn-secondaire" onclick="annulerUnites()">Passer sans indiquer</button>
+    </div>
+  </div>
+
+  <!-- MODALE PIN AIDANT -->
+  <div id="modal-pin" class="modal-overlay" style="display:none">
+    <div class="pin-boite">
+      <div class="pin-titre">🔑 Accès aidant</div>
+      <p class="pin-sous">Entrez le code à 4 chiffres</p>
+      <div class="pin-points">
+        <span class="pin-point" id="pin-p1"></span>
+        <span class="pin-point" id="pin-p2"></span>
+        <span class="pin-point" id="pin-p3"></span>
+        <span class="pin-point" id="pin-p4"></span>
+      </div>
+      <div class="pin-pad">
+        <button class="pin-touche" onclick="_pinTouche('1')">1</button>
+        <button class="pin-touche" onclick="_pinTouche('2')">2</button>
+        <button class="pin-touche" onclick="_pinTouche('3')">3</button>
+        <button class="pin-touche" onclick="_pinTouche('4')">4</button>
+        <button class="pin-touche" onclick="_pinTouche('5')">5</button>
+        <button class="pin-touche" onclick="_pinTouche('6')">6</button>
+        <button class="pin-touche" onclick="_pinTouche('7')">7</button>
+        <button class="pin-touche" onclick="_pinTouche('8')">8</button>
+        <button class="pin-touche" onclick="_pinTouche('9')">9</button>
+        <button class="pin-touche pin-eff" onclick="_pinEffacer()">⌫</button>
+        <button class="pin-touche" onclick="_pinTouche('0')">0</button>
+        <button class="pin-touche pin-ann" onclick="fermerModalPin()">✕</button>
+      </div>
     </div>
   </div>
 

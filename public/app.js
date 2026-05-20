@@ -113,6 +113,84 @@ async function hydraterDepuisServeur() {
 }
 
 // ════════════════════════════════════════════════════════
+// ── PIN aidant ─────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+let _pinSaisi = '';
+
+function ouvrirParametres() {
+  const pin = localStorage.getItem(cleUser('ms_pin'));
+  if (!pin) {
+    // Pas encore de PIN → première config, accès direct
+    allerA('ecran-proche');
+    return;
+  }
+  _pinSaisi = '';
+  _majAffichagePin();
+  document.getElementById('modal-pin').style.display = 'flex';
+}
+
+function _pinTouche(chiffre) {
+  if (_pinSaisi.length >= 4) return;
+  _pinSaisi += chiffre;
+  _majAffichagePin();
+  if (_pinSaisi.length === 4) setTimeout(_verifierPin, 180);
+}
+
+function _pinEffacer() {
+  _pinSaisi = _pinSaisi.slice(0, -1);
+  _majAffichagePin();
+}
+
+function _majAffichagePin() {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`pin-p${i}`);
+    if (el) el.classList.toggle('rempli', i <= _pinSaisi.length);
+  }
+}
+
+function _verifierPin() {
+  const pinSauve = localStorage.getItem(cleUser('ms_pin'));
+  if (_pinSaisi === pinSauve) {
+    document.getElementById('modal-pin').style.display = 'none';
+    allerA('ecran-proche');
+  } else {
+    // Mauvais code — animation erreur
+    const boite = document.querySelector('.pin-boite');
+    if (boite) { boite.classList.add('pin-erreur'); setTimeout(() => boite.classList.remove('pin-erreur'), 600); }
+    _pinSaisi = '';
+    setTimeout(_majAffichagePin, 100);
+  }
+}
+
+function fermerModalPin() {
+  _pinSaisi = '';
+  _majAffichagePin();
+  document.getElementById('modal-pin').style.display = 'none';
+}
+
+function sauverPin() {
+  const val = document.getElementById('inp-pin')?.value?.trim();
+  if (!val || !/^\d{4}$/.test(val)) {
+    alert('Le code PIN doit être composé exactement de 4 chiffres.');
+    return;
+  }
+  localStorage.setItem(cleUser('ms_pin'), val);
+  afficherZone('pin-sauve');
+  setTimeout(() => masquerZone('pin-sauve'), 2500);
+  document.getElementById('inp-pin').value = '';
+}
+
+// ── Écran DEV ──────────────────────────────────────────
+function chargerEcranDev() {
+  const devEl     = document.getElementById('toggle-mode-dev');
+  const seniorEl  = document.getElementById('toggle-senior-only');
+  const labelEl   = document.getElementById('label-senior-only');
+  if (devEl)    devEl.checked    = estModeDevActif();
+  if (seniorEl) seniorEl.checked = estSeniorOnly();
+  if (labelEl)  labelEl.textContent = estSeniorOnly() ? 'Activé' : 'Désactivé';
+}
+
+// ════════════════════════════════════════════════════════
 // ── Navigation ─────────────────────────────────────────
 // ════════════════════════════════════════════════════════
 function allerA(ecranId) {
@@ -126,6 +204,7 @@ function allerA(ecranId) {
 
   if (ecranId === 'ecran-urgence')      chargerEcranUrgence();
   if (ecranId === 'ecran-proche')       chargerFormulaireProche();
+  if (ecranId === 'ecran-dev')          chargerEcranDev();
   if (ecranId === 'ecran-historique')   chargerHistorique();
   if (ecranId === 'ecran-glycemie')     reinitGlyc();
   if (ecranId === 'ecran-medicaments')  chargerMedicaments();
