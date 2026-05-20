@@ -948,15 +948,18 @@ async function repondreBienEtre(reponse) {
   const today = new Date().toDateString();
   localStorage.setItem('ms_bienetre_date', today);
 
-  // Affiche la réponse chaleureuse
+  // Affiche la réponse chaleureuse + la dit à voix haute
   const btns   = document.getElementById('bienetre-btns');
   const merci  = document.getElementById('bienetre-merci');
   if (btns)  btns.style.display  = 'none';
+  const pool        = reponse === 'ok' ? REPONSES_OUI : REPONSES_NON;
+  const texteReponse = pool[Math.floor(Math.random() * pool.length)];
   if (merci) {
-    const pool   = reponse === 'ok' ? REPONSES_OUI : REPONSES_NON;
-    merci.textContent = pool[Math.floor(Math.random() * pool.length)];
+    merci.textContent = texteReponse;
     merci.style.display = 'block';
   }
+  // Voix — on retire les emojis pour un rendu plus naturel
+  _jouerTexteVocal(texteReponse.replace(/[\u{1F300}-\u{1FAFF}]/gu, '').trim());
 
   // Envoie au serveur (silencieux en cas d'erreur)
   try {
