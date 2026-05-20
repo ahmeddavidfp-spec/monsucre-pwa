@@ -335,6 +335,26 @@ async function chargerListeUtilisateurs() {
   }
 }
 
+async function viderTouteDB() {
+  if (!confirm('⚠️ VIDER TOUTE LA BASE DE DONNÉES ?\n\nTous les comptes utilisateurs seront supprimés définitivement.\nVous serez déconnecté.\n\nContinuer ?')) return;
+  try {
+    const r = await fetch('/api/admin/users?all=true', {
+      method: 'DELETE',
+      headers: authHeader()
+    });
+    const d = await r.json();
+    if (r.ok) {
+      alert(`✅ Base vidée — ${d.supprimés} compte(s) supprimé(s).\nVous allez être redirigé vers l'inscription.`);
+      localStorage.clear();
+      allerA('ecran-inscription');
+    } else {
+      alert('Erreur : ' + (d.erreur || 'inconnue'));
+    }
+  } catch {
+    alert('Erreur réseau.');
+  }
+}
+
 async function supprimerUtilisateur(telephone) {
   if (!confirm(`Supprimer définitivement l'utilisateur ${telephone} ?`)) return;
   try {

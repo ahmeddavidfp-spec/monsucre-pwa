@@ -33,10 +33,22 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── DELETE : supprime un user par téléphone ─────────────
+  // ── DELETE : supprime un user ou toute la DB ───────────
   if (req.method === 'DELETE') {
+    // ?all=true → vide toutes les clés user:*
+    if (req.query?.all === 'true') {
+      try {
+        const keys = await redis.keys('user:*');
+        if (keys.length) await Promise.all(keys.map(k => redis.del(k)));
+        return res.status(200).json({ ok: true, supprimés: keys.length });
+      } catch (e) {
+        console.error('admin/users DELETE all:', e);
+        return res.status(500).json({ erreur: 'Erreur serveur.' });
+      }
+    }
+    // ?tel=+32… → supprime un user précis
     const tel = req.query?.tel;
-    if (!tel) return res.status(400).json({ erreur: 'Paramètre ?tel manquant.' });
+    if (!tel) return res.status(400).json({ erreur: 'Paramètre ?tel ou ?all=true manquant.' });
     try {
       await redis.del(`user:${tel}`);
       return res.status(200).json({ ok: true });
