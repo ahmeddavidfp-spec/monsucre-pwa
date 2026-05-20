@@ -728,7 +728,7 @@ function afficherQuestionBienEtre() {
   // Vérifie si déjà répondu aujourd'hui
   const today    = new Date().toDateString();
   const dejaDone = localStorage.getItem('ms_bienetre_date') === today;
-  if (dejaDone) { carte.style.display = 'none'; return; }
+  if (dejaDone && !estModeDevActif()) { carte.style.display = 'none'; return; }
 
   const { q, e } = questionDuJour();
   const el = document.getElementById('bienetre-question');
