@@ -33,19 +33,19 @@
         <div class="ob-card">
           <div class="ob-card-icone">👋</div>
           <h2 class="ob-card-titre">Configuration initiale</h2>
-          <p class="ob-card-texte">Bonjour ! Vous allez configurer l'application pour votre proche en 5 étapes rapides.<br><br>Cette configuration est réservée à l'aidant. Le patient n'y aura pas accès.</p>
+          <p class="ob-card-texte">Bonjour ! Vous allez configurer l'application pour votre proche en 5 étapes rapides.<br><br>Cette configuration est réservée à l'aidant. Votre proche n'y aura pas accès.</p>
         </div>
         <button class="ob-btn-suivant" onclick="obSuivant()">Commencer →</button>
       </div>
 
-      <!-- ÉTAPE 2 : Profil patient -->
+      <!-- ÉTAPE 2 : Profil proche -->
       <div class="ob-etape" id="ob-step-2">
         <div class="ob-card">
           <div class="ob-card-icone">👤</div>
-          <h2 class="ob-card-titre">Profil du patient</h2>
+          <h2 class="ob-card-titre">Votre proche</h2>
           <p class="ob-card-texte">Comment s'appelle votre proche ? Ce prénom sera utilisé dans les messages vocaux.</p>
           <div class="champ-group" style="margin-top:20px">
-            <label class="champ-label">Prénom du patient</label>
+            <label class="champ-label">Son prénom</label>
             <input class="champ-input" type="text" id="ob-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
           </div>
         </div>
@@ -602,7 +602,7 @@
       <div class="config-section">
         <div class="config-section-titre">👤 Mon profil</div>
         <div class="champ-group">
-          <label class="champ-label" for="inp-profil-prenom">Prénom du patient</label>
+          <label class="champ-label" for="inp-profil-prenom">Son prénom</label>
           <input class="champ-input" type="text" id="inp-profil-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
         </div>
         <div class="champ-group">
@@ -658,7 +658,7 @@
       <!-- Code PIN -->
       <div class="config-section">
         <div class="config-section-titre">🔑 Code PIN aidant</div>
-        <p class="config-section-sous">Protège l'accès aux paramètres contre une ouverture accidentelle par le patient.</p>
+        <p class="config-section-sous">Protège l'accès aux paramètres contre une ouverture accidentelle par votre proche.</p>
         <div class="champ-group">
           <label class="champ-label" for="inp-pin">Code à 4 chiffres</label>
           <input class="champ-input" type="tel" id="inp-pin" maxlength="4" inputmode="numeric" placeholder="Ex : 1234" />
@@ -670,7 +670,7 @@
       <!-- Accès DEV -->
       <div class="config-section" style="border-left:4px solid #888">
         <div class="config-section-titre" style="color:#555">🛠️ Zone développeur</div>
-        <p class="config-section-sous">Paramètres avancés, diagnostics, gestion des utilisateurs.</p>
+        <p class="config-section-sous">Paramètres avancés et gestion des utilisateurs.</p>
         <button class="btn-dev-acces" onclick="allerA('ecran-dev')">🛠️ Ouvrir la zone développeur →</button>
       </div>
 
