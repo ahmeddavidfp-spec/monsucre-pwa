@@ -129,6 +129,7 @@ function allerA(ecranId) {
   if (ecranId === 'ecran-historique')   chargerHistorique();
   if (ecranId === 'ecran-glycemie')     reinitGlyc();
   if (ecranId === 'ecran-medicaments')  chargerMedicaments();
+  if (ecranId === 'ecran-repas')        verifierRappelGlyc();
 }
 
 function chargerFormulaireProche() {
@@ -1080,6 +1081,58 @@ function mettreAJourIndicateurGlycRepas() {
   ind.className   = 'glycemie-indicateur' + (cls ? ' ' + cls : '');
   ind.style.minHeight = texte ? '' : '0';
   ind.style.padding   = texte ? '' : '0';
+}
+
+// ════════════════════════════════════════════════════════
+// ── Rappel glycémie avant repas ────────────────────────
+// ════════════════════════════════════════════════════════
+function _slotRepas() {
+  const h = new Date().getHours();
+  if (h >= 5  && h < 12) return 'matin';
+  if (h >= 12 && h < 17) return 'midi';
+  if (h >= 17 && h < 23) return 'soir';
+  return null; // nuit : pas de rappel
+}
+
+function _glycEnregistreeAujourdhui(slot) {
+  const aujourd = new Date().toDateString();
+  return getHistorique().some(e => {
+    if (e.type !== 'glycemie') return false;
+    const d = new Date(e.date);
+    if (d.toDateString() !== aujourd) return false;
+    const h = d.getHours();
+    if (slot === 'matin') return h >= 5  && h < 12;
+    if (slot === 'midi')  return h >= 12 && h < 17;
+    if (slot === 'soir')  return h >= 17 && h < 23;
+    return false;
+  });
+}
+
+function verifierRappelGlyc() {
+  const slot = _slotRepas();
+  if (!slot) return; // nuit → pas de rappel
+
+  if (_glycEnregistreeAujourdhui(slot)) return; // déjà mesurée → silence
+
+  // Labels pour le moment
+  const labels = { matin: 'ce matin', midi: 'ce midi', soir: 'ce soir' };
+  const label  = labels[slot];
+
+  // Message vocal
+  const prenom = getPrenom();
+  const intro  = prenom ? `${prenom}, ` : '';
+  const texte  = `${intro}avant d'enregistrer votre repas, avez-vous mesuré votre glycémie ${label} ? Pensez à la mesurer juste avant de manger. Vous pouvez l'enregistrer directement sur cet écran.`;
+  _jouerTexteVocal(texte);
+
+  // Notification push (via Service Worker) si les notifs sont autorisées
+  if (navigator.serviceWorker?.controller && Notification.permission === 'granted') {
+    navigator.serviceWorker.controller.postMessage({
+      type:  'SHOW_NOTIF',
+      titre: '🩸 Glycémie non mesurée',
+      corps: `Pensez à mesurer votre glycémie ${label} avant le repas.`,
+      tag:   `glyc-rappel-${slot}`
+    });
+  }
 }
 
 function sauverGlycemieRepas() {
