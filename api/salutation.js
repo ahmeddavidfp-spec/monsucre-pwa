@@ -1,9 +1,13 @@
 // POST /api/salutation
 // Body : { texte: "..." }
-// OpenAI TTS (Shimmer) — remplacer par ElevenLabs après upgrade
-// ElevenLabs voix Marie-Alice ID : tMyQcCxfGDdIt7wJ2RQw
+// ElevenLabs TTS — voix Matilda (gratuit)
+// ⬆️ Après upgrade : remplacer VOICE_ID par 'tMyQcCxfGDdIt7wJ2RQw' (Marie-Alice)
 
 import { lireSessionDepuisRequete } from './_lib/session.js';
+
+const VOICE_ID = 'XrExE9yKIg1WjnnlVkGX'; // Matilda — gratuit
+// const VOICE_ID = 'tMyQcCxfGDdIt7wJ2RQw'; // Marie-Alice — après upgrade
+const MODEL_ID = 'eleven_multilingual_v2';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -16,28 +20,33 @@ export default async function handler(req, res) {
     return res.status(400).json({ erreur: 'Texte invalide.' });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return res.status(500).json({ erreur: 'Clé OpenAI manquante.' });
+  const apiKey = process.env.ELEVENLABS_API_KEY;
+  if (!apiKey) return res.status(500).json({ erreur: 'Clé ElevenLabs manquante.' });
 
   try {
-    const r = await fetch('https://api.openai.com/v1/audio/speech', {
+    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+        'xi-api-key': apiKey,
+        'Content-Type': 'application/json',
+        'Accept': 'audio/mpeg'
       },
       body: JSON.stringify({
-        model: 'tts-1-hd',
-        voice: 'shimmer',
-        input: texte,
-        speed: 0.95
+        text: texte,
+        model_id: MODEL_ID,
+        voice_settings: {
+          stability:        0.55,
+          similarity_boost: 0.80,
+          style:            0.35,
+          use_speaker_boost: true
+        }
       })
     });
 
     if (!r.ok) {
       const err = await r.json().catch(() => ({}));
-      console.error('OpenAI TTS erreur:', err);
-      return res.status(500).json({ erreur: 'Erreur OpenAI TTS.' });
+      console.error('ElevenLabs erreur:', err);
+      return res.status(500).json({ erreur: 'Erreur ElevenLabs TTS.' });
     }
 
     const audio = await r.arrayBuffer();
