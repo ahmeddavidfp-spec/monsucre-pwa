@@ -528,14 +528,26 @@ function _preparerSalutationVocale() {
   _salutationEnAttente  = true;
   _salutationDeclenchee = false;
 
-  // iOS bloque tout son sans geste utilisateur — on attend le premier tap
-  const declencher = () => {
-    if (_salutationDeclenchee) return;
-    _salutationDeclenchee = true;
-    _parlerSalutation();
-  };
-  document.addEventListener('touchend', declencher, { once: true, passive: true });
-  document.addEventListener('click',    declencher, { once: true });
+  // Affiche le splash plein écran avec "Appuyez pour commencer"
+  const splash = document.getElementById('splash-vocal');
+  const sousEl = document.getElementById('splash-bonjour');
+  if (sousEl) sousEl.textContent = messageBonjourComplet();
+  if (splash) splash.style.display = 'flex';
+}
+
+function demarrerDepuisSplash() {
+  if (_salutationDeclenchee) return;
+  _salutationDeclenchee = true;
+
+  // Ferme le splash
+  const splash = document.getElementById('splash-vocal');
+  if (splash) {
+    splash.style.opacity = '0';
+    setTimeout(() => { splash.style.display = 'none'; }, 400);
+  }
+
+  // Lance la voix — on est dans un geste utilisateur ✓
+  _parlerSalutation();
 }
 
 const VOIX_NOM = 'Matilda'; // ← changer ici pour identifier la voix testée

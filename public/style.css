@@ -1771,3 +1771,63 @@ body.heure-soir       .entete { background: linear-gradient(160deg, #C87848 0%, 
 
 /* 🌆 Crépuscule 20h – 21h : lavande douce */
 body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, #6A58A8 100%) !important; }
+
+/* ── Splash vocal ────────────────────────────────────── */
+#splash-vocal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #4F8A6D 0%, #2D5A42 100%);
+  transition: opacity 0.4s ease;
+}
+.splash-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.splash-logo {
+  width: 90px;
+  height: 90px;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.2));
+}
+.splash-titre {
+  font-size: 36px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.5px;
+}
+.splash-sous {
+  font-size: 20px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+}
+.splash-tap {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  animation: splash-pulse 2s ease-in-out infinite;
+}
+.splash-tap-point {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.8);
+  animation: splash-pulse 2s ease-in-out infinite;
+}
+@keyframes splash-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.15); }
+}
