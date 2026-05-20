@@ -512,76 +512,69 @@ function entrerDansAccueil() {
 // ════════════════════════════════════════════════════════
 // ── Salutation vocale ─────────────────────────────────
 // ════════════════════════════════════════════════════════
-let _salutationPrete = false;
+let _salutationDeclenchee = false;
 
 function _preparerSalutationVocale() {
   if (!window.speechSynthesis) return;
   const today = new Date().toDateString();
   if (!estModeDevActif() && localStorage.getItem(cleUser('ms_voix_date')) === today) return;
 
-  // iOS exige un geste utilisateur : on attend le premier tap
-  const declencher = () => {
-    document.removeEventListener('touchend', declencher);
-    document.removeEventListener('click',    declencher);
-    if (_salutationPrete) return;
-    _salutationPrete = true;
+  _salutationDeclenchee = false; // reset à chaque ouverture (important pour DEV)
+
+  // iOS bloque tout son sans geste utilisateur — on attend le premier tap
+  const declencher = (e) => {
+    if (_salutationDeclenchee) return;
+    _salutationDeclenchee = true;
     _parlerSalutation();
   };
-  document.addEventListener('touchend', declencher, { once: true });
+  document.addEventListener('touchend', declencher, { once: true, passive: true });
   document.addEventListener('click',    declencher, { once: true });
 }
 
 function _parlerSalutation() {
-  if (!window.speechSynthesis) return;
+  const synth = window.speechSynthesis;
+  if (!synth) return;
+
+  // Stopper tout ce qui pourrait tourner
+  synth.cancel();
 
   const prenom = getPrenom() || '';
-  const h      = new Date().getHours();
+  const h = new Date().getHours();
   let salut;
   if      (h >= 5  && h < 12) salut = 'Bonjour';
   else if (h >= 12 && h < 18) salut = 'Bon après-midi';
   else if (h >= 18 && h < 22) salut = 'Bonsoir';
-  else return; // pas de salutation la nuit
+  else return;
 
-  const texte = `${salut}${prenom ? ' ' + prenom : ''} ! Comment vous sentez-vous aujourd'hui ? `
-              + `Pensez à cliquer sur le pouce en l'air ou le pouce en bas.`;
+  const texte = `${salut}${prenom ? ' ' + prenom : ''} ! `
+              + `Comment vous sentez-vous aujourd'hui ? `
+              + `Pensez à appuyer sur le pouce en haut ou le pouce en bas.`;
 
-  const utterance      = new SpeechSynthesisUtterance(texte);
-  utterance.lang       = 'fr-FR';
-  utterance.rate       = 0.88;
-  utterance.pitch      = 1.15;
-  utterance.volume     = 1;
+  const lancer = () => {
+    const u = new SpeechSynthesisUtterance(texte);
+    u.lang   = 'fr-FR';
+    u.rate   = 0.88;
+    u.pitch  = 1.1;
+    u.volume = 1;
 
-  // Sélectionne la meilleure voix française féminine disponible
-  const _choisirVoix = () => {
-    const voix = window.speechSynthesis.getVoices();
-    const fr   = voix.filter(v => v.lang.startsWith('fr'));
-    // Préférer une voix féminine connue
-    const feminine = fr.find(v =>
-      /amelie|marie|aurelie|audrey|thomas|claire|anna|siri/i.test(v.name) === false
-        ? false
-        : !/thomas|nicolas|pierre/i.test(v.name)
-    ) || fr.find(v => !/thomas|nicolas|pierre/i.test(v.name)) || fr[0];
-    if (feminine) utterance.voice = feminine;
+    // Choisir la meilleure voix française — éviter les voix masculines connues
+    const voix = synth.getVoices().filter(v => v.lang.startsWith('fr'));
+    const voixMasc = /thomas|nicolas|pierre|xavier/i;
+    const choisie  = voix.find(v => !voixMasc.test(v.name)) || voix[0];
+    if (choisie) u.voice = choisie;
+
+    u.onend  = () => localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
+    u.onerror = (e) => console.warn('Voix erreur:', e.error);
+
+    synth.speak(u);
   };
 
-  const voixDispo = window.speechSynthesis.getVoices();
-  if (voixDispo.length) {
-    _choisirVoix();
-    window.speechSynthesis.speak(utterance);
+  // Les voix sont dispo immédiatement sur iOS, async sur Chrome
+  if (synth.getVoices().length) {
+    lancer();
   } else {
-    // Les voix se chargent de façon asynchrone (Chrome/Android)
-    window.speechSynthesis.onvoiceschanged = () => {
-      _choisirVoix();
-      window.speechSynthesis.speak(utterance);
-    };
+    synth.addEventListener('voiceschanged', lancer, { once: true });
   }
-
-  utterance.onend = () => {
-    localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
-  };
-  utterance.onerror = () => {
-    localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
-  };
 }
 
 function afficherErreur(el, msg) {
