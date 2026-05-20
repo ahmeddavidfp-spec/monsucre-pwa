@@ -1,17 +1,45 @@
 import { redis } from '../_lib/db.js';
+import { lireSessionDepuisRequete } from '../_lib/session.js';
+import { normaliserTelephone } from '../_lib/phone.js';
 
 // GET    /api/admin/users          → liste tous les utilisateurs
 // DELETE /api/admin/users?tel=+32… → supprime un utilisateur
+// DELETE /api/admin/users?all=true → vide toute la DB
 //
-// Accessible uniquement en DEV_MODE.
+// Double protection :
+//   1. Session valide (Bearer token)
+//   2. Numéro de téléphone dans la liste ADMIN_PHONES (variable d'env)
+//      Format : "0493507475,0493507476" ou "+32493507475,+32493507476" (virgule-séparé)
+//      Les numéros sont normalisés en E.164 avant comparaison.
+//   Fallback dev : si ADMIN_PHONES n'est pas défini ET DEV_MODE=true,
+//   toute session valide est acceptée (pour ne pas bloquer le dev local).
+
+function getAdmins() {
+  const raw = process.env.ADMIN_PHONES || '';
+  return raw.split(',')
+    .map(s => normaliserTelephone(s.trim()))
+    .filter(Boolean);
+}
 
 function isDev() {
   return ['true', '1', 'yes'].includes((process.env.DEV_MODE || '').toLowerCase().trim());
 }
 
+function estAutorise(telephone) {
+  const admins = getAdmins();
+  if (admins.length > 0) return admins.includes(telephone);
+  // Pas de liste définie → fallback DEV_MODE uniquement
+  return isDev();
+}
+
 export default async function handler(req, res) {
-  if (!isDev()) {
-    return res.status(403).json({ erreur: 'Accès refusé (DEV_MODE uniquement).' });
+  // ── Authentification ────────────────────────────────────
+  const session = lireSessionDepuisRequete(req);
+  if (!session?.telephone) {
+    return res.status(401).json({ erreur: 'Non authentifié.' });
+  }
+  if (!estAutorise(session.telephone)) {
+    return res.status(403).json({ erreur: 'Accès refusé.' });
   }
 
   // ── GET : liste tous les users ──────────────────────────
