@@ -571,15 +571,11 @@ async function seConnecter() {
     const data = await r.json();
     if (r.status === 429) { afficherErreur(erreur, data.erreur || 'Trop de tentatives. Attendez une minute.'); return; }
     if (!r.ok) { afficherErreur(erreur, data.erreur || 'Erreur de connexion.'); return; }
-    if (data.existe) {
-      sauverSession({ telephone: data.user.telephone, token: data.session });
-      sauverUserLocal(data.user);
-      demarrerApp();
-    } else {
-      localStorage.setItem('ms_verif_token', data.token);
-      localStorage.setItem('ms_verif_tel', telephone);
-      afficherEcranVerification(data.dev_code);
-    }
+    // Le serveur envoie toujours un code SMS (même pour les utilisateurs existants).
+    // Cela empêche tout accès au compte par simple connaissance du numéro de téléphone.
+    localStorage.setItem('ms_verif_token', data.token);
+    localStorage.setItem('ms_verif_tel', telephone);
+    afficherEcranVerification(data.dev_code);
   } catch {
     afficherErreur(erreur, 'Impossible de se connecter. Vérifiez votre connexion.');
   } finally {

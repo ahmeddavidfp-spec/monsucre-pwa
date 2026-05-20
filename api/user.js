@@ -8,10 +8,15 @@ import { getUser, mettreAJourUser } from './_lib/db.js';
 //
 // Body PUT (tous champs optionnels) :
 //   {
-//     prenom:           "Marie" | null,
-//     medicaments:      [...],
-//     proche:           { prenom, telephone } | null,
-//     historique_repas: [...]   // max 30, tronqué côté serveur
+//     prenom:              "Marie" | null,          (max 60 chars)
+//     medicaments:         [...],                   (max 200 entrées)
+//     proche:              { prenom, telephone } | null,
+//     proche2:             { prenom, telephone } | null,
+//     medecin:             { nom, telephone } | null,
+//     pharmacie:           { nom, telephone } | null,
+//     historique_repas:    [...],                   (max 120 entrées)
+//     prises_medicaments:  [...],                   (max 500 entrées)
+//     bien_etre:           [...]                    (max 200 entrées)
 //   }
 
 export default async function handler(req, res) {

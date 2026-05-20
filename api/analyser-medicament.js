@@ -42,6 +42,8 @@ export default async function handler(req, res) {
 
   const { image, type } = req.body || {};
   if (!image) return res.status(400).json({ erreur: 'Image manquante.' });
+  const MIMES_ACCEPTES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  const mimeValide = type && MIMES_ACCEPTES.includes(type) ? type : 'image/jpeg';
 
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
@@ -58,7 +60,7 @@ export default async function handler(req, res) {
         messages: [{
           role: 'user',
           content: [
-            { type: 'image', source: { type: 'base64', media_type: type || 'image/jpeg', data: image } },
+            { type: 'image', source: { type: 'base64', media_type: mimeValide, data: image } },
             { type: 'text', text: INSTRUCTION }
           ]
         }]

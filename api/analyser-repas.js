@@ -64,6 +64,18 @@ export default async function handler(req, res) {
 
   const { texte, image, type } = req.body || {};
 
+  // Validation des entrées
+  if (!image && (!texte || typeof texte !== 'string')) {
+    return res.status(400).json({ erreur: 'Image ou texte requis.' });
+  }
+  if (texte && texte.length > 1000) {
+    return res.status(400).json({ erreur: 'Texte trop long (max 1000 caractères).' });
+  }
+  const MIMES_ACCEPTES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  if (image && !MIMES_ACCEPTES.includes(type)) {
+    return res.status(400).json({ erreur: 'Format d\'image non supporté.' });
+  }
+
   const contenu = image
     ? [
         { type: 'image', source: { type: 'base64', media_type: type, data: image } },
