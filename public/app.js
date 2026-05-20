@@ -517,7 +517,7 @@ let _salutationPrete = false;
 function _preparerSalutationVocale() {
   if (!window.speechSynthesis) return;
   const today = new Date().toDateString();
-  if (localStorage.getItem(cleUser('ms_voix_date')) === today) return;
+  if (!estModeDevActif() && localStorage.getItem(cleUser('ms_voix_date')) === today) return;
 
   // iOS exige un geste utilisateur : on attend le premier tap
   const declencher = () => {
