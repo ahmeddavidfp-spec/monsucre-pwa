@@ -116,6 +116,9 @@ async function hydraterDepuisServeur() {
 // ── Navigation ─────────────────────────────────────────
 // ════════════════════════════════════════════════════════
 function allerA(ecranId) {
+  // Stoppe toute voix en cours — sauf si on va sur urgence (elle joue sa propre voix)
+  if (ecranId !== 'ecran-urgence') _stopperAudioGlobal();
+
   document.querySelectorAll('.ecran').forEach(e => e.classList.remove('actif'));
   const cible = document.getElementById(ecranId);
   if (cible) cible.classList.add('actif');
@@ -510,6 +513,58 @@ function entrerDansAccueil() {
 }
 
 // ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+// ── Gestionnaire audio global (une seule voix à la fois) ─
+// ════════════════════════════════════════════════════════
+let _audioGlobal = null; // { src, ctx }
+
+function _stopperAudioGlobal() {
+  if (_audioGlobal) {
+    try { _audioGlobal.src.stop(); } catch(_) {}
+    try { _audioGlobal.ctx.close(); } catch(_) {}
+    _audioGlobal = null;
+  }
+  // Stoppe aussi le fallback Web Speech si actif
+  try { window.speechSynthesis?.cancel(); } catch(_) {}
+}
+
+async function _jouerTexteVocal(texte, onFin) {
+  _stopperAudioGlobal(); // coupe tout audio en cours
+
+  let audioCtx;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+  } catch(e) { onFin?.(); return; }
+
+  try {
+    const resp = await fetch('/api/salutation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify({ texte })
+    });
+    if (!resp.ok) throw new Error('api');
+    const ab  = await resp.arrayBuffer();
+    const buf = await audioCtx.decodeAudioData(ab);
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 1.8;
+    src.connect(gain);
+    gain.connect(audioCtx.destination);
+    src.onended = () => {
+      try { audioCtx.close(); } catch(_) {}
+      _audioGlobal = null;
+      onFin?.();
+    };
+    _audioGlobal = { src, ctx: audioCtx };
+    src.start(0);
+  } catch(e) {
+    try { audioCtx.close(); } catch(_) {}
+    onFin?.();
+  }
+}
+
 // ── Salutation vocale ─────────────────────────────────
 // ════════════════════════════════════════════════════════
 let _salutationDeclenchee = false;
@@ -580,55 +635,10 @@ function _texteeSalutation() {
 
 async function _parlerSalutation(texteOverride) {
   const texte = texteOverride || _texteeSalutation();
-
-  // ── 1. Déverrouiller l'audio iOS via AudioContext ──────
-  // (doit se faire dans le même tick que le geste utilisateur)
-  let audioCtx;
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') await audioCtx.resume();
-  } catch (e) { console.warn('AudioContext:', e); }
-
-  // ── 2. Appel à l'API OpenAI TTS ────────────────────────
-  try {
-    const resp = await fetch('/api/salutation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeader() },
-      body: JSON.stringify({ texte })
-    });
-
-    if (!resp.ok) throw new Error('API ' + resp.status);
-
-    const arrayBuffer = await resp.arrayBuffer();
-
-    // ── 3. Décoder et jouer via AudioContext ───────────────
-    if (audioCtx) {
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-      const source = audioCtx.createBufferSource();
-      source.buffer = audioBuffer;
-      // Boost volume
-      const gain = audioCtx.createGain();
-      gain.gain.value = 1.8;
-      source.connect(gain);
-      gain.connect(audioCtx.destination);
-      source.onended = () => { audioCtx.close(); _finSalutation(); };
-      source.start(0);
-    } else {
-      // Fallback : Audio HTML
-      const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
-      const url  = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-        localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
-      };
-      await audio.play();
-    }
-
-  } catch (e) {
-    console.warn('Salutation erreur, fallback Web Speech:', e);
-    _parlerSalutationFallback(texte);
-  }
+  await _jouerTexteVocal(texte, () => {
+    // onFin : marquer le jour + déclencher bien-être
+    _finSalutation();
+  });
 }
 
 function _finSalutation() {
@@ -829,63 +839,26 @@ function mettreAJourBoutonsAppel() {
 }
 
 // ── Confirmation vocale 112 ───────────────────────────
-let _audio112 = null; // pour arrêter la voix si l'user annule
-
 async function confirmerAppel112() {
-  // Affiche la modale
   const modal = document.getElementById('modal-112');
   if (modal) { modal.classList.remove('zone-cachee'); modal.style.display = 'flex'; }
 
-  // Message vocal rassurant
   const prenomUser = getPrenom();
-  const intro = prenomUser
-    ? `Ne vous inquiétez pas, ${prenomUser}.`
-    : `Ne vous inquiétez pas.`;
+  const intro = prenomUser ? `Ne vous inquiétez pas, ${prenomUser}.` : `Ne vous inquiétez pas.`;
   const texte = `${intro} Vous êtes sur le point d'appeler le 1-1-2, le numéro des secours d'urgence. Si vous avez vraiment besoin d'aide immédiate, appuyez sur le bouton rouge pour confirmer. Sinon, appuyez sur Annuler. Je suis là avec vous.`;
 
-  let audioCtx;
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') await audioCtx.resume();
-    const resp = await fetch('/api/salutation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeader() },
-      body: JSON.stringify({ texte })
-    });
-    if (!resp.ok) throw new Error('api');
-    const ab  = await resp.arrayBuffer();
-    const buf = await audioCtx.decodeAudioData(ab);
-    const src = audioCtx.createBufferSource();
-    src.buffer = buf;
-    const gain = audioCtx.createGain();
-    gain.gain.value = 1.8;
-    src.connect(gain);
-    gain.connect(audioCtx.destination);
-    src.onended = () => { try { audioCtx.close(); } catch(_) {} _audio112 = null; };
-    _audio112 = { src, ctx: audioCtx };
-    src.start(0);
-  } catch(e) {
-    try { if (audioCtx) audioCtx.close(); } catch(_) {}
-  }
-}
-
-function _stopperVoix112() {
-  if (_audio112) {
-    try { _audio112.src.stop(); _audio112.ctx.close(); } catch(_) {}
-    _audio112 = null;
-  }
+  await _jouerTexteVocal(texte); // coupe automatiquement toute voix précédente
 }
 
 function lancerAppel112() {
-  _stopperVoix112();
+  _stopperAudioGlobal();
   fermerModal112();
   window.location.href = 'tel:112';
 }
 
 function fermerModal112(evt) {
-  // Ferme si clic sur l'overlay (pas sur la boite)
   if (evt && evt.target !== document.getElementById('modal-112')) return;
-  _stopperVoix112();
+  _stopperAudioGlobal();
   const modal = document.getElementById('modal-112');
   if (modal) { modal.style.display = 'none'; modal.classList.add('zone-cachee'); }
 }
@@ -1422,32 +1395,7 @@ function _texteUrgence() {
 }
 
 async function _parlerUrgence() {
-  const texte = _texteUrgence();
-  let audioCtx;
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') await audioCtx.resume();
-  } catch(e) { return; }
-  try {
-    const resp = await fetch('/api/salutation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeader() },
-      body: JSON.stringify({ texte })
-    });
-    if (!resp.ok) return;
-    const ab  = await resp.arrayBuffer();
-    const buf = await audioCtx.decodeAudioData(ab);
-    const src = audioCtx.createBufferSource();
-    src.buffer = buf;
-    const gain = audioCtx.createGain();
-    gain.gain.value = 1.8;
-    src.connect(gain);
-    gain.connect(audioCtx.destination);
-    src.onended = () => audioCtx.close();
-    src.start(0);
-  } catch(e) {
-    try { audioCtx.close(); } catch(_) {}
-  }
+  await _jouerTexteVocal(_texteUrgence());
 }
 
 async function envoyerAlerteUrgence() {

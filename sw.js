@@ -1,4 +1,4 @@
-const CACHE = 'monsucre-v60';
+const CACHE = 'monsucre-v61';
 const ASSETS = ['/', '/index.html', '/public/style.css', '/public/app.js', '/public/manifest.json'];
 
 self.addEventListener('install', e => {
