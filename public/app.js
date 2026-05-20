@@ -2253,7 +2253,7 @@ function obSauverProfil() {
   const prenom = document.getElementById('ob-prenom')?.value?.trim();
   if (prenom) {
     patchUserLocal({ prenom });
-    syncUserServeur();
+    planifierSync({ prenom });
   }
   obSuivant();
 }
@@ -2263,7 +2263,7 @@ function obSauverProche() {
   const tel    = document.getElementById('ob-proche-tel')?.value?.trim();
   if (prenom && tel) {
     patchUserLocal({ proche: { prenom, telephone: tel } });
-    syncUserServeur();
+    planifierSync({ proche: { prenom, telephone: tel } });
   }
   obSuivant();
 }
