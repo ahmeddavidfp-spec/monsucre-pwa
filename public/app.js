@@ -863,6 +863,31 @@ function fermerModal112(evt) {
   if (modal) modal.style.display = 'none';
 }
 
+// ── Confirmation vocale 1733 ──────────────────────────
+async function confirmerAppel1733() {
+  const modal = document.getElementById('modal-1733');
+  if (modal) modal.style.display = 'flex';
+
+  const prenomUser = getPrenom();
+  const intro = prenomUser ? `Ne vous inquiétez pas, ${prenomUser}.` : `Ne vous inquiétez pas.`;
+  const texte = `${intro} Le 1733 est le numéro du médecin et de la pharmacie de garde. C'est le bon numéro quand vous avez besoin d'un avis médical, mais que ce n'est pas une urgence vitale. Souhaitez-vous appeler maintenant ? Appuyez sur le bouton vert pour confirmer, ou sur Annuler.`;
+
+  await _jouerTexteVocal(texte);
+}
+
+function lancerAppel1733() {
+  _stopperAudioGlobal();
+  fermerModal1733();
+  window.location.href = 'tel:1733';
+}
+
+function fermerModal1733(evt) {
+  if (evt && evt.target !== document.getElementById('modal-1733')) return;
+  _stopperAudioGlobal();
+  const modal = document.getElementById('modal-1733');
+  if (modal) modal.style.display = 'none';
+}
+
 // ── Appel proches ─────────────────────────────────────
 function appelerProche(numero) {
   const user   = getUserLocal();
