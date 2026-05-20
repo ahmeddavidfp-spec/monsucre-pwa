@@ -841,7 +841,7 @@ function mettreAJourBoutonsAppel() {
 // ── Confirmation vocale 112 ───────────────────────────
 async function confirmerAppel112() {
   const modal = document.getElementById('modal-112');
-  if (modal) { modal.classList.remove('zone-cachee'); modal.style.display = 'flex'; }
+  if (modal) { modal.style.display = 'flex'; }
 
   const prenomUser = getPrenom();
   const intro = prenomUser ? `Ne vous inquiétez pas, ${prenomUser}.` : `Ne vous inquiétez pas.`;
@@ -860,7 +860,7 @@ function fermerModal112(evt) {
   if (evt && evt.target !== document.getElementById('modal-112')) return;
   _stopperAudioGlobal();
   const modal = document.getElementById('modal-112');
-  if (modal) { modal.style.display = 'none'; modal.classList.add('zone-cachee'); }
+  if (modal) modal.style.display = 'none';
 }
 
 // ── Appel proches ─────────────────────────────────────
