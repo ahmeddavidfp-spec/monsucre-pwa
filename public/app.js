@@ -755,15 +755,74 @@ function demarrerDepuisSplash() {
   if (_salutationDeclenchee) return;
   _salutationDeclenchee = true;
 
-  // Ferme le splash
+  // Pré-fetch l'audio PENDANT que le splash disparaît (gain ~400ms)
+  const texte = _texteeSalutation();
+  const audioPromise = _prefetchAudio(texte);
+
+  // Ferme le splash (animation 200ms réduite)
   const splash = document.getElementById('splash-vocal');
   if (splash) {
+    splash.style.transition = 'opacity 0.15s ease';
     splash.style.opacity = '0';
-    setTimeout(() => { splash.style.display = 'none'; }, 400);
+    setTimeout(() => { splash.style.display = 'none'; }, 150);
   }
 
-  // Lance la voix — on est dans un geste utilisateur ✓
-  _parlerSalutation();
+  // Joue dès que le fetch est prêt (sans re-fetcher)
+  audioPromise.then(ab => _jouerDepuisBuffer(ab, texte, _finSalutation));
+}
+
+// Pré-télécharge l'audio et retourne l'ArrayBuffer (ou null en cas d'erreur)
+async function _prefetchAudio(texte) {
+  try {
+    const resp = await fetch('/api/salutation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify({ texte, provider: getTTSProvider() })
+    });
+    if (!resp.ok) throw new Error('api-' + resp.status);
+    return await resp.arrayBuffer();
+  } catch(e) {
+    console.error('[audio] prefetch erreur:', e.message);
+    return null;
+  }
+}
+
+// Joue un ArrayBuffer déjà téléchargé (évite le double fetch)
+async function _jouerDepuisBuffer(ab, texteFallback, onFin) {
+  if (!ab) {
+    // Fallback Web Speech si le fetch a échoué
+    _parlerSalutationFallback(texteFallback);
+    onFin?.();
+    return;
+  }
+  _stopperAudioGlobal();
+  let audioCtx;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+  } catch(e) {
+    _parlerSalutationFallback(texteFallback); onFin?.(); return;
+  }
+  try {
+    const buf = await audioCtx.decodeAudioData(ab);
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 1.8;
+    src.connect(gain);
+    gain.connect(audioCtx.destination);
+    src.onended = () => {
+      try { audioCtx.close(); } catch(_) {}
+      _audioGlobal = null;
+      onFin?.();
+    };
+    _audioGlobal = { src, ctx: audioCtx };
+    src.start(0);
+  } catch(e) {
+    try { audioCtx.close(); } catch(_) {}
+    _parlerSalutationFallback(texteFallback);
+    onFin?.();
+  }
 }
 
 const VOIX_NOM = 'Marie-Alice'; // ← changer ici pour identifier la voix testée
