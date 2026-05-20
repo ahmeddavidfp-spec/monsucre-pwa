@@ -268,9 +268,15 @@ async function reinitialiserCompte() {
   const userVide = { telephone: tel, prenom: null, medicaments: [], proche: null, proche2: null, historique_repas: [], prises_medicaments: [] };
   sauverUserLocal(userVide);
 
+  // Effacer toutes les clés localStorage propres à cet utilisateur
+  const clesPurger = ['ms_onboarding_done','ms_pin','ms_mode_dev','ms_senior_only',
+                      'ms_voix_date','ms_bienetre_date'];
+  clesPurger.forEach(c => localStorage.removeItem(cleUser(c)));
+
   alert('✅ Compte réinitialisé. L\'application va redémarrer.');
-  allerA('ecran-accueil');
-  chargerMedicaments();
+  // Relancer l'onboarding
+  obAfficherEtape(1);
+  allerA('ecran-onboarding');
 }
 
 // ════════════════════════════════════════════════════════
