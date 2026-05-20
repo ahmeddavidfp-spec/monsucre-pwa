@@ -531,12 +531,9 @@ function _preparerSalutationVocale() {
   document.addEventListener('click',    declencher, { once: true });
 }
 
-function _parlerSalutation() {
+function _parlerSalutation(texteOverride) {
   const synth = window.speechSynthesis;
   if (!synth) return;
-
-  // Stopper tout ce qui pourrait tourner
-  synth.cancel();
 
   const prenom = getPrenom() || '';
   const h = new Date().getHours();
@@ -544,37 +541,38 @@ function _parlerSalutation() {
   if      (h >= 5  && h < 12) salut = 'Bonjour';
   else if (h >= 12 && h < 18) salut = 'Bon après-midi';
   else if (h >= 18 && h < 22) salut = 'Bonsoir';
-  else return;
+  else salut = 'Bonjour'; // test DEV : toujours parler
 
-  const texte = `${salut}${prenom ? ' ' + prenom : ''} ! `
-              + `Comment vous sentez-vous aujourd'hui ? `
-              + `Pensez à appuyer sur le pouce en haut ou le pouce en bas.`;
+  const texte = texteOverride || (
+    `${salut}${prenom ? ' ' + prenom : ''} ! `
+  + `Comment vous sentez-vous aujourd'hui ? `
+  + `Pensez à appuyer sur le pouce en haut ou le pouce en bas.`
+  );
 
-  const lancer = () => {
-    const u = new SpeechSynthesisUtterance(texte);
-    u.lang   = 'fr-FR';
-    u.rate   = 0.88;
-    u.pitch  = 1.1;
-    u.volume = 1;
+  // ⚠️ iOS : speak() DOIT être appelé dans le même tick que le geste
+  // Ne jamais attendre voiceschanged — parler immédiatement, sans voix spécifique si besoin
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(texte);
+  u.lang   = 'fr-FR';
+  u.rate   = 0.88;
+  u.pitch  = 1.1;
+  u.volume = 1;
 
-    // Choisir la meilleure voix française — éviter les voix masculines connues
-    const voix = synth.getVoices().filter(v => v.lang.startsWith('fr'));
-    const voixMasc = /thomas|nicolas|pierre|xavier/i;
-    const choisie  = voix.find(v => !voixMasc.test(v.name)) || voix[0];
-    if (choisie) u.voice = choisie;
+  // Tenter de choisir une voix française (peut être vide sur iOS → voix par défaut)
+  const voix = synth.getVoices().filter(v => v.lang.startsWith('fr'));
+  const voixMasc = /thomas|nicolas|pierre|xavier/i;
+  const choisie  = voix.find(v => !voixMasc.test(v.name)) || voix[0];
+  if (choisie) u.voice = choisie;
 
-    u.onend  = () => localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
-    u.onerror = (e) => console.warn('Voix erreur:', e.error);
+  u.onend   = () => localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
+  u.onerror = (e) => console.warn('Voix erreur:', e.error);
 
-    synth.speak(u);
-  };
+  synth.speak(u);
+}
 
-  // Les voix sont dispo immédiatement sur iOS, async sur Chrome
-  if (synth.getVoices().length) {
-    lancer();
-  } else {
-    synth.addEventListener('voiceschanged', lancer, { once: true });
-  }
+// Bouton test DEV : appeler directement depuis un onclick
+function testerVoix() {
+  _parlerSalutation('Test voix. Bonjour ! Je suis Mon Sucre, votre assistant santé.');
 }
 
 function afficherErreur(el, msg) {
