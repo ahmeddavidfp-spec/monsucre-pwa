@@ -2065,48 +2065,54 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   opacity: 0.85;
 }
 
+/* ob-contenu : fond blanc arrondi, PAS de overflow propre → c'est le .ecran qui scrolle */
 .ob-contenu {
-  flex: 1;
   background: var(--fond);
   border-radius: 28px 28px 0 0;
-  padding: 28px 20px 32px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  padding: 28px 20px 48px;
 }
 
-.ob-etape { display: none; flex-direction: column; min-height: 100%; }
+/* Les étapes s'affichent en bloc simple, hauteur naturelle */
+.ob-etape { display: none; flex-direction: column; gap: 16px; }
 .ob-etape.actif { display: flex; animation: modal-entree 0.25s ease; }
 
-.ob-card {
-  background: white;
-  border-radius: 24px;
-  padding: 28px 22px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
-  margin-bottom: 20px;
-}
-.ob-card-fin { text-align: center; }
+/* Icône, titre, texte directement dans l'étape (sans carte wrapper) */
 .ob-card-icone {
-  font-size: 48px;
-  margin-bottom: 14px;
+  font-size: 52px;
+  text-align: center;
   display: block;
 }
 .ob-card-titre {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 900;
   color: var(--texte);
-  margin-bottom: 12px;
+  text-align: center;
 }
 .ob-card-texte {
   font-size: 17px;
   color: var(--texte-doux);
-  line-height: 1.6;
+  line-height: 1.65;
+  text-align: center;
 }
 .ob-card-note {
   font-size: 14px;
   color: #D97706;
   font-weight: 600;
-  margin-top: 12px;
+  text-align: center;
+}
+
+/* Bouton retour dans le header */
+.ob-btn-retour {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  align-self: flex-start;
 }
 
 .ob-btn-suivant {
@@ -2121,9 +2127,9 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   width: 100%;
   transition: transform 0.1s;
   box-shadow: 0 4px 16px rgba(79,138,109,0.35);
+  margin-top: 8px;
 }
 .ob-btn-suivant:active { transform: scale(0.97); }
-.ob-btn-fin { background: var(--accent-sombre); margin-top: auto; }
 
 .ob-btn-passer {
   background: none;
@@ -2132,7 +2138,7 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  padding: 14px;
+  padding: 12px;
   width: 100%;
   text-align: center;
 }

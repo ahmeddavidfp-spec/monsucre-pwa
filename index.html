@@ -17,7 +17,10 @@
   <!-- ÉCRAN 0 : INSCRIPTION -->
   <!-- ══ ONBOARDING AIDANT ════════════════════════════════ -->
   <div id="ecran-onboarding" class="ecran">
+
+    <!-- Header fixe -->
     <div class="ob-header">
+      <button class="ob-btn-retour" id="ob-btn-retour" onclick="obPrecedent()" style="display:none">← Retour</button>
       <div class="ob-logo">🩺</div>
       <h1 class="ob-titre">Bienvenue sur Mon Sucre</h1>
       <div class="ob-progress-bar">
@@ -26,28 +29,25 @@
       <p class="ob-etape-label" id="ob-etape-label">Étape 1 sur 5</p>
     </div>
 
+    <!-- Contenu scrollable -->
     <div class="ob-contenu">
 
       <!-- ÉTAPE 1 : Bienvenue -->
       <div class="ob-etape actif" id="ob-step-1">
-        <div class="ob-card">
-          <div class="ob-card-icone">👋</div>
-          <h2 class="ob-card-titre">Configuration initiale</h2>
-          <p class="ob-card-texte">Bonjour ! Vous allez configurer l'application pour votre proche en 5 étapes rapides.<br><br>Cette configuration est réservée à l'aidant. Votre proche n'y aura pas accès.</p>
-        </div>
+        <div class="ob-card-icone">👋</div>
+        <h2 class="ob-card-titre">Configuration initiale</h2>
+        <p class="ob-card-texte">Bonjour ! Vous allez configurer l'application pour votre proche en 5 étapes rapides.<br><br>Cette configuration est réservée à vous. Votre proche n'y aura pas accès.</p>
         <button class="ob-btn-suivant" onclick="obSuivant()">Commencer →</button>
       </div>
 
-      <!-- ÉTAPE 2 : Profil proche -->
+      <!-- ÉTAPE 2 : Prénom proche -->
       <div class="ob-etape" id="ob-step-2">
-        <div class="ob-card">
-          <div class="ob-card-icone">👤</div>
-          <h2 class="ob-card-titre">Votre proche</h2>
-          <p class="ob-card-texte">Comment s'appelle votre proche ? Ce prénom sera utilisé dans les messages vocaux.</p>
-          <div class="champ-group" style="margin-top:20px">
-            <label class="champ-label">Son prénom</label>
-            <input class="champ-input" type="text" id="ob-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
-          </div>
+        <div class="ob-card-icone">👤</div>
+        <h2 class="ob-card-titre">Votre proche</h2>
+        <p class="ob-card-texte">Comment s'appelle votre proche ? Ce prénom sera utilisé dans les messages vocaux de l'application.</p>
+        <div class="champ-group">
+          <label class="champ-label">Son prénom</label>
+          <input class="champ-input" type="text" id="ob-prenom" placeholder="Ex : Marie" autocomplete="given-name" />
         </div>
         <button class="ob-btn-suivant" onclick="obSauverProfil()">Suivant →</button>
         <button class="ob-btn-passer" onclick="obSuivant()">Passer cette étape</button>
@@ -55,18 +55,16 @@
 
       <!-- ÉTAPE 3 : Proche aidant -->
       <div class="ob-etape" id="ob-step-3">
-        <div class="ob-card">
-          <div class="ob-card-icone">🤝</div>
-          <h2 class="ob-card-titre">Proche aidant</h2>
-          <p class="ob-card-texte">Qui doit être prévenu en cas d'urgence ? Ce contact apparaîtra sur le bouton d'appel rapide.</p>
-          <div class="champ-group" style="margin-top:20px">
-            <label class="champ-label">Prénom</label>
-            <input class="champ-input" type="text" id="ob-proche-prenom" placeholder="Ex : Pierre" />
-          </div>
-          <div class="champ-group">
-            <label class="champ-label">Numéro de téléphone</label>
-            <input class="champ-input" type="tel" id="ob-proche-tel" placeholder="Ex : +32 470 00 00 00" />
-          </div>
+        <div class="ob-card-icone">🤝</div>
+        <h2 class="ob-card-titre">Proche aidant</h2>
+        <p class="ob-card-texte">Qui doit être prévenu en cas d'urgence ? Ce contact apparaîtra sur le bouton d'appel rapide.</p>
+        <div class="champ-group">
+          <label class="champ-label">Prénom</label>
+          <input class="champ-input" type="text" id="ob-proche-prenom" placeholder="Ex : Pierre" />
+        </div>
+        <div class="champ-group">
+          <label class="champ-label">Numéro de téléphone</label>
+          <input class="champ-input" type="tel" id="ob-proche-tel" placeholder="Ex : +32 470 00 00 00" />
         </div>
         <button class="ob-btn-suivant" onclick="obSauverProche()">Suivant →</button>
         <button class="ob-btn-passer" onclick="obSuivant()">Passer cette étape</button>
@@ -74,40 +72,34 @@
 
       <!-- ÉTAPE 4 : Code PIN -->
       <div class="ob-etape" id="ob-step-4">
-        <div class="ob-card">
-          <div class="ob-card-icone">🔑</div>
-          <h2 class="ob-card-titre">Code PIN aidant</h2>
-          <p class="ob-card-texte">Choisissez un code à 4 chiffres. Il vous sera demandé chaque fois que vous voulez accéder aux paramètres.</p>
-          <div class="champ-group" style="margin-top:20px">
-            <label class="champ-label">Code à 4 chiffres</label>
-            <input class="champ-input" type="tel" id="ob-pin" maxlength="4" inputmode="numeric" placeholder="Ex : 1234" />
-          </div>
-          <p class="ob-card-note">⚠️ Notez ce code, il protège les paramètres.</p>
+        <div class="ob-card-icone">🔑</div>
+        <h2 class="ob-card-titre">Code PIN aidant</h2>
+        <p class="ob-card-texte">Choisissez un code à 4 chiffres. Il vous sera demandé à chaque fois que vous voulez accéder aux paramètres.</p>
+        <div class="champ-group">
+          <label class="champ-label">Code à 4 chiffres</label>
+          <input class="champ-input" type="tel" id="ob-pin" maxlength="4" inputmode="numeric" placeholder="Ex : 1234" />
         </div>
+        <p class="ob-card-note">⚠️ Notez ce code, il protège les paramètres.</p>
         <button class="ob-btn-suivant" onclick="obSauverPin()">Suivant →</button>
         <button class="ob-btn-passer" onclick="obSuivant()">Passer (déconseillé)</button>
       </div>
 
       <!-- ÉTAPE 5 : Notifications -->
       <div class="ob-etape" id="ob-step-5">
-        <div class="ob-card">
-          <div class="ob-card-icone">🔔</div>
-          <h2 class="ob-card-titre">Rappels médicaments</h2>
-          <p class="ob-card-texte">Activez les notifications pour que votre proche reçoive des rappels automatiques pour ses médicaments.</p>
-          <div id="ob-notif-statut" style="margin-top:16px;font-weight:600;color:var(--accent)"></div>
-        </div>
-        <button class="ob-btn-suivant" onclick="obActiverNotifs()">🔔 Activer les notifications</button>
-        <button class="ob-btn-passer" onclick="obTerminer()">Terminer sans notifications</button>
+        <div class="ob-card-icone">🔔</div>
+        <h2 class="ob-card-titre">Rappels automatiques</h2>
+        <p class="ob-card-texte">Activez les notifications pour que votre proche reçoive des rappels pour ses médicaments, même quand l'application est fermée.</p>
+        <div id="ob-notif-statut" style="margin-top:4px;font-weight:600;color:var(--accent);font-size:16px;"></div>
+        <button class="ob-btn-suivant" onclick="obActiverNotifs()">🔔 Activer les rappels</button>
+        <button class="ob-btn-passer" onclick="obTerminer()">Terminer sans rappels</button>
       </div>
 
-      <!-- ÉTAPE 6 : Terminé -->
+      <!-- FIN : Tout est prêt -->
       <div class="ob-etape" id="ob-step-fin">
-        <div class="ob-card ob-card-fin">
-          <div class="ob-card-icone" style="font-size:64px">✅</div>
-          <h2 class="ob-card-titre">Tout est prêt !</h2>
-          <p class="ob-card-texte">L'application est configurée pour votre proche.<br><br>Vous pouvez maintenant lui remettre le téléphone. En cas de besoin, accédez aux paramètres en appuyant sur la goutte verte en haut.</p>
-        </div>
-        <button class="ob-btn-suivant ob-btn-fin" onclick="obTerminer()">🚀 Lancer l'application</button>
+        <div class="ob-card-icone" style="font-size:64px">✅</div>
+        <h2 class="ob-card-titre">Tout est prêt !</h2>
+        <p class="ob-card-texte">L'application est configurée.<br><br>Vous pouvez maintenant remettre le téléphone à votre proche. Pour accéder aux paramètres, appuyez sur la goutte verte en haut de l'écran d'accueil.</p>
+        <button class="ob-btn-suivant" style="background:var(--accent-sombre)" onclick="obTerminer()">🚀 Lancer l'application</button>
       </div>
 
     </div>

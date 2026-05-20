@@ -2260,10 +2260,17 @@ function obAfficherEtape(n) {
   // Label étape
   const label = document.getElementById('ob-etape-label');
   if (label) label.textContent = n > OB_TOTAL ? 'Configuration terminée !' : `Étape ${n} sur ${OB_TOTAL}`;
+  // Bouton retour : visible dès l'étape 2, caché à l'étape 1 et à la fin
+  const btnRetour = document.getElementById('ob-btn-retour');
+  if (btnRetour) btnRetour.style.display = (n > 1 && n <= OB_TOTAL) ? 'flex' : 'none';
 }
 
 function obSuivant() {
   obAfficherEtape(_obEtape + 1);
+}
+
+function obPrecedent() {
+  if (_obEtape > 1) obAfficherEtape(_obEtape - 1);
 }
 
 function obSauverProfil() {
