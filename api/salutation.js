@@ -4,8 +4,8 @@
 
 import { lireSessionDepuisRequete } from './_lib/session.js';
 
-// Voix ElevenLabs — "Charlotte" : féminine, douce, naturelle, excellente en français
-const VOICE_ID  = 'XB0fDUnXU5powFXDhCwa';
+// Voix ElevenLabs — "Matilda" : chaleureuse, douce, naturelle, excellente en français
+const VOICE_ID  = 'XrExE9yKIg1WjnnlVkGX';
 const MODEL_ID  = 'eleven_multilingual_v2';
 
 export default async function handler(req, res) {

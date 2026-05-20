@@ -531,22 +531,27 @@ function _preparerSalutationVocale() {
   document.addEventListener('click',    declencher, { once: true });
 }
 
+const VOIX_NOM = 'Matilda'; // ← changer ici pour identifier la voix testée
+
 function _texteeSalutation() {
   const prenom = getPrenom() || '';
   const h = new Date().getHours();
   let message;
   if (h >= 5 && h < 12) {
-    message = `Bonjour${prenom ? ' ' + prenom : ''} ! `
+    message = `Bonjour, je suis ${VOIX_NOM}. `
+            + `${prenom ? 'Bonjour ' + prenom + ' ! ' : ''}`
             + `Nous sommes heureux de vous retrouver ce matin. `
             + `Comment vous sentez-vous aujourd'hui ? `
             + `N'hésitez pas à nous le dire en appuyant sur le pouce en haut, ou le pouce en bas.`;
   } else if (h >= 12 && h < 18) {
-    message = `Bonjour${prenom ? ' ' + prenom : ''} ! `
+    message = `Bonjour, je suis ${VOIX_NOM}. `
+            + `${prenom ? 'Bonjour ' + prenom + ' ! ' : ''}`
             + `Nous espérons que votre journée se passe bien. `
             + `Comment vous sentez-vous en ce moment ? `
             + `Dites-le nous en appuyant sur le pouce en haut, ou le pouce en bas.`;
   } else {
-    message = `Bonsoir${prenom ? ' ' + prenom : ''} ! `
+    message = `Bonsoir, je suis ${VOIX_NOM}. `
+            + `${prenom ? 'Bonsoir ' + prenom + ' ! ' : ''}`
             + `Nous espérons que vous avez passé une belle journée. `
             + `Comment vous sentez-vous ce soir ? `
             + `Dites-le nous en appuyant sur le pouce en haut, ou le pouce en bas.`;
