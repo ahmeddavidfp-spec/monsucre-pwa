@@ -828,6 +828,69 @@ function mettreAJourBoutonsAppel() {
   if (btn2) btn2.classList.toggle('non-configure', !proche2?.telephone);
 }
 
+// ── Confirmation vocale 112 ───────────────────────────
+let _audio112 = null; // pour arrêter la voix si l'user annule
+
+async function confirmerAppel112() {
+  // Affiche la modale
+  const modal = document.getElementById('modal-112');
+  if (modal) { modal.classList.remove('zone-cachee'); modal.style.display = 'flex'; }
+
+  // Message vocal rassurant
+  const prenomUser = getPrenom();
+  const intro = prenomUser
+    ? `Ne vous inquiétez pas, ${prenomUser}.`
+    : `Ne vous inquiétez pas.`;
+  const texte = `${intro} Vous êtes sur le point d'appeler le 1-1-2, le numéro des secours d'urgence. Si vous avez vraiment besoin d'aide immédiate, appuyez sur le bouton rouge pour confirmer. Sinon, appuyez sur Annuler. Je suis là avec vous.`;
+
+  let audioCtx;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+    const resp = await fetch('/api/salutation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify({ texte })
+    });
+    if (!resp.ok) throw new Error('api');
+    const ab  = await resp.arrayBuffer();
+    const buf = await audioCtx.decodeAudioData(ab);
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 1.8;
+    src.connect(gain);
+    gain.connect(audioCtx.destination);
+    src.onended = () => { try { audioCtx.close(); } catch(_) {} _audio112 = null; };
+    _audio112 = { src, ctx: audioCtx };
+    src.start(0);
+  } catch(e) {
+    try { if (audioCtx) audioCtx.close(); } catch(_) {}
+  }
+}
+
+function _stopperVoix112() {
+  if (_audio112) {
+    try { _audio112.src.stop(); _audio112.ctx.close(); } catch(_) {}
+    _audio112 = null;
+  }
+}
+
+function lancerAppel112() {
+  _stopperVoix112();
+  fermerModal112();
+  window.location.href = 'tel:112';
+}
+
+function fermerModal112(evt) {
+  // Ferme si clic sur l'overlay (pas sur la boite)
+  if (evt && evt.target !== document.getElementById('modal-112')) return;
+  _stopperVoix112();
+  const modal = document.getElementById('modal-112');
+  if (modal) { modal.style.display = 'none'; modal.classList.add('zone-cachee'); }
+}
+
+// ── Appel proches ─────────────────────────────────────
 function appelerProche(numero) {
   const user   = getUserLocal();
   const proche = numero === 1 ? user?.proche : user?.proche2;

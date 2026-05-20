@@ -1859,3 +1859,81 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   0%, 100% { opacity: 0.5; transform: scale(1); }
   50%       { opacity: 1;   transform: scale(1.15); }
 }
+
+/* ── MODALE CONFIRMATION 112 ─────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-112-boite {
+  background: white;
+  border-radius: 28px;
+  padding: 32px 24px 28px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: modal-entree 0.25s ease;
+}
+@keyframes modal-entree {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.modal-112-icone {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.modal-112-titre {
+  font-size: 26px;
+  font-weight: 900;
+  color: #CC1F1F;
+  margin: 0 0 10px;
+}
+.modal-112-texte {
+  font-size: 17px;
+  color: #555;
+  line-height: 1.5;
+  margin: 0 0 28px;
+}
+.modal-112-boutons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.modal-btn-oui {
+  background: #CC1F1F;
+  color: white;
+  border: none;
+  border-radius: 18px;
+  padding: 20px;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(204,31,31,0.4);
+  transition: transform 0.1s;
+}
+.modal-btn-oui:active { transform: scale(0.97); }
+.modal-btn-non {
+  background: #f0f0f0;
+  color: #555;
+  border: none;
+  border-radius: 18px;
+  padding: 18px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.modal-btn-non:active { background: #e0e0e0; }
