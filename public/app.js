@@ -353,7 +353,18 @@ async function supprimerUtilisateur(telephone) {
       headers: authHeader()
     });
     if (r.ok) {
-      chargerListeUtilisateurs(); // rafraîchir la liste
+      // Si c'est le compte actuellement connecté → déconnexion + onboarding
+      const sessionTel = getSession()?.telephone;
+      if (telephone === sessionTel) {
+        const clesPurger = ['ms_onboarding_done','ms_pin','ms_mode_dev','ms_senior_only',
+                            'ms_voix_date','ms_bienetre_date'];
+        clesPurger.forEach(c => localStorage.removeItem(cleUser(c)));
+        deconnecterSession();
+        localStorage.removeItem('ms_user');
+        allerA('ecran-inscription');
+      } else {
+        chargerListeUtilisateurs();
+      }
     } else {
       const d = await r.json();
       alert('Erreur : ' + (d.erreur || 'inconnue'));

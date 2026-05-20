@@ -2084,7 +2084,6 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   padding: 28px 22px;
   box-shadow: 0 2px 16px rgba(0,0,0,0.07);
   margin-bottom: 20px;
-  flex: 1;
 }
 .ob-card-fin { text-align: center; }
 .ob-card-icone {
