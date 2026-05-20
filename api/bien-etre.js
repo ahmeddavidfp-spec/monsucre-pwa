@@ -22,7 +22,6 @@ export default async function handler(req, res) {
 
     const entree = {
       ts:       Date.now(),
-      date:     new Date().toISOString(),
       question: question || '',
       reponse
     };

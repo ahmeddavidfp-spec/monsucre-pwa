@@ -45,11 +45,17 @@ export function verifierCode(telephone, code, token) {
 
 // ── Session (HMAC, sans état serveur) ───────────────────
 // Format : <payload-base64url>.<signature-hex>
-// Payload = { telephone, ts }   (pas d'expiration pour l'instant)
+// Payload = { telephone, ts, exp }
+// exp = ts + SESSION_DUREE_MS (90 jours par défaut)
+// Rétrocompatibilité : les anciens tokens sans exp sont toujours acceptés.
+
+const SESSION_DUREE_MS = 90 * 24 * 60 * 60 * 1000; // 90 jours
 
 export function creerSession(telephone) {
+  const ts  = Date.now();
+  const exp = ts + SESSION_DUREE_MS;
   const payload = Buffer
-    .from(JSON.stringify({ telephone, ts: Date.now() }))
+    .from(JSON.stringify({ telephone, ts, exp }))
     .toString('base64url');
   const sig = crypto.createHmac('sha256', SECRET).update(payload).digest('hex');
   return `${payload}.${sig}`;
@@ -70,15 +76,21 @@ export function lireSession(token) {
     return null;
   }
 
+  let data;
   try {
-    return JSON.parse(Buffer.from(payload, 'base64url').toString());
+    data = JSON.parse(Buffer.from(payload, 'base64url').toString());
   } catch {
     return null;
   }
+
+  // Vérifie l'expiration — les anciens tokens sans exp sont toujours acceptés
+  if (data.exp && Date.now() > data.exp) return null;
+
+  return data;
 }
 
 // Lit la session depuis l'en-tête Authorization: Bearer <token>
-// Renvoie le payload { telephone, ts } ou null.
+// Renvoie le payload { telephone, ts, exp } ou null.
 export function lireSessionDepuisRequete(req) {
   const auth = req.headers?.authorization || req.headers?.Authorization || '';
   if (!auth.startsWith('Bearer ')) return null;

@@ -92,6 +92,12 @@ export default async function handler(req, res) {
       }
       champsAutorises.prises_medicaments = patch.prises_medicaments;
     }
+    if ('bien_etre' in patch) {
+      if (!Array.isArray(patch.bien_etre)) {
+        return res.status(400).json({ erreur: 'bien_etre doit être un tableau.' });
+      }
+      champsAutorises.bien_etre = patch.bien_etre;
+    }
 
     try {
       const user = await mettreAJourUser(tel, champsAutorises);

@@ -194,14 +194,18 @@ function chargerEcranDev() {
 }
 
 function _majBoutonsTTS() {
-  const p       = getTTSProvider();
-  const btnE    = document.getElementById('btn-tts-eleven');
-  const btnO    = document.getElementById('btn-tts-openai');
-  const label   = document.getElementById('tts-provider-label');
-  const actif   = 'background:#2e7d32;color:#fff;border-color:#2e7d32';
-  const inactif = 'background:#fff;color:#333;border-color:#ccc';
-  if (btnE) btnE.style.cssText += ';' + (p === 'elevenlabs' ? actif : inactif);
-  if (btnO) btnO.style.cssText += ';' + (p === 'openai'     ? actif : inactif);
+  const p     = getTTSProvider();
+  const btnE  = document.getElementById('btn-tts-eleven');
+  const btnO  = document.getElementById('btn-tts-openai');
+  const label = document.getElementById('tts-provider-label');
+  const _styleBtn = (btn, actif) => {
+    if (!btn) return;
+    btn.style.background  = actif ? '#2e7d32' : '#fff';
+    btn.style.color       = actif ? '#fff'    : '#333';
+    btn.style.borderColor = actif ? '#2e7d32' : '#ccc';
+  };
+  _styleBtn(btnE, p === 'elevenlabs');
+  _styleBtn(btnO, p === 'openai');
   if (label) label.textContent = p === 'openai'
     ? '🤖 OpenAI TTS actif (nova) — pour tests quota ElevenLabs épuisé'
     : '🎙️ ElevenLabs actif (Matilda)';
@@ -260,14 +264,8 @@ function chargerFormulaireProche() {
   masquerZone('medecin-sauve');
   masquerZone('pharmacie-sauve');
   afficherStatutNotifications();
-
-  const toggle = document.getElementById('toggle-mode-dev');
-  if (toggle) toggle.checked = estModeDevActif();
-
-  const toggleSenior = document.getElementById('toggle-senior-only');
-  const labelSenior  = document.getElementById('label-senior-only');
-  if (toggleSenior) toggleSenior.checked = estSeniorOnly();
-  if (labelSenior)  labelSenior.textContent = estSeniorOnly() ? '✅ Activé — médicaments verrouillés' : 'Désactivé';
+  // Note : les toggles DEV et SeniorOnly sont initialisés par chargerEcranDev()
+  // qui est appelé automatiquement quand on navigue vers ecran-dev.
 }
 
 // ════════════════════════════════════════════════════════
@@ -336,7 +334,6 @@ async function chargerListeUtilisateurs() {
       return;
     }
 
-    const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     _usersAdmin = data.users;  // cache pour le rapport
     conteneur.innerHTML = data.users.map(u => {
       const date   = u.cree_le ? new Date(u.cree_le).toLocaleDateString('fr-BE') : '—';
@@ -402,9 +399,12 @@ async function supprimerUtilisateur(telephone) {
       // Si c'est le compte actuellement connecté → déconnexion + onboarding
       const sessionTel = getSession()?.telephone;
       if (telephone === sessionTel) {
+        // Clés préfixées par cleUser (incluent le numéro de téléphone)
         const clesPurger = ['ms_onboarding_done','ms_pin','ms_mode_dev','ms_senior_only',
-                            'ms_voix_date','ms_bienetre_date','ms_tts_provider'];
+                            'ms_voix_date','ms_bienetre_date'];
         clesPurger.forEach(c => localStorage.removeItem(cleUser(c)));
+        // Clé globale (sans préfixe cleUser)
+        localStorage.removeItem('ms_tts_provider');
         deconnecterSession();
         localStorage.removeItem('ms_user');
         allerA('ecran-inscription');
@@ -656,13 +656,9 @@ function entrerDansAccueil() {
 }
 
 // Vérifie si l'onboarding a été complété avant d'entrer dans l'accueil.
-// À utiliser après chaque connexion / vérification de code.
-function demarrerApp() {
-  if (localStorage.getItem(cleUser('ms_onboarding_done')) !== 'true') {
-    obAfficherEtape(1);
-    allerA('ecran-onboarding');
-    return;
-  }
+// Lance la session normale (accueil + notifs + meds).
+// Utilisé par demarrerApp() (après onboarding) ET par obTerminer().
+function _lancerSession() {
   entrerDansAccueil();
   demanderPermissionNotifications();
   verifierMedsOublies();
@@ -671,6 +667,16 @@ function demarrerApp() {
   hydraterDepuisServeur().then(u => {
     if (u) { mettreAJourBoutonsAppel(); chargerMedicaments(); }
   });
+}
+
+// À utiliser après chaque connexion / vérification de code.
+function demarrerApp() {
+  if (localStorage.getItem(cleUser('ms_onboarding_done')) !== 'true') {
+    obAfficherEtape(1);
+    allerA('ecran-onboarding');
+    return;
+  }
+  _lancerSession();
 }
 
 // ════════════════════════════════════════════════════════
@@ -842,7 +848,11 @@ async function _jouerDepuisBuffer(ab, texteFallback, onFin) {
   }
 }
 
-const VOIX_NOM = 'Marie-Alice'; // ← changer ici pour identifier la voix testée
+// Nom de la voix annoncé dans le message TTS.
+// ⚠️  À synchroniser avec ELEVEN_VOICE_ID dans api/salutation.js :
+//   Matilda (gratuit)  → VOIX_NOM = 'Matilda'
+//   Marie-Alice (payant) → VOIX_NOM = 'Marie-Alice'
+const VOIX_NOM = 'Matilda';
 
 function _texteeSalutation() {
   const prenom = getPrenom() || '';
@@ -1429,7 +1439,7 @@ function mettreAJourIndicateurGlyc() {
   }
 }
 
-function sauverGlychemie() {
+function sauverGlycemie() {
   const valeur = parseInt(document.getElementById('inp-glycemie').value, 10);
   const erreur = document.getElementById('glycemie-erreur');
   erreur.classList.remove('visible');
@@ -1586,8 +1596,8 @@ function rendreEntreeHistorique(repas) {
       <span class="historique-icone">${icone}</span>
       <div class="historique-date"><span class="historique-heure">${heure}</span></div>
     </div>
-    ${repas.description ? `<p class="historique-description">"${repas.description}"</p>` : ''}
-    <p class="historique-conseil">${repas.conseil}</p>
+    ${repas.description ? `<p class="historique-description">"${esc(repas.description)}"</p>` : ''}
+    <p class="historique-conseil">${esc(repas.conseil)}</p>
     ${tableau}
     ${photoHtml}
   </div>`;
@@ -1602,7 +1612,7 @@ function rendreTableauNutritionnel(a) {
   const id = diabetes[a.indice_diabete]   || null;
   return `<div class="analyse-dev">
     <div class="analyse-dev-titre">🛠️ Analyse détaillée (Mode DEV)</div>
-    ${a.plat ? `<div class="analyse-dev-plat"><strong>${a.plat}</strong>${a.portion ? ` <span class="analyse-dev-portion">· ${a.portion}</span>` : ''}</div>` : ''}
+    ${a.plat ? `<div class="analyse-dev-plat"><strong>${esc(a.plat)}</strong>${a.portion ? ` <span class="analyse-dev-portion">· ${esc(a.portion)}</span>` : ''}</div>` : ''}
     <table class="analyse-dev-table">
       <tr><td>Calories</td><td>${num(a.calories,'kcal')}</td></tr>
       <tr><td>Glucides</td><td>${num(a.glucides_g,'g')}</td></tr>
@@ -1614,7 +1624,7 @@ function rendreTableauNutritionnel(a) {
       ${ig ? `<tr><td>Index glycémique</td><td><span class="ig-badge ${ig.cls}">${ig.label}</span></td></tr>` : ''}
       ${id ? `<tr><td>Indice diabète</td><td><span class="ind-badge ${id.cls}">${id.label}</span></td></tr>` : ''}
     </table>
-    ${a.remarque_diabete ? `<div class="analyse-dev-remarque">💡 ${a.remarque_diabete}</div>` : ''}
+    ${a.remarque_diabete ? `<div class="analyse-dev-remarque">💡 ${esc(a.remarque_diabete)}</div>` : ''}
   </div>`;
 }
 
@@ -1654,7 +1664,7 @@ function sauverProche() {
   patchUserLocal({ proche: { prenom, telephone: tel } });
   afficherZone('proche-sauve');
   mettreAJourBoutonsAppel();
-  setTimeout(() => { masquerZone('proche-sauve'); allerA('ecran-accueil'); }, 1500);
+  setTimeout(() => masquerZone('proche-sauve'), 2000);
 }
 
 function sauverProche2() {
@@ -2387,6 +2397,11 @@ async function planifierNotification(med) {
 function afficherZone(id) { const el = document.getElementById(id); if (el) el.classList.add('visible'); }
 function masquerZone(id)  { const el = document.getElementById(id); if (el) el.classList.remove('visible'); }
 
+// Échappement HTML (anti-XSS) — utilisé partout où du contenu externe est injecté dans innerHTML
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 async function viderCache() {
   const btn = document.getElementById('btn-vider-cache');
   if (btn) { btn.textContent = '⏳ En cours…'; btn.disabled = true; }
@@ -2506,14 +2521,7 @@ async function obActiverNotifs() {
 
 function obTerminer() {
   localStorage.setItem(cleUser('ms_onboarding_done'), 'true');
-  entrerDansAccueil();
-  demanderPermissionNotifications();
-  verifierMedsOublies();
-  if (!_intervalMeds) _intervalMeds = setInterval(verifierMedsOublies, 15 * 60 * 1000);
-  getMedicaments().forEach(planifierNotification);
-  hydraterDepuisServeur().then(u => {
-    if (u) { mettreAJourBoutonsAppel(); chargerMedicaments(); }
-  });
+  _lancerSession();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
