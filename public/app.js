@@ -660,7 +660,10 @@ async function _jouerTexteVocal(texte, onFin) {
   try {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
-  } catch(e) { onFin?.(); return; }
+  } catch(e) {
+    console.error('[audio] AudioContext échec:', e);
+    _parlerSalutationFallback(texte); onFin?.(); return;
+  }
 
   try {
     const resp = await fetch('/api/salutation', {
@@ -668,7 +671,11 @@ async function _jouerTexteVocal(texte, onFin) {
       headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify({ texte })
     });
-    if (!resp.ok) throw new Error('api');
+    if (!resp.ok) {
+      const errBody = await resp.json().catch(() => ({}));
+      console.error('[audio] API salutation erreur', resp.status, errBody);
+      throw new Error('api-' + resp.status);
+    }
     const ab  = await resp.arrayBuffer();
     const buf = await audioCtx.decodeAudioData(ab);
     const src = audioCtx.createBufferSource();
@@ -685,7 +692,10 @@ async function _jouerTexteVocal(texte, onFin) {
     _audioGlobal = { src, ctx: audioCtx };
     src.start(0);
   } catch(e) {
+    console.error('[audio] Échec ElevenLabs, fallback Web Speech:', e.message);
     try { audioCtx.close(); } catch(_) {}
+    // Fallback : voix du navigateur si ElevenLabs échoue
+    _parlerSalutationFallback(texte);
     onFin?.();
   }
 }
