@@ -4,8 +4,8 @@
 
 import { lireSessionDepuisRequete } from './_lib/session.js';
 
-// Voix ElevenLabs — "Alice" : confiante, douce, excellente en français
-const VOICE_ID  = 'Xb7hH8MSUJpSbSDYk0k2';
+// Voix ElevenLabs — "Marie-Alice" : voix choisie par l'utilisateur
+const VOICE_ID  = 'tMyQcCxfGDdIt7wJ2RQw';
 const MODEL_ID  = 'eleven_multilingual_v2';
 
 export default async function handler(req, res) {
