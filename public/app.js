@@ -727,6 +727,7 @@ let _audioGlobal = null; // { src, ctx }
 let _intervalMeds = null; // setInterval unique pour verifierMedsOublies
 
 function _stopperAudioGlobal() {
+  _cacherLoadingTTS(); // annule l'indicateur si la voix est interrompue
   if (_audioGlobal) {
     try { _audioGlobal.src.stop(); } catch(_) {}
     try { _audioGlobal.ctx.close(); } catch(_) {}
@@ -734,6 +735,21 @@ function _stopperAudioGlobal() {
   }
   // Stoppe aussi le fallback Web Speech si actif
   try { window.speechSynthesis?.cancel(); } catch(_) {}
+}
+
+// ── Indicateur de chargement TTS (rassure les seniors pendant le fetch) ──
+function _afficherLoadingTTS() {
+  const el = document.getElementById('tts-loading');
+  if (!el) return;
+  el.style.display = 'flex';
+  el.offsetHeight; // force reflow pour déclencher la transition CSS
+  el.style.opacity = '1';
+}
+function _cacherLoadingTTS() {
+  const el = document.getElementById('tts-loading');
+  if (!el || el.style.display === 'none') return;
+  el.style.opacity = '0';
+  setTimeout(() => { if (el.style.opacity !== '1') el.style.display = 'none'; }, 300);
 }
 
 function getTTSProvider() {
@@ -745,6 +761,7 @@ function setTTSProvider(p) {
 
 async function _jouerTexteVocal(texte, onFin) {
   _stopperAudioGlobal(); // coupe tout audio en cours
+  _afficherLoadingTTS(); // rassure les seniors pendant le fetch ElevenLabs
 
   let audioCtx;
   try {
@@ -752,6 +769,7 @@ async function _jouerTexteVocal(texte, onFin) {
     if (audioCtx.state === 'suspended') await audioCtx.resume();
   } catch(e) {
     console.error('[audio] AudioContext échec:', e);
+    _cacherLoadingTTS();
     _parlerSalutationFallback(texte); onFin?.(); return;
   }
 
@@ -780,9 +798,11 @@ async function _jouerTexteVocal(texte, onFin) {
       onFin?.();
     };
     _audioGlobal = { src, ctx: audioCtx };
+    _cacherLoadingTTS(); // la voix est prête — on masque l'indicateur
     src.start(0);
   } catch(e) {
     console.error('[audio] Échec TTS, fallback Web Speech:', e.message);
+    _cacherLoadingTTS();
     try { audioCtx.close(); } catch(_) {}
     _parlerSalutationFallback(texte);
     onFin?.();
@@ -875,6 +895,7 @@ async function _prefetchAudio(texte) {
 async function _jouerDepuisBuffer(ab, texteFallback, onFin) {
   if (!ab) {
     // Fallback Web Speech si le fetch a échoué
+    _cacherLoadingTTS();
     _parlerSalutationFallback(texteFallback);
     onFin?.();
     return;
@@ -1202,7 +1223,8 @@ async function _jouerAudioUrgence(key, texteFn) {
     // Lecture instantanée depuis le cache mémoire
     await _jouerDepuisBuffer(entree.ab, entree.texte, null);
   } else {
-    // Pas encore en cache : fetch à la volée (fallback)
+    // Pas encore en cache : fetch à la volée — on montre l'indicateur
+    _afficherLoadingTTS();
     const texte = texteFn();
     const ab    = await _prefetchAudio(texte);
     // Stocke pour la prochaine fois
