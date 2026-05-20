@@ -242,15 +242,13 @@ function chargerFormulaireProche() {
 // ── Réinitialisation compte ────────────────────────────
 // ════════════════════════════════════════════════════════
 async function reinitialiserCompte() {
-  const tel = getSession()?.telephone;
-  if (!tel) return;
-  if (!confirm('⚠️ Réinitialiser le compte ?\n\nTout sera supprimé : médicaments, repas, contacts proches, historique.\nSeul le numéro de téléphone est conservé.\n\nCette action est irréversible.')) return;
+  if (!confirm('⚠️ Réinitialiser le compte ?\n\nTout sera supprimé : médicaments, repas, contacts proches, historique.\nVous devrez vous reconnecter.\n\nCette action est irréversible.')) return;
 
-  // Réinitialiser côté serveur (Redis)
+  // 1. Réinitialiser côté serveur (Redis) — avec authHeader
   try {
     await fetch('/api/user', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify({
         prenom: null,
         medicaments: [],
@@ -264,19 +262,11 @@ async function reinitialiserCompte() {
     console.error('Erreur reset serveur:', e);
   }
 
-  // Réinitialiser localement — garder uniquement la session et le téléphone
-  const userVide = { telephone: tel, prenom: null, medicaments: [], proche: null, proche2: null, historique_repas: [], prises_medicaments: [] };
-  sauverUserLocal(userVide);
+  // 2. Tout vider côté localStorage (session + user + clés perso)
+  localStorage.clear();
 
-  // Effacer toutes les clés localStorage propres à cet utilisateur
-  const clesPurger = ['ms_onboarding_done','ms_pin','ms_mode_dev','ms_senior_only',
-                      'ms_voix_date','ms_bienetre_date'];
-  clesPurger.forEach(c => localStorage.removeItem(cleUser(c)));
-
-  alert('✅ Compte réinitialisé. L\'application va redémarrer.');
-  // Relancer l'onboarding
-  obAfficherEtape(1);
-  allerA('ecran-onboarding');
+  alert('✅ Compte réinitialisé.');
+  allerA('ecran-inscription');
 }
 
 // ════════════════════════════════════════════════════════
