@@ -531,46 +531,86 @@ function _preparerSalutationVocale() {
   document.addEventListener('click',    declencher, { once: true });
 }
 
-function _parlerSalutation(texteOverride) {
-  const synth = window.speechSynthesis;
-  if (!synth) return;
-
+function _texteeSalutation() {
   const prenom = getPrenom() || '';
   const h = new Date().getHours();
   let salut;
   if      (h >= 5  && h < 12) salut = 'Bonjour';
   else if (h >= 12 && h < 18) salut = 'Bon après-midi';
   else if (h >= 18 && h < 22) salut = 'Bonsoir';
-  else salut = 'Bonjour'; // test DEV : toujours parler
+  else salut = 'Bonjour';
+  return `${salut}${prenom ? ' ' + prenom : ''} ! `
+       + `Comment vous sentez-vous aujourd'hui ? `
+       + `Pensez à appuyer sur le pouce en haut ou le pouce en bas.`;
+}
 
-  const texte = texteOverride || (
-    `${salut}${prenom ? ' ' + prenom : ''} ! `
-  + `Comment vous sentez-vous aujourd'hui ? `
-  + `Pensez à appuyer sur le pouce en haut ou le pouce en bas.`
-  );
+async function _parlerSalutation(texteOverride) {
+  const texte = texteOverride || _texteeSalutation();
 
-  // ⚠️ iOS : speak() DOIT être appelé dans le même tick que le geste
-  // Ne jamais attendre voiceschanged — parler immédiatement, sans voix spécifique si besoin
+  // ── 1. Déverrouiller l'audio iOS via AudioContext ──────
+  // (doit se faire dans le même tick que le geste utilisateur)
+  let audioCtx;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+  } catch (e) { console.warn('AudioContext:', e); }
+
+  // ── 2. Appel à l'API OpenAI TTS ────────────────────────
+  try {
+    const resp = await fetch('/api/salutation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify({ texte })
+    });
+
+    if (!resp.ok) throw new Error('API ' + resp.status);
+
+    const arrayBuffer = await resp.arrayBuffer();
+
+    // ── 3. Décoder et jouer via AudioContext ───────────────
+    if (audioCtx) {
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      const source = audioCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioCtx.destination);
+      source.onended = () => {
+        localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
+        audioCtx.close();
+      };
+      source.start(0);
+    } else {
+      // Fallback : Audio HTML
+      const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
+      const url  = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
+      };
+      await audio.play();
+    }
+
+  } catch (e) {
+    console.warn('Salutation OpenAI erreur, fallback Web Speech:', e);
+    // ── Fallback : Web Speech API ──────────────────────────
+    _parlerSalutationFallback(texte);
+  }
+}
+
+function _parlerSalutationFallback(texte) {
+  const synth = window.speechSynthesis;
+  if (!synth) return;
   synth.cancel();
   const u = new SpeechSynthesisUtterance(texte);
-  u.lang   = 'fr-FR';
-  u.rate   = 0.88;
-  u.pitch  = 1.1;
-  u.volume = 1;
-
-  // Tenter de choisir une voix française (peut être vide sur iOS → voix par défaut)
+  u.lang = 'fr-FR'; u.rate = 0.88; u.pitch = 1.1; u.volume = 1;
   const voix = synth.getVoices().filter(v => v.lang.startsWith('fr'));
-  const voixMasc = /thomas|nicolas|pierre|xavier/i;
-  const choisie  = voix.find(v => !voixMasc.test(v.name)) || voix[0];
+  const choisie = voix.find(v => !/thomas|nicolas|pierre/i.test(v.name)) || voix[0];
   if (choisie) u.voice = choisie;
-
-  u.onend   = () => localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
-  u.onerror = (e) => console.warn('Voix erreur:', e.error);
-
+  u.onend = () => localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
   synth.speak(u);
 }
 
-// Bouton test DEV : appeler directement depuis un onclick
+// Bouton test DEV
 function testerVoix() {
   _parlerSalutation('Test voix. Bonjour ! Je suis Mon Sucre, votre assistant santé.');
 }
