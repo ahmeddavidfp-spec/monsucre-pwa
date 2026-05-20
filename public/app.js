@@ -555,6 +555,7 @@ function sauverProfil() {
   if (el) el.textContent = messageBonjourComplet();
   afficherZone('profil-sauve');
   setTimeout(() => masquerZone('profil-sauve'), 2000);
+  _invaliderEtRechargerCacheUrgence(); // le prénom a changé → les textes TTS aussi
 }
 
 // ════════════════════════════════════════════════════════
@@ -662,6 +663,8 @@ function entrerDansAccueil() {
   mettreAJourBoutonsAppel();
   afficherQuestionBienEtre();
   _preparerSalutationVocale();
+  // Pré-fetche les clips urgence en arrière-plan (lecture instantanée quand besoin)
+  setTimeout(() => _prefetcherAudiosUrgence(), 3000); // laisse 3s pour que la salutation vocale parte en premier
 }
 
 // Vérifie si l'onboarding a été complété avant d'entrer dans l'accueil.
@@ -1118,16 +1121,73 @@ function mettreAJourBoutonsAppel() {
   if (btn2) btn2.classList.toggle('non-configure', !proche2?.telephone);
 }
 
+// ════════════════════════════════════════════════════════
+// ── Cache audio urgences (pré-fetchés en arrière-plan) ─
+// Évite la latence ElevenLabs au moment critique d'une urgence.
+// ════════════════════════════════════════════════════════
+const _cacheAudioUrgence = { '112': null, '1733': null, 'urgence': null };
+
+function _texte112() {
+  const p = getPrenom();
+  const intro = p ? `Ne vous inquiétez pas, ${p}.` : `Ne vous inquiétez pas.`;
+  return `${intro} Vous êtes sur le point d'appeler le 1-1-2, le numéro des secours d'urgence. Si vous avez vraiment besoin d'aide immédiate, appuyez sur le bouton rouge pour confirmer. Sinon, appuyez sur Annuler. Je suis là avec vous.`;
+}
+
+function _texte1733() {
+  const p = getPrenom();
+  const intro = p ? `Ne vous inquiétez pas, ${p}.` : `Ne vous inquiétez pas.`;
+  return `${intro} Le 1733 est le numéro du médecin et de la pharmacie de garde. C'est le bon numéro quand vous avez besoin d'un avis médical, mais que ce n'est pas une urgence vitale. Souhaitez-vous appeler maintenant ? Appuyez sur le bouton vert pour confirmer, ou sur Annuler.`;
+}
+
+// Pré-fetche les 3 clips en parallèle en arrière-plan.
+// Appelé à l'entrée de l'accueil et après chaque changement de profil/proche.
+async function _prefetcherAudiosUrgence() {
+  const clefs = [
+    { key: '112',     texte: _texte112()     },
+    { key: '1733',    texte: _texte1733()    },
+    { key: 'urgence', texte: _texteUrgence() },
+  ];
+  // Lance les 3 fetches en parallèle (sans bloquer l'UI)
+  await Promise.allSettled(clefs.map(async ({ key, texte }) => {
+    // Ne re-fetche que si le texte a changé (prenom ou proche mis à jour)
+    if (_cacheAudioUrgence[key]?.texte === texte) return;
+    _cacheAudioUrgence[key] = null; // invalide pendant le fetch
+    const ab = await _prefetchAudio(texte);
+    if (ab) _cacheAudioUrgence[key] = { ab, texte };
+  }));
+}
+
+// Invalide le cache (ex: après changement prenom / proche)
+// et relance le pré-fetch en arrière-plan.
+function _invaliderEtRechargerCacheUrgence() {
+  _cacheAudioUrgence['112']     = null;
+  _cacheAudioUrgence['1733']    = null;
+  _cacheAudioUrgence['urgence'] = null;
+  _prefetcherAudiosUrgence(); // recharge sans await (arrière-plan)
+}
+
+// Joue un clip urgence depuis le cache si disponible, sinon fetch à la volée.
+async function _jouerAudioUrgence(key, texteFn) {
+  _stopperAudioGlobal();
+  const entree = _cacheAudioUrgence[key];
+  if (entree?.ab) {
+    // Lecture instantanée depuis le cache mémoire
+    await _jouerDepuisBuffer(entree.ab, entree.texte, null);
+  } else {
+    // Pas encore en cache : fetch à la volée (fallback)
+    const texte = texteFn();
+    const ab    = await _prefetchAudio(texte);
+    // Stocke pour la prochaine fois
+    if (ab) _cacheAudioUrgence[key] = { ab, texte };
+    await _jouerDepuisBuffer(ab, texte, null);
+  }
+}
+
 // ── Confirmation vocale 112 ───────────────────────────
 async function confirmerAppel112() {
   const modal = document.getElementById('modal-112');
   if (modal) { modal.style.display = 'flex'; }
-
-  const prenomUser = getPrenom();
-  const intro = prenomUser ? `Ne vous inquiétez pas, ${prenomUser}.` : `Ne vous inquiétez pas.`;
-  const texte = `${intro} Vous êtes sur le point d'appeler le 1-1-2, le numéro des secours d'urgence. Si vous avez vraiment besoin d'aide immédiate, appuyez sur le bouton rouge pour confirmer. Sinon, appuyez sur Annuler. Je suis là avec vous.`;
-
-  await _jouerTexteVocal(texte); // coupe automatiquement toute voix précédente
+  await _jouerAudioUrgence('112', _texte112);
 }
 
 function lancerAppel112() {
@@ -1147,12 +1207,7 @@ function fermerModal112(evt) {
 async function confirmerAppel1733() {
   const modal = document.getElementById('modal-1733');
   if (modal) modal.style.display = 'flex';
-
-  const prenomUser = getPrenom();
-  const intro = prenomUser ? `Ne vous inquiétez pas, ${prenomUser}.` : `Ne vous inquiétez pas.`;
-  const texte = `${intro} Le 1733 est le numéro du médecin et de la pharmacie de garde. C'est le bon numéro quand vous avez besoin d'un avis médical, mais que ce n'est pas une urgence vitale. Souhaitez-vous appeler maintenant ? Appuyez sur le bouton vert pour confirmer, ou sur Annuler.`;
-
-  await _jouerTexteVocal(texte);
+  await _jouerAudioUrgence('1733', _texte1733);
 }
 
 function lancerAppel1733() {
@@ -1702,6 +1757,7 @@ function sauverProche() {
   const tel    = document.getElementById('inp-proche-tel').value.trim();
   if (!prenom || !tel) return;
   patchUserLocal({ proche: { prenom, telephone: tel } });
+  _invaliderEtRechargerCacheUrgence(); // le nom du proche a changé → texte urgence aussi
   afficherZone('proche-sauve');
   mettreAJourBoutonsAppel();
   setTimeout(() => masquerZone('proche-sauve'), 2000);
@@ -1712,6 +1768,7 @@ function sauverProche2() {
   const tel    = document.getElementById('inp-proche2-tel').value.trim();
   if (!prenom || !tel) return;
   patchUserLocal({ proche2: { prenom, telephone: tel } });
+  _invaliderEtRechargerCacheUrgence(); // proche2 peut être proche principal plus tard
   afficherZone('proche2-sauve');
   mettreAJourBoutonsAppel();
   setTimeout(() => masquerZone('proche2-sauve'), 2000);
@@ -1816,7 +1873,7 @@ function _texteUrgence() {
 }
 
 async function _parlerUrgence() {
-  await _jouerTexteVocal(_texteUrgence());
+  await _jouerAudioUrgence('urgence', _texteUrgence);
 }
 
 async function envoyerAlerteUrgence() {
@@ -2527,14 +2584,20 @@ function obPrecedent() {
 
 function obSauverProfil() {
   const prenom = document.getElementById('ob-prenom')?.value?.trim();
-  if (prenom) patchUserLocal({ prenom }); // planifierSync déclenché en interne
+  if (prenom) {
+    patchUserLocal({ prenom }); // planifierSync déclenché en interne
+    _invaliderEtRechargerCacheUrgence();
+  }
   obSuivant();
 }
 
 function obSauverProche() {
   const prenom = document.getElementById('ob-proche-prenom')?.value?.trim();
   const tel    = document.getElementById('ob-proche-tel')?.value?.trim();
-  if (prenom && tel) patchUserLocal({ proche: { prenom, telephone: tel } }); // planifierSync déclenché en interne
+  if (prenom && tel) {
+    patchUserLocal({ proche: { prenom, telephone: tel } }); // planifierSync déclenché en interne
+    _invaliderEtRechargerCacheUrgence();
+  }
   obSuivant();
 }
 
