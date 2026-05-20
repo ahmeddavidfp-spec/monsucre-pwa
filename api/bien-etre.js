@@ -3,18 +3,13 @@
 // Ajoute une entrée bien-être dans l'historique de l'utilisateur.
 
 import { getUser, setUser } from './_lib/db.js';
-import { verifierToken }   from './_lib/auth.js';
+import { lireSessionDepuisRequete } from './_lib/session.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  // Vérification du token
-  const auth = req.headers.authorization || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
-  if (!token) return res.status(401).json({ erreur: 'Non authentifié.' });
-
-  const payload = verifierToken(token);
-  if (!payload?.telephone) return res.status(401).json({ erreur: 'Token invalide.' });
+  const session = lireSessionDepuisRequete(req);
+  if (!session?.telephone) return res.status(401).json({ erreur: 'Non authentifié.' });
 
   const { reponse, question } = req.body || {};
   if (!['ok', 'ko'].includes(reponse)) {
@@ -22,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const user = await getUser(payload.telephone);
+    const user = await getUser(session.telephone);
     if (!user) return res.status(404).json({ erreur: 'Utilisateur introuvable.' });
 
     const entree = {
@@ -35,7 +30,7 @@ export default async function handler(req, res) {
     const bienEtre = Array.isArray(user.bien_etre) ? user.bien_etre : [];
     bienEtre.push(entree);
 
-    await setUser(payload.telephone, { ...user, bien_etre: bienEtre });
+    await setUser(session.telephone, { ...user, bien_etre: bienEtre });
 
     return res.status(200).json({ ok: true });
   } catch (e) {
