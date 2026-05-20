@@ -1,8 +1,12 @@
 import { envoyerSMS, smsConfigured } from './_lib/sms.js';
 import { normaliserTelephone } from './_lib/phone.js';
+import { lireSessionDepuisRequete } from './_lib/session.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  const session = lireSessionDepuisRequete(req);
+  if (!session?.telephone) return res.status(401).json({ ok: false, erreur: 'Non authentifié.' });
 
   const { prenom_utilisateur, telephone_proche, timestamp } = req.body;
 

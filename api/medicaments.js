@@ -1,12 +1,6 @@
-// Données de démonstration — à remplacer par Neon PostgreSQL
-const MEDS_DEMO = [
-  { id: 1, nom: 'Metformine', heure: 'Matin — 8h00', pris: false },
-  { id: 2, nom: 'Insuline', heure: 'Midi — 12h30', pris: false }
-];
+// Route héritée — non utilisée dans l'app (les médicaments sont gérés côté client via localStorage + /api/user).
+// Conservée pour ne pas casser d'éventuels anciens clients, mais répond 410 Gone.
 
 export default async function handler(req, res) {
-  if (req.method === 'GET') {
-    return res.status(200).json({ medicaments: MEDS_DEMO });
-  }
-  res.status(405).end();
+  return res.status(410).json({ erreur: 'Route dépréciée. Utilisez /api/user pour accéder aux médicaments.' });
 }

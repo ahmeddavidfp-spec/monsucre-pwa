@@ -1,9 +1,12 @@
 // POST /api/analyser-medicament
 // Body : { image, type }
+// Auth : Bearer token requis
 //
 // Identifie un médicament sur une photo.
 // Renvoie : { nom, dosage, instructions, indication }
 // Si non reconnu : { nom: null, dosage: null, instructions: null, indication: null }
+
+import { lireSessionDepuisRequete } from './_lib/session.js';
 
 const INSTRUCTION = `Tu es un assistant médical. Identifie le médicament visible sur cette photo (boîte, blister, flacon ou comprimé).
 Renvoie UNIQUEMENT un objet JSON valide, sans markdown, sans texte avant ou après.
@@ -33,6 +36,9 @@ function extraireJson(texte) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  const session = lireSessionDepuisRequete(req);
+  if (!session?.telephone) return res.status(401).json({ erreur: 'Non authentifié.' });
 
   const { image, type } = req.body || {};
   if (!image) return res.status(400).json({ erreur: 'Image manquante.' });

@@ -466,7 +466,7 @@ function afficherOngletRapport(tab, u) {
           return `<tr>
             <td>${fmt(r.ts || r.id)}</td>
             <td>${r.type === 'photo' ? '📷' : '🎤'}</td>
-            <td class="rapport-td-long">${plat}</td>
+            <td class="rapport-td-long">${esc(plat)}</td>
             <td>${ig}</td>
             <td>${id}</td>
           </tr>`;
@@ -482,7 +482,7 @@ function afficherOngletRapport(tab, u) {
         <tbody>${humeurs.map(h => `<tr>
           <td>${fmt(h.ts)}</td>
           <td style="text-align:center;font-size:22px">${h.reponse === 'ok' ? '👍' : '👎'}</td>
-          <td class="rapport-td-long">${h.question || '—'}</td>
+          <td class="rapport-td-long">${esc(h.question || '—')}</td>
         </tr>`).join('')}</tbody>
       </table>`;
 
@@ -498,8 +498,8 @@ function afficherOngletRapport(tab, u) {
           const dateHeure = d.toLocaleDateString('fr-BE', { day:'numeric', month:'short' }) + ' ' + d.toLocaleTimeString('fr-BE', { hour:'2-digit', minute:'2-digit' });
           return `<tr>
             <td>${dateHeure}</td>
-            <td>${p.icone || '💊'} ${p.nom}</td>
-            <td>${p.periode || '—'}</td>
+            <td>${p.icone || '💊'} ${esc(p.nom)}</td>
+            <td>${esc(p.periode || '—')}</td>
             ${hasInsuline ? `<td>${p.unites != null ? `<strong>${p.unites} U</strong>` : '—'}</td>` : ''}
           </tr>`;
         }).join('')}</tbody>
@@ -1299,7 +1299,7 @@ function afficherConseil(texte, description, type, analyse, thumbnail) {
             <span class="repas-ig-desc">${ig.desc}</span>
           </div>
           ${id ? `<div class="repas-ig-diabete">${id}</div>` : ''}
-          ${analyse.remarque_diabete ? `<div class="repas-ig-remarque">💡 ${analyse.remarque_diabete}</div>` : ''}
+          ${analyse.remarque_diabete ? `<div class="repas-ig-remarque">💡 ${esc(analyse.remarque_diabete)}</div>` : ''}
         </div>`;
     } else {
       igZone.style.display = 'none';
@@ -1706,7 +1706,7 @@ function chargerEcranUrgence() {
   btn.style.display = '';
 
   if (proche) {
-    infoEl.innerHTML = `Votre proche aidant : <strong>${proche.prenom}</strong><br>${proche.telephone}`;
+    infoEl.innerHTML = `Votre proche aidant : <strong>${esc(proche.prenom)}</strong><br>${esc(proche.telephone)}`;
     afficherZone('urgence-proche-info');
     masquerZone('urgence-pas-de-proche');
     btnTexte.textContent = `Appeler ${proche.prenom}`;
@@ -1904,7 +1904,7 @@ function toggleListeMedsEnregistres(btn) {
         <span class="liste-med-periode" style="background:${{'matin':'#E08C00','midi':'#1450C4','soir':'#7B10BB','nuit':'#3949AB'}[m.periode]||'#888'}">
           ${iconesPeriode[m.periode]||'💊'} ${labelsPeriode[m.periode]||m.periode}
         </span>
-        <span class="liste-med-nom">${m.nom}${m.insuline?' 💉':''}</span>
+        <span class="liste-med-nom">${esc(m.nom)}${m.insuline?' 💉':''}</span>
         ${m.desactive ? '<span class="liste-med-statut">⏸ désactivé</span>' : ''}
       </div>`).join('');
   }
@@ -2055,8 +2055,8 @@ function chargerMedicaments() {
         ${enRetard ? '<span class="med-retard">⚠️ Oublié !</span>' : ''}
       </div>
       <div class="med-carte-corps">
-        <div class="med-nom">${med.nom}${med.insuline ? ' <span class="med-badge-insuline">💉</span>' : ''}${med.desactive ? ' <span class="med-desactive-tag">désactivé</span>' : ''}</div>
-        ${med.posologie ? `<div class="med-posologie">${med.posologie}</div>` : ''}
+        <div class="med-nom">${esc(med.nom)}${med.insuline ? ' <span class="med-badge-insuline">💉</span>' : ''}${med.desactive ? ' <span class="med-desactive-tag">désactivé</span>' : ''}</div>
+        ${med.posologie ? `<div class="med-posologie">${esc(med.posologie)}</div>` : ''}
         ${labelFrequence(med) ? `<div class="med-freq-tag">${labelFrequence(med).trim()}</div>` : ''}
         <button class="btn-med-pris ${med.pris ? 'deja-pris' : ''}"
                 onclick="event.stopPropagation(); marquerPris(${med.id}, this)"

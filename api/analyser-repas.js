@@ -1,5 +1,6 @@
 // POST /api/analyser-repas
 // Body : { image, type } OU { texte }
+// Auth : Bearer token requis
 //
 // Renvoie :
 //   {
@@ -9,6 +10,8 @@
 //                proteines_g, fibres_g, sel_g, index_glycemique, indice_diabete,
 //                remarque_diabete } | null
 //   }
+
+import { lireSessionDepuisRequete } from './_lib/session.js';
 
 const INSTRUCTION = `Tu es un assistant nutritionniste bienveillant pour une personne âgée diabétique.
 
@@ -55,6 +58,9 @@ function extraireJson(texte) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  const session = lireSessionDepuisRequete(req);
+  if (!session?.telephone) return res.status(401).json({ erreur: 'Non authentifié.' });
 
   const { texte, image, type } = req.body || {};
 
