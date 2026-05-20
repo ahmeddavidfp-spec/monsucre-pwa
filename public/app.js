@@ -2222,6 +2222,91 @@ function migrerAncienFormat() {
 // ════════════════════════════════════════════════════════
 // ── Init ───────────────────────────────────────────────
 // ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+// ── Onboarding aidant ──────────────────────────────────
+// ════════════════════════════════════════════════════════
+const OB_TOTAL = 5;
+let _obEtape = 1;
+
+function obAfficherEtape(n) {
+  _obEtape = n;
+  // Masque toutes les étapes
+  document.querySelectorAll('.ob-etape').forEach(el => el.classList.remove('actif'));
+  // Affiche l'étape courante (step-fin si n > OB_TOTAL)
+  const id = n > OB_TOTAL ? 'ob-step-fin' : `ob-step-${n}`;
+  const el = document.getElementById(id);
+  if (el) el.classList.add('actif');
+  // Barre de progression
+  const pct = Math.min((n - 1) / OB_TOTAL * 100, 100);
+  const fill = document.getElementById('ob-progress-fill');
+  if (fill) fill.style.width = pct + '%';
+  // Label étape
+  const label = document.getElementById('ob-etape-label');
+  if (label) label.textContent = n > OB_TOTAL ? 'Configuration terminée !' : `Étape ${n} sur ${OB_TOTAL}`;
+}
+
+function obSuivant() {
+  obAfficherEtape(_obEtape + 1);
+}
+
+function obSauverProfil() {
+  const prenom = document.getElementById('ob-prenom')?.value?.trim();
+  if (prenom) {
+    patchUserLocal({ prenom });
+    syncUserServeur();
+  }
+  obSuivant();
+}
+
+function obSauverProche() {
+  const prenom = document.getElementById('ob-proche-prenom')?.value?.trim();
+  const tel    = document.getElementById('ob-proche-tel')?.value?.trim();
+  if (prenom && tel) {
+    patchUserLocal({ proche: { prenom, telephone: tel } });
+    syncUserServeur();
+  }
+  obSuivant();
+}
+
+function obSauverPin() {
+  const pin = document.getElementById('ob-pin')?.value?.trim();
+  if (pin && /^\d{4}$/.test(pin)) {
+    localStorage.setItem(cleUser('ms_pin'), pin);
+  } else if (pin) {
+    alert('Le code PIN doit être exactement 4 chiffres.');
+    return;
+  }
+  obSuivant();
+}
+
+async function obActiverNotifs() {
+  const statut = document.getElementById('ob-notif-statut');
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      if (statut) statut.textContent = '✅ Notifications activées !';
+      setTimeout(obSuivant, 1000);
+    } else {
+      if (statut) statut.textContent = '⚠️ Notifications refusées — vous pourrez les activer plus tard dans les paramètres.';
+      setTimeout(obSuivant, 2000);
+    }
+  } catch {
+    obSuivant();
+  }
+}
+
+function obTerminer() {
+  localStorage.setItem(cleUser('ms_onboarding_done'), 'true');
+  entrerDansAccueil();
+  demanderPermissionNotifications();
+  verifierMedsOublies();
+  setInterval(verifierMedsOublies, 15 * 60 * 1000);
+  getMedicaments().forEach(planifierNotification);
+  hydraterDepuisServeur().then(u => {
+    if (u) { mettreAJourBoutonsAppel(); chargerMedicaments(); }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   // Verrouille l'orientation en portrait (PWA + navigateurs compatibles)
   try {
@@ -2231,6 +2316,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   migrerAncienFormat();
   const session = getSession();
   if (!session) { allerA('ecran-inscription'); return; }
+
+  // Premier lancement → onboarding aidant
+  if (localStorage.getItem(cleUser('ms_onboarding_done')) !== 'true') {
+    obAfficherEtape(1);
+    allerA('ecran-onboarding');
+    return;
+  }
 
   entrerDansAccueil();
   demanderPermissionNotifications();
