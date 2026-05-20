@@ -522,6 +522,24 @@ html, body {
 .btn-urgence-gros:active { transform: scale(0.97); }
 .btn-urgence-gros:disabled { background: #ccc; box-shadow: none; }
 
+.btn-urgence-med {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  border: 2px solid #1E6E45;
+  border-radius: 20px;
+  padding: 20px 24px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1E6E45;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.1s, background 0.15s;
+}
+.btn-urgence-med .btn-icone { font-size: 36px; }
+.btn-urgence-med:active { transform: scale(0.97); background: #E8F8EE; }
+
 .btn-secondaire {
   background: none;
   border: none;
@@ -1566,21 +1584,21 @@ input[type="time"].champ-input {
 }
 .bienetre-btns {
   display: flex;
-  gap: 24px;
+  gap: 28px;
   justify-content: center;
 }
 .bienetre-btn {
-  width: 72px;
-  height: 72px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: none;
-  font-size: 36px;
+  font-size: 52px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.14);
 }
 .bienetre-btn:active { transform: scale(0.88); }
 .bienetre-oui { background: #E8F8EE; }

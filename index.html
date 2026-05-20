@@ -566,6 +566,18 @@
         </div>
       </div>
 
+      <!-- Médecin + Pharmacie (affichés si configurés) -->
+      <div id="urgence-contacts-med" style="display:none;margin-top:12px;display:flex;flex-direction:column;gap:10px">
+        <button class="btn-urgence-med" id="btn-appel-medecin" onclick="appelerMedecin()" style="display:none">
+          <span class="btn-icone">🩺</span>
+          <span class="btn-texte" id="label-medecin">Mon médecin</span>
+        </button>
+        <button class="btn-urgence-med" id="btn-appel-pharmacie" onclick="appelerPharmacie()" style="display:none">
+          <span class="btn-icone">💊</span>
+          <span class="btn-texte" id="label-pharmacie">Ma pharmacie</span>
+        </button>
+      </div>
+
       <button class="btn-secondaire" onclick="allerA('ecran-proche')">⚙️ Configurer mon proche aidant</button>
       <button class="btn-secondaire" onclick="allerA('ecran-accueil')">Je vais mieux, retour à l'accueil</button>
     </div>
@@ -645,6 +657,38 @@
         </div>
         <button class="btn-confirmer" onclick="sauverProche2()">✅ Enregistrer</button>
         <div id="proche2-sauve" class="config-confirmation zone-cachee">✅ Proche 2 enregistré !</div>
+      </div>
+
+      <!-- Médecin traitant -->
+      <div class="config-section">
+        <div class="config-section-titre">🩺 Médecin traitant</div>
+        <p class="config-section-sous">Affiché sur l'écran d'urgence avec un bouton d'appel direct.</p>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-medecin-nom">Nom</label>
+          <input class="champ-input" type="text" id="inp-medecin-nom" placeholder="Ex : Dr Dupont" />
+        </div>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-medecin-tel">Numéro de téléphone</label>
+          <input class="champ-input" type="tel" id="inp-medecin-tel" placeholder="Ex : +32 2 000 00 00" />
+        </div>
+        <button class="btn-confirmer" onclick="sauverMedecin()">✅ Enregistrer</button>
+        <div id="medecin-sauve" class="config-confirmation zone-cachee">✅ Médecin enregistré !</div>
+      </div>
+
+      <!-- Pharmacie -->
+      <div class="config-section">
+        <div class="config-section-titre">💊 Pharmacie habituelle</div>
+        <p class="config-section-sous">Affiché sur l'écran d'urgence avec un bouton d'appel direct.</p>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-pharmacie-nom">Nom</label>
+          <input class="champ-input" type="text" id="inp-pharmacie-nom" placeholder="Ex : Pharmacie Centrale" />
+        </div>
+        <div class="champ-group">
+          <label class="champ-label" for="inp-pharmacie-tel">Numéro de téléphone</label>
+          <input class="champ-input" type="tel" id="inp-pharmacie-tel" placeholder="Ex : +32 2 000 00 00" />
+        </div>
+        <button class="btn-confirmer" onclick="sauverPharmacie()">✅ Enregistrer</button>
+        <div id="pharmacie-sauve" class="config-confirmation zone-cachee">✅ Pharmacie enregistrée !</div>
       </div>
 
       <!-- Code PIN -->

@@ -46,8 +46,10 @@ function restaurerThumbnails(userServeur) {
 }
 function getPrenom()       { return getUserLocal()?.prenom || ''; }
 function getMedicaments()  { return getUserLocal()?.medicaments || []; }
-function getProcheContact()  { return getUserLocal()?.proche  || null; }
-function getProcheContact2() { return getUserLocal()?.proche2 || null; }
+function getProcheContact()  { return getUserLocal()?.proche    || null; }
+function getProcheContact2() { return getUserLocal()?.proche2   || null; }
+function getMedecin()        { return getUserLocal()?.medecin   || null; }
+function getPharmacie()      { return getUserLocal()?.pharmacie || null; }
 function getHistorique()   { return getUserLocal()?.historique_repas || []; }
 
 function patchUserLocal(patch) {
@@ -244,9 +246,19 @@ function chargerFormulaireProche() {
   document.getElementById('inp-proche2-prenom').value = proche2?.prenom    || '';
   document.getElementById('inp-proche2-tel').value    = proche2?.telephone || '';
 
+  const medecin = getMedecin();
+  document.getElementById('inp-medecin-nom').value = medecin?.nom       || '';
+  document.getElementById('inp-medecin-tel').value = medecin?.telephone || '';
+
+  const pharmacie = getPharmacie();
+  document.getElementById('inp-pharmacie-nom').value = pharmacie?.nom       || '';
+  document.getElementById('inp-pharmacie-tel').value = pharmacie?.telephone || '';
+
   masquerZone('profil-sauve');
   masquerZone('proche-sauve');
   masquerZone('proche2-sauve');
+  masquerZone('medecin-sauve');
+  masquerZone('pharmacie-sauve');
   afficherStatutNotifications();
 
   const toggle = document.getElementById('toggle-mode-dev');
@@ -1651,6 +1663,22 @@ function sauverProche2() {
   setTimeout(() => masquerZone('proche2-sauve'), 2000);
 }
 
+function sauverMedecin() {
+  const nom = document.getElementById('inp-medecin-nom').value.trim();
+  const tel = document.getElementById('inp-medecin-tel').value.trim();
+  patchUserLocal({ medecin: (nom || tel) ? { nom, telephone: tel } : null });
+  afficherZone('medecin-sauve');
+  setTimeout(() => masquerZone('medecin-sauve'), 2000);
+}
+
+function sauverPharmacie() {
+  const nom = document.getElementById('inp-pharmacie-nom').value.trim();
+  const tel = document.getElementById('inp-pharmacie-tel').value.trim();
+  patchUserLocal({ pharmacie: (nom || tel) ? { nom, telephone: tel } : null });
+  afficherZone('pharmacie-sauve');
+  setTimeout(() => masquerZone('pharmacie-sauve'), 2000);
+}
+
 function chargerEcranUrgence() {
   const proche   = getProcheContact();
   const infoEl   = document.getElementById('urgence-proche-info');
@@ -1674,8 +1702,41 @@ function chargerEcranUrgence() {
     btn.disabled = true;
   }
 
+  // Médecin + Pharmacie
+  const medecin   = getMedecin();
+  const pharmacie = getPharmacie();
+  const btnMed    = document.getElementById('btn-appel-medecin');
+  const btnPha    = document.getElementById('btn-appel-pharmacie');
+  const lblMed    = document.getElementById('label-medecin');
+  const lblPha    = document.getElementById('label-pharmacie');
+  if (btnMed) {
+    if (medecin?.telephone) {
+      lblMed.textContent = medecin.nom ? `Dr ${medecin.nom}` : 'Mon médecin';
+      btnMed.style.display = 'flex';
+    } else {
+      btnMed.style.display = 'none';
+    }
+  }
+  if (btnPha) {
+    if (pharmacie?.telephone) {
+      lblPha.textContent = pharmacie.nom || 'Ma pharmacie';
+      btnPha.style.display = 'flex';
+    } else {
+      btnPha.style.display = 'none';
+    }
+  }
+
   // Message vocal rassurant automatique (le tap "Besoin d'aide" = geste iOS valide)
   _parlerUrgence();
+}
+
+function appelerMedecin() {
+  const m = getMedecin();
+  if (m?.telephone) window.location.href = `tel:${m.telephone}`;
+}
+function appelerPharmacie() {
+  const p = getPharmacie();
+  if (p?.telephone) window.location.href = `tel:${p.telephone}`;
 }
 
 function _texteUrgence() {

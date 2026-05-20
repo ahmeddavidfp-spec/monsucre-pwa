@@ -36,6 +36,8 @@ export async function setUser(telephone, user) {
     medicaments: Array.isArray(user.medicaments) ? user.medicaments : [],
     proche: user.proche || null,
     proche2: user.proche2 || null,
+    medecin:   user.medecin   || null,  // { nom, telephone }
+    pharmacie: user.pharmacie || null,  // { nom, telephone }
     historique_repas: Array.isArray(user.historique_repas) ? user.historique_repas.slice(0, 60) : [],
     bien_etre:           Array.isArray(user.bien_etre)           ? user.bien_etre.slice(-90)           : [],
     prises_medicaments:  Array.isArray(user.prises_medicaments)  ? user.prises_medicaments.slice(-200) : [],
@@ -62,6 +64,8 @@ export async function mettreAJourUser(telephone, patch) {
   if (patch.medicaments !== undefined)      fusion.medicaments = patch.medicaments;
   if (patch.proche !== undefined)           fusion.proche = patch.proche;
   if (patch.proche2 !== undefined)          fusion.proche2 = patch.proche2;
+  if (patch.medecin !== undefined)          fusion.medecin = patch.medecin;
+  if (patch.pharmacie !== undefined)        fusion.pharmacie = patch.pharmacie;
   if (patch.historique_repas !== undefined) fusion.historique_repas = patch.historique_repas;
   if (patch.bien_etre !== undefined)           fusion.bien_etre           = patch.bien_etre;
   if (patch.prises_medicaments !== undefined)  fusion.prises_medicaments  = patch.prises_medicaments;
