@@ -66,6 +66,20 @@ export default async function handler(req, res) {
       }
       champsAutorises.proche2 = pr2;
     }
+    if ('medecin' in patch) {
+      const m = patch.medecin;
+      if (m !== null && typeof m !== 'object') {
+        return res.status(400).json({ erreur: 'Médecin invalide.' });
+      }
+      champsAutorises.medecin = m;
+    }
+    if ('pharmacie' in patch) {
+      const p = patch.pharmacie;
+      if (p !== null && typeof p !== 'object') {
+        return res.status(400).json({ erreur: 'Pharmacie invalide.' });
+      }
+      champsAutorises.pharmacie = p;
+    }
     if ('historique_repas' in patch) {
       if (!Array.isArray(patch.historique_repas)) {
         return res.status(400).json({ erreur: 'historique_repas doit être un tableau.' });

@@ -286,8 +286,11 @@ async function reinitialiserCompte() {
         medicaments: [],
         proche: null,
         proche2: null,
+        medecin: null,
+        pharmacie: null,
         historique_repas: [],
-        prises_medicaments: []
+        prises_medicaments: [],
+        bien_etre: []
       })
     });
   } catch (e) {
@@ -333,19 +336,20 @@ async function chargerListeUtilisateurs() {
       return;
     }
 
+    const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     _usersAdmin = data.users;  // cache pour le rapport
     conteneur.innerHTML = data.users.map(u => {
       const date   = u.cree_le ? new Date(u.cree_le).toLocaleDateString('fr-BE') : '—';
-      const prenom = u.prenom || '(sans prénom)';
+      const prenom = esc(u.prenom || '(sans prénom)');
       const nbMeds = (u.medicaments || []).length;
       const nbRepas= (u.historique_repas || []).length;
-      const tel    = u.telephone.replace(/'/g, '');
+      const tel    = esc(u.telephone.replace(/'/g, ''));
       return `
         <div style="background:white;border-radius:16px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">
           <div style="display:flex;align-items:center;gap:12px">
             <div style="flex:1;min-width:0">
               <div style="font-size:17px;font-weight:800;color:var(--texte)">${prenom}</div>
-              <div style="font-size:13px;color:var(--texte-doux);margin-top:2px">${u.telephone}</div>
+              <div style="font-size:13px;color:var(--texte-doux);margin-top:2px">${esc(u.telephone)}</div>
               <div style="font-size:12px;color:var(--texte-doux);margin-top:2px">
                 Inscrit le ${date} · ${nbMeds} méd. · ${nbRepas} repas
               </div>
@@ -399,7 +403,7 @@ async function supprimerUtilisateur(telephone) {
       const sessionTel = getSession()?.telephone;
       if (telephone === sessionTel) {
         const clesPurger = ['ms_onboarding_done','ms_pin','ms_mode_dev','ms_senior_only',
-                            'ms_voix_date','ms_bienetre_date'];
+                            'ms_voix_date','ms_bienetre_date','ms_tts_provider'];
         clesPurger.forEach(c => localStorage.removeItem(cleUser(c)));
         deconnecterSession();
         localStorage.removeItem('ms_user');
@@ -662,7 +666,7 @@ function demarrerApp() {
   entrerDansAccueil();
   demanderPermissionNotifications();
   verifierMedsOublies();
-  setInterval(verifierMedsOublies, 15 * 60 * 1000);
+  if (!_intervalMeds) _intervalMeds = setInterval(verifierMedsOublies, 15 * 60 * 1000);
   getMedicaments().forEach(planifierNotification);
   hydraterDepuisServeur().then(u => {
     if (u) { mettreAJourBoutonsAppel(); chargerMedicaments(); }
@@ -674,6 +678,7 @@ function demarrerApp() {
 // ── Gestionnaire audio global (une seule voix à la fois) ─
 // ════════════════════════════════════════════════════════
 let _audioGlobal = null; // { src, ctx }
+let _intervalMeds = null; // setInterval unique pour verifierMedsOublies
 
 function _stopperAudioGlobal() {
   if (_audioGlobal) {
@@ -996,7 +1001,7 @@ function afficherQuestionBienEtre() {
 
   // Vérifie si déjà répondu aujourd'hui
   const today    = new Date().toDateString();
-  const dejaDone = localStorage.getItem('ms_bienetre_date') === today;
+  const dejaDone = localStorage.getItem(cleUser('ms_bienetre_date')) === today;
   if (dejaDone && !estModeDevActif()) { carte.style.display = 'none'; return; }
 
   // Si la salutation vocale est prévue, on attend qu'elle finisse
@@ -1017,7 +1022,7 @@ function afficherQuestionBienEtre() {
 
 async function repondreBienEtre(reponse) {
   const today = new Date().toDateString();
-  localStorage.setItem('ms_bienetre_date', today);
+  localStorage.setItem(cleUser('ms_bienetre_date'), today);
 
   // Affiche la réponse chaleureuse + la dit à voix haute
   const btns   = document.getElementById('bienetre-btns');
@@ -1150,7 +1155,7 @@ async function analyserPhoto(input) {
   try {
     const res  = await fetch('/api/analyser-repas', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify({ image: base64, type: fichier.type })
     });
     const data = await res.json();
@@ -1237,7 +1242,7 @@ async function envoyerRepas() {
   try {
     const res  = await fetch('/api/analyser-repas', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify({ texte })
     });
     const data = await res.json();
@@ -1383,8 +1388,7 @@ function sauverGlycemieRepas() {
     valeur: valeur,
     unite:  'mg/dL'
   });
-  patchUserLocal({ historique_repas: historique.slice(0, 60) });
-  syncUserServeur();
+  patchUserLocal({ historique_repas: historique.slice(0, 60) }); // planifierSync() déclenché en interne
 
   // Feedback visuel
   const conf = document.getElementById('glyc-repas-confirm');
@@ -1768,7 +1772,7 @@ async function envoyerAlerteUrgence() {
   try {
     const r = await fetch('/api/urgence', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify({ timestamp: new Date().toISOString(), prenom_utilisateur: prenom, telephone_proche: proche?.telephone || '', telephone_utilisateur: getSession()?.telephone || '' })
     });
     const data = await r.json();
@@ -1797,7 +1801,7 @@ async function analyserMedicamentPhoto(input) {
   try {
     const r    = await fetch('/api/analyser-medicament', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify({ image: base64, type: fichier.type })
     });
     const data = await r.json();
@@ -2384,7 +2388,7 @@ function afficherZone(id) { const el = document.getElementById(id); if (el) el.c
 function masquerZone(id)  { const el = document.getElementById(id); if (el) el.classList.remove('visible'); }
 
 async function viderCache() {
-  const btn = document.querySelector('.btn-renew-session');
+  const btn = document.getElementById('btn-vider-cache');
   if (btn) { btn.textContent = '⏳ En cours…'; btn.disabled = true; }
   try {
     const cles = await caches.keys();
@@ -2462,20 +2466,14 @@ function obPrecedent() {
 
 function obSauverProfil() {
   const prenom = document.getElementById('ob-prenom')?.value?.trim();
-  if (prenom) {
-    patchUserLocal({ prenom });
-    planifierSync({ prenom });
-  }
+  if (prenom) patchUserLocal({ prenom }); // planifierSync déclenché en interne
   obSuivant();
 }
 
 function obSauverProche() {
   const prenom = document.getElementById('ob-proche-prenom')?.value?.trim();
   const tel    = document.getElementById('ob-proche-tel')?.value?.trim();
-  if (prenom && tel) {
-    patchUserLocal({ proche: { prenom, telephone: tel } });
-    planifierSync({ proche: { prenom, telephone: tel } });
-  }
+  if (prenom && tel) patchUserLocal({ proche: { prenom, telephone: tel } }); // planifierSync déclenché en interne
   obSuivant();
 }
 
@@ -2511,7 +2509,7 @@ function obTerminer() {
   entrerDansAccueil();
   demanderPermissionNotifications();
   verifierMedsOublies();
-  setInterval(verifierMedsOublies, 15 * 60 * 1000);
+  if (!_intervalMeds) _intervalMeds = setInterval(verifierMedsOublies, 15 * 60 * 1000);
   getMedicaments().forEach(planifierNotification);
   hydraterDepuisServeur().then(u => {
     if (u) { mettreAJourBoutonsAppel(); chargerMedicaments(); }
@@ -2529,13 +2527,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!session) { allerA('ecran-inscription'); return; }
 
   // Premier lancement ou onboarding non terminé → onboarding aidant
+  // Note : demarrerApp() appelle déjà hydraterDepuisServeur() en interne — pas de double appel
   demarrerApp();
-
-  const userServeur = await hydraterDepuisServeur();
-  if (userServeur) {
-    const el = document.getElementById('message-bonjour');
-    if (el) el.textContent = messageBonjourComplet();
-    mettreAJourBoutonsAppel();
-    if (document.getElementById('ecran-accueil').classList.contains('actif')) chargerMedicaments();
-  }
 });
