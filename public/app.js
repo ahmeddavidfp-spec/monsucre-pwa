@@ -527,7 +527,7 @@ async function seConnecter() {
     if (data.existe) {
       sauverSession({ telephone: data.user.telephone, token: data.session });
       sauverUserLocal(data.user);
-      entrerDansAccueil();
+      demarrerApp();
     } else {
       localStorage.setItem('ms_verif_token', data.token);
       localStorage.setItem('ms_verif_tel', telephone);
@@ -575,7 +575,7 @@ async function verifierCode() {
     sauverUserLocal(data.user);
     localStorage.removeItem('ms_verif_token');
     localStorage.removeItem('ms_verif_tel');
-    entrerDansAccueil();
+    demarrerApp();
   } catch {
     afficherErreur(erreur, 'Impossible de vérifier le code. Réessayez.');
   }
@@ -607,6 +607,24 @@ function entrerDansAccueil() {
   mettreAJourBoutonsAppel();
   afficherQuestionBienEtre();
   _preparerSalutationVocale();
+}
+
+// Vérifie si l'onboarding a été complété avant d'entrer dans l'accueil.
+// À utiliser après chaque connexion / vérification de code.
+function demarrerApp() {
+  if (localStorage.getItem(cleUser('ms_onboarding_done')) !== 'true') {
+    obAfficherEtape(1);
+    allerA('ecran-onboarding');
+    return;
+  }
+  entrerDansAccueil();
+  demanderPermissionNotifications();
+  verifierMedsOublies();
+  setInterval(verifierMedsOublies, 15 * 60 * 1000);
+  getMedicaments().forEach(planifierNotification);
+  hydraterDepuisServeur().then(u => {
+    if (u) { mettreAJourBoutonsAppel(); chargerMedicaments(); }
+  });
 }
 
 // ════════════════════════════════════════════════════════
@@ -2341,18 +2359,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const session = getSession();
   if (!session) { allerA('ecran-inscription'); return; }
 
-  // Premier lancement → onboarding aidant
-  if (localStorage.getItem(cleUser('ms_onboarding_done')) !== 'true') {
-    obAfficherEtape(1);
-    allerA('ecran-onboarding');
-    return;
-  }
-
-  entrerDansAccueil();
-  demanderPermissionNotifications();
-  verifierMedsOublies();
-  setInterval(verifierMedsOublies, 15 * 60 * 1000);
-  getMedicaments().forEach(planifierNotification);
+  // Premier lancement ou onboarding non terminé → onboarding aidant
+  demarrerApp();
 
   const userServeur = await hydraterDepuisServeur();
   if (userServeur) {
