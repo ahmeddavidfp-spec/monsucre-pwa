@@ -188,6 +188,26 @@ function chargerEcranDev() {
   if (devEl)    devEl.checked    = estModeDevActif();
   if (seniorEl) seniorEl.checked = estSeniorOnly();
   if (labelEl)  labelEl.textContent = estSeniorOnly() ? 'Activé' : 'Désactivé';
+  _majBoutonsTTS();
+}
+
+function _majBoutonsTTS() {
+  const p       = getTTSProvider();
+  const btnE    = document.getElementById('btn-tts-eleven');
+  const btnO    = document.getElementById('btn-tts-openai');
+  const label   = document.getElementById('tts-provider-label');
+  const actif   = 'background:#2e7d32;color:#fff;border-color:#2e7d32';
+  const inactif = 'background:#fff;color:#333;border-color:#ccc';
+  if (btnE) btnE.style.cssText += ';' + (p === 'elevenlabs' ? actif : inactif);
+  if (btnO) btnO.style.cssText += ';' + (p === 'openai'     ? actif : inactif);
+  if (label) label.textContent = p === 'openai'
+    ? '🤖 OpenAI TTS actif (nova) — pour tests quota ElevenLabs épuisé'
+    : '🎙️ ElevenLabs actif (Matilda)';
+}
+
+function basculerTTS(provider) {
+  setTTSProvider(provider);
+  _majBoutonsTTS();
 }
 
 // ════════════════════════════════════════════════════════
@@ -653,6 +673,13 @@ function _stopperAudioGlobal() {
   try { window.speechSynthesis?.cancel(); } catch(_) {}
 }
 
+function getTTSProvider() {
+  return localStorage.getItem('ms_tts_provider') || 'elevenlabs';
+}
+function setTTSProvider(p) {
+  localStorage.setItem('ms_tts_provider', p);
+}
+
 async function _jouerTexteVocal(texte, onFin) {
   _stopperAudioGlobal(); // coupe tout audio en cours
 
@@ -669,7 +696,7 @@ async function _jouerTexteVocal(texte, onFin) {
     const resp = await fetch('/api/salutation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeader() },
-      body: JSON.stringify({ texte })
+      body: JSON.stringify({ texte, provider: getTTSProvider() })
     });
     if (!resp.ok) {
       const errBody = await resp.json().catch(() => ({}));
@@ -692,9 +719,8 @@ async function _jouerTexteVocal(texte, onFin) {
     _audioGlobal = { src, ctx: audioCtx };
     src.start(0);
   } catch(e) {
-    console.error('[audio] Échec ElevenLabs, fallback Web Speech:', e.message);
+    console.error('[audio] Échec TTS, fallback Web Speech:', e.message);
     try { audioCtx.close(); } catch(_) {}
-    // Fallback : voix du navigateur si ElevenLabs échoue
     _parlerSalutationFallback(texte);
     onFin?.();
   }

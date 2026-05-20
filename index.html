@@ -708,6 +708,20 @@
         <button class="btn-renew-session" onclick="testerVoix()">🔊 Tester la voix</button>
         <button class="btn-renew-session" onclick="viderCache()">🔄 Renouveler la session</button>
         <button class="btn-reinit-compte" onclick="reinitialiserCompte()">🗑️ Réinitialiser le compte</button>
+        <div style="margin-top:14px;padding:14px;background:#f0f0f0;border-radius:14px">
+          <div style="font-weight:700;font-size:15px;margin-bottom:10px">🔊 Moteur TTS</div>
+          <div style="display:flex;gap:10px">
+            <button id="btn-tts-eleven" onclick="basculerTTS('elevenlabs')"
+              style="flex:1;padding:12px;border-radius:12px;border:2px solid #2e7d32;font-size:15px;font-weight:700;cursor:pointer">
+              🎙️ ElevenLabs
+            </button>
+            <button id="btn-tts-openai" onclick="basculerTTS('openai')"
+              style="flex:1;padding:12px;border-radius:12px;border:2px solid #ccc;font-size:15px;font-weight:700;cursor:pointer">
+              🤖 OpenAI
+            </button>
+          </div>
+          <p id="tts-provider-label" style="margin-top:8px;font-size:13px;color:#555;text-align:center"></p>
+        </div>
       </div>
 
       <!-- Utilisateurs -->
