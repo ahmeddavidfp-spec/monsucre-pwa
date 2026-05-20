@@ -550,7 +550,7 @@ function demarrerDepuisSplash() {
   _parlerSalutation();
 }
 
-const VOIX_NOM = 'Matilda'; // ← changer ici pour identifier la voix testée
+const VOIX_NOM = 'Marie-Alice'; // ← changer ici pour identifier la voix testée
 
 function _texteeSalutation() {
   const prenom = getPrenom() || '';
