@@ -219,6 +219,13 @@ function basculerTTS(provider) {
 // ════════════════════════════════════════════════════════
 // ── Navigation ─────────────────────────────────────────
 // ════════════════════════════════════════════════════════
+// UX-F1 : message Bravo contextualisé selon l'action
+function afficherBravo(message) {
+  const el = document.getElementById('bravo-texte');
+  if (el) el.textContent = message || "C'est noté. Continuez comme ça !";
+  allerA('ecran-bravo');
+}
+
 function allerA(ecranId) {
   // Stoppe toute voix en cours — sauf si on va sur urgence (elle joue sa propre voix)
   if (ecranId !== 'ecran-urgence') _stopperAudioGlobal();
@@ -757,6 +764,23 @@ let _salutationDeclenchee = false;
 let _salutationEnAttente  = false;
 let _callbackApresVoix    = null;
 
+// UX-F5 : timeout automatique si le senior ne tape pas dans les 25s
+let _splashTimeoutId = null;
+function _armerTimeoutSplash() {
+  _splashTimeoutId = setTimeout(() => {
+    // Passe directement à l'accueil sans audio
+    const splash = document.getElementById('splash-vocal');
+    if (splash && splash.style.display !== 'none') {
+      splash.style.opacity = '0';
+      setTimeout(() => { splash.style.display = 'none'; }, 200);
+      _finSalutation();
+    }
+  }, 25000);
+}
+function _annulerTimeoutSplash() {
+  if (_splashTimeoutId) { clearTimeout(_splashTimeoutId); _splashTimeoutId = null; }
+}
+
 function _preparerSalutationVocale() {
   const today = new Date().toDateString();
   const voixNecessaire = estModeDevActif() || localStorage.getItem(cleUser('ms_voix_date')) !== today;
@@ -773,12 +797,16 @@ function _preparerSalutationVocale() {
   const splash = document.getElementById('splash-vocal');
   const sousEl = document.getElementById('splash-bonjour');
   if (sousEl) sousEl.textContent = messageBonjourComplet();
-  if (splash) splash.style.display = 'flex';
+  if (splash) {
+    splash.style.display = 'flex';
+    _armerTimeoutSplash(); // UX-F5 : passe automatiquement à l'accueil après 25s
+  }
 }
 
 function demarrerDepuisSplash() {
   if (_salutationDeclenchee) return;
   _salutationDeclenchee = true;
+  _annulerTimeoutSplash(); // UX-F5 : annule le timeout automatique puisque le senior a tapé
 
   // Pré-fetch l'audio PENDANT que le splash disparaît (gain ~400ms)
   const texte = _texteeSalutation();
@@ -1148,6 +1176,8 @@ function appelerProche(numero) {
     alert(`Proche ${numero} non configuré.\nAllez dans ⚙️ Paramètres pour l'ajouter.`);
     return;
   }
+  const nom = proche.prenom ? `${proche.prenom} (${proche.telephone})` : proche.telephone;
+  if (!confirm(`Appeler ${nom} ?`)) return;
   window.location.href = `tel:${proche.telephone}`;
 }
 
@@ -1458,7 +1488,7 @@ function sauverGlycemie() {
     unite: 'mg/dL'
   });
   patchUserLocal({ historique_repas: historique.slice(0, 60) });
-  allerA('ecran-bravo');
+  afficherBravo('Votre glycémie est enregistrée. Continuez comme ça !');
 }
 
 // ════════════════════════════════════════════════════════
@@ -1536,7 +1566,12 @@ function rendreCalendrier(historique) {
       </div>
     </div>`;
   }
-  html += `</div></div>`;
+  html += `</div>
+    <div class="cal-legende">
+      <span class="cal-legende-item"><span class="cal-dot dot-repas cal-legende-dot"></span> Repas enregistré</span>
+      <span class="cal-legende-item"><span class="cal-dot dot-glyc cal-legende-dot"></span> Glycémie mesurée</span>
+    </div>
+  </div>`;
 
   if (jourSelectionne) {
     const key     = `${annee}-${String(mois+1).padStart(2,'0')}-${String(jourSelectionne).padStart(2,'0')}`;
@@ -1591,7 +1626,10 @@ function rendreEntreeHistorique(repas) {
   const modeDev  = estModeDevActif();
   const icone    = repas.type === 'photo' ? '📷' : '🎤';
   const tableau  = (modeDev && repas.analyse) ? rendreTableauNutritionnel(repas.analyse) : '';
-  const photoHtml = repas.thumbnail ? `<img class="historique-photo" src="${repas.thumbnail}" alt="Photo du repas" />` : '';
+  const dateLabel = repas.date ? new Date(repas.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' }) : '';
+  const photoHtml = repas.thumbnail
+    ? `<img class="historique-photo" src="${repas.thumbnail}" alt="Photo du repas du ${dateLabel}" onerror="this.style.display='none'" />`
+    : '';
 
   return `<div class="historique-carte">
     <div class="historique-entete">
@@ -1748,11 +1786,17 @@ function chargerEcranUrgence() {
 
 function appelerMedecin() {
   const m = getMedecin();
-  if (m?.telephone) window.location.href = `tel:${m.telephone}`;
+  if (!m?.telephone) return;
+  const nom = m.nom ? `${m.nom} (${m.telephone})` : m.telephone;
+  if (!confirm(`Appeler ${nom} ?`)) return;
+  window.location.href = `tel:${m.telephone}`;
 }
 function appelerPharmacie() {
   const p = getPharmacie();
-  if (p?.telephone) window.location.href = `tel:${p.telephone}`;
+  if (!p?.telephone) return;
+  const nom = p.nom ? `${p.nom} (${p.telephone})` : p.telephone;
+  if (!confirm(`Appeler ${nom} ?`)) return;
+  window.location.href = `tel:${p.telephone}`;
 }
 
 function _texteUrgence() {
