@@ -513,16 +513,23 @@ function entrerDansAccueil() {
 // ── Salutation vocale ─────────────────────────────────
 // ════════════════════════════════════════════════════════
 let _salutationDeclenchee = false;
+let _salutationEnAttente  = false;
+let _callbackApresVoix    = null;
 
 function _preparerSalutationVocale() {
-  if (!window.speechSynthesis) return;
   const today = new Date().toDateString();
-  if (!estModeDevActif() && localStorage.getItem(cleUser('ms_voix_date')) === today) return;
+  const voixNecessaire = estModeDevActif() || localStorage.getItem(cleUser('ms_voix_date')) !== today;
 
-  _salutationDeclenchee = false; // reset à chaque ouverture (important pour DEV)
+  if (!voixNecessaire) {
+    _salutationEnAttente = false;
+    return;
+  }
+
+  _salutationEnAttente  = true;
+  _salutationDeclenchee = false;
 
   // iOS bloque tout son sans geste utilisateur — on attend le premier tap
-  const declencher = (e) => {
+  const declencher = () => {
     if (_salutationDeclenchee) return;
     _salutationDeclenchee = true;
     _parlerSalutation();
@@ -592,10 +599,7 @@ async function _parlerSalutation(texteOverride) {
       gain.gain.value = 1.8;
       source.connect(gain);
       gain.connect(audioCtx.destination);
-      source.onended = () => {
-        localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
-        audioCtx.close();
-      };
+      source.onended = () => { audioCtx.close(); _finSalutation(); };
       source.start(0);
     } else {
       // Fallback : Audio HTML
@@ -610,22 +614,28 @@ async function _parlerSalutation(texteOverride) {
     }
 
   } catch (e) {
-    console.warn('Salutation OpenAI erreur, fallback Web Speech:', e);
-    // ── Fallback : Web Speech API ──────────────────────────
+    console.warn('Salutation erreur, fallback Web Speech:', e);
     _parlerSalutationFallback(texte);
   }
 }
 
+function _finSalutation() {
+  localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
+  _salutationEnAttente = false;
+  if (_callbackApresVoix) { _callbackApresVoix(); _callbackApresVoix = null; }
+}
+
 function _parlerSalutationFallback(texte) {
   const synth = window.speechSynthesis;
-  if (!synth) return;
+  if (!synth) { _finSalutation(); return; }
   synth.cancel();
   const u = new SpeechSynthesisUtterance(texte);
   u.lang = 'fr-FR'; u.rate = 0.88; u.pitch = 1.1; u.volume = 1;
   const voix = synth.getVoices().filter(v => v.lang.startsWith('fr'));
   const choisie = voix.find(v => !/thomas|nicolas|pierre/i.test(v.name)) || voix[0];
   if (choisie) u.voice = choisie;
-  u.onend = () => localStorage.setItem(cleUser('ms_voix_date'), new Date().toDateString());
+  u.onend  = () => _finSalutation();
+  u.onerror = () => _finSalutation();
   synth.speak(u);
 }
 
@@ -735,12 +745,18 @@ function afficherQuestionBienEtre() {
   const dejaDone = localStorage.getItem('ms_bienetre_date') === today;
   if (dejaDone && !estModeDevActif()) { carte.style.display = 'none'; return; }
 
+  // Si la salutation vocale est prévue, on attend qu'elle finisse
+  if (_salutationEnAttente) {
+    _callbackApresVoix = () => afficherQuestionBienEtre();
+    carte.style.display = 'none';
+    return;
+  }
+
   const { q, e } = questionDuJour();
   const el = document.getElementById('bienetre-question');
   if (el) el.innerHTML = `<span class="bienetre-emoji">${e}</span>${q}`;
 
   carte.style.display = 'block';
-  // Animation d'entrée
   carte.classList.remove('bienetre-visible');
   requestAnimationFrame(() => requestAnimationFrame(() => carte.classList.add('bienetre-visible')));
 }
