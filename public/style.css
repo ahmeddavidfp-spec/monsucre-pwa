@@ -2075,7 +2075,7 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   flex-direction: column;
 }
 
-.ob-etape { display: none; flex-direction: column; flex: 1; }
+.ob-etape { display: none; flex-direction: column; min-height: 100%; }
 .ob-etape.actif { display: flex; animation: modal-entree 0.25s ease; }
 
 .ob-card {
