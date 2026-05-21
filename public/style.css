@@ -2211,6 +2211,40 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
 }
 .ob-btn-passer:active { opacity: 0.6; }
 
+/* ── ZONES ACCUEIL (Proposition 3) ───────────────────── */
+.accueil-zone {
+  margin: 0 16px 8px;
+  padding: 6px 0 10px;
+}
+.accueil-zone-titre {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-doux);
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+.accueil-zone-urgence {
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 2px solid #eee;
+}
+/* Bouton glycémie — mise en avant (couleur accent) */
+.btn-glycemie {
+  background: linear-gradient(135deg, #0B6650 0%, #1E8C6A 100%) !important;
+  color: #fff !important;
+}
+.btn-glycemie .btn-texte { color: #fff !important; }
+
+/* Grille 2 colonnes pour 112 / 1733 */
+.grille-appels-urgence {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 /* ── INDICATEUR DE CHARGEMENT TTS ────────────────────── */
 #tts-loading {
   position: fixed;
