@@ -1008,13 +1008,13 @@ function messageBonjourComplet() {
   const prenom = getPrenom();
   const nom    = prenom ? `, ${prenom}` : '';
 
-  if (h >= 5  && h < 8)  return `Bonjour${nom} 🌅`;
-  if (h >= 8  && h < 12) return `Bonjour${nom} ☀️`;
-  if (h >= 12 && h < 14) return `Bon appétit${nom} 🍽️`;
-  if (h >= 14 && h < 17) return `Bonne après-midi${nom} 🌤️`;
-  if (h >= 17 && h < 20) return `Bonsoir${nom} 🌆`;
-  if (h >= 20)           return `Bonsoir${nom} 🌙`;
-  return `Bonne nuit${nom} 🌜`;
+  if (h >= 5  && h < 8)  return `Bonjour${nom}`;
+  if (h >= 8  && h < 12) return `Bonjour${nom}`;
+  if (h >= 12 && h < 14) return `Bon appétit${nom}`;
+  if (h >= 14 && h < 17) return `Bonne après-midi${nom}`;
+  if (h >= 17 && h < 20) return `Bonsoir${nom}`;
+  if (h >= 20)           return `Bonsoir${nom}`;
+  return `Bonne nuit${nom}`;
 }
 
 // ════════════════════════════════════════════════════════

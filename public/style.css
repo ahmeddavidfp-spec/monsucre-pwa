@@ -127,8 +127,8 @@ html, body {
   gap: 20px;
   background: #FEF3E8;
   border: none;
-  border-radius: 24px;
-  border-left: 6px solid #D4821A;
+  border-radius: 18px;
+  border-left: 5px solid #D4821A;
   padding: 24px 24px;
   min-height: 76px;
   font-size: 22px;
@@ -311,7 +311,7 @@ html, body {
   align-items: center;
   justify-content: center;
 }
-.glycemie-indicateur:empty { min-height: 0; padding: 0; margin: 0; }
+.glycemie-indicateur:empty { display: none; }
 .glyc-ind-ok         { background: #D4EDDA; color: #147A35; }
 .glyc-ind-attention  { background: #FFF3CD; color: #856404; }
 .glyc-ind-elevee     { background: #FFE4C4; color: #D96500; }
@@ -356,6 +356,12 @@ html, body {
 .glyc-ref-tres  { background: #FFF0E6; }
 .glyc-ref-tres  .glyc-ref-puce { background: #C96B2B; }
 .glyc-ref-tres  .glyc-ref-nom  { color: #C96B2B; }
+
+/* Bouton Enregistrer ancré en bas de l'écran glycémie */
+#ecran-glycemie .btn-confirmer {
+  margin-top: auto;
+  margin-bottom: 8px;
+}
 
 /* Ligne active quand la valeur de glycémie est saisie */
 .glyc-ref-ligne.glyc-ref-active {
@@ -2311,7 +2317,7 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
 .btn-glycemie {
   background: var(--blanc) !important;
   color: var(--texte) !important;
-  border-left: 4px solid #0B6650 !important;
+  border-left: 6px solid #0B6650 !important;
 }
 .btn-glycemie .btn-texte { color: var(--texte) !important; }
 .btn-urgence-home .btn-icone { background: rgba(212,130,26,0.13); color: #B86A10; }
