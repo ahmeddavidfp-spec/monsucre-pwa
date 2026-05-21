@@ -2235,33 +2235,36 @@ function chargerMedicaments() {
   ];
 
   let html = '';
-  if (duJour.length > 0) html += `<div class="med-section-titre">🗓️ Aujourd'hui</div>`;
+  if (duJour.length > 0) html += `<div class="med-section-titre">Aujourd'hui</div>`;
 
   tries.forEach((med, idx) => {
     if (!estDuAujourdhui(med) && (idx === 0 || estDuAujourdhui(tries[idx - 1]))) {
-      html += `<div class="med-section-titre" style="margin-top:8px">📆 Autres jours</div>`;
+      html += `<div class="med-section-titre" style="margin-top:8px">Autres jours</div>`;
     }
     const dj       = estDuAujourdhui(med);
     const enRetard = dj && !med.pris && heureEnMinutes(med) + 30 <= now;
-    const iconesPeriode = { matin:'🌅', midi:'☀️', soir:'🌆', nuit:'🌙' };
     const labelsPeriode = { matin:'Matin', midi:'Midi', soir:'Soir', nuit:'Nuit' };
     const heureAffichee = (med.heure && med.heure !== labelsPeriode[med.periode]) ? med.heure : '';
+    // Nettoie la posologie : retire les textes étrangers entre parenthèses
+    const posologiePropre = med.posologie
+      ? esc(med.posologie).replace(/\s*\([^)]*\)/g, '').trim()
+      : '';
     html += `
     <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''} ${!dj ? 'pas-aujourd' : ''} ${med.desactive ? 'desactive' : ''}"
          onclick="ouvrirFicheMed(${med.id})">
       <div class="med-carte-header">
-        <span class="med-carte-periode-label">${iconesPeriode[med.periode] || '💊'} ${labelsPeriode[med.periode] || med.periode}</span>
+        <span class="med-carte-periode-label">${labelsPeriode[med.periode] || med.periode}</span>
         ${heureAffichee ? `<span class="med-carte-heure-tag">${heureAffichee}</span>` : ''}
-        ${enRetard ? '<span class="med-retard">⚠️ Oublié !</span>' : ''}
+        ${enRetard ? '<span class="med-retard">Oublié</span>' : ''}
       </div>
       <div class="med-carte-corps">
-        <div class="med-nom">${esc(med.nom)}${med.insuline ? ' <span class="med-badge-insuline">💉</span>' : ''}${med.desactive ? ' <span class="med-desactive-tag">désactivé</span>' : ''}</div>
-        ${med.posologie ? `<div class="med-posologie">${esc(med.posologie)}</div>` : ''}
+        <div class="med-nom">${esc(med.nom)}${med.insuline ? ' <span class="med-badge-insuline">Insuline</span>' : ''}${med.desactive ? ' <span class="med-desactive-tag">désactivé</span>' : ''}</div>
+        ${posologiePropre ? `<div class="med-posologie">${posologiePropre}</div>` : ''}
         ${labelFrequence(med) ? `<div class="med-freq-tag">${labelFrequence(med).trim()}</div>` : ''}
         <button class="btn-med-pris ${med.pris ? 'deja-pris' : ''}"
                 onclick="event.stopPropagation(); marquerPris(${med.id}, this)"
                 ${med.pris || !dj || med.desactive ? 'disabled' : ''}>
-          ${med.pris ? '✅ Pris — bien joué !' : med.desactive ? '⏸ Désactivé' : dj ? '✔ Marquer comme pris' : '—'}
+          ${med.pris ? 'Pris — bien joué !' : med.desactive ? 'Désactivé' : dj ? 'Marquer comme pris' : '—'}
         </button>
       </div>
     </div>`;

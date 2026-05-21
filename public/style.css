@@ -755,14 +755,15 @@ input[type="time"].champ-input {
   gap: 8px;
   padding: 10px 16px;
 }
-.med-carte.matin .med-carte-header { background: #E08C00; }
-.med-carte.midi  .med-carte-header { background: #1450C4; }
-.med-carte.soir  .med-carte-header { background: #7B10BB; }
-.med-carte.nuit  .med-carte-header { background: #3949AB; }
+.med-carte.matin .med-carte-header { background: #F5EDE0; }
+.med-carte.midi  .med-carte-header { background: #EAF4EF; }
+.med-carte.soir  .med-carte-header { background: #F0EBF8; }
+.med-carte.nuit  .med-carte-header { background: #E8ECF5; }
 
 .med-carte-periode-label {
   font-size: 14px;
   font-weight: 800;
+  color: #3A3A3A;
   color: white;
   letter-spacing: 0.4px;
   text-transform: uppercase;
@@ -778,9 +779,9 @@ input[type="time"].champ-input {
 }
 .med-retard {
   font-size: 13px;
-  font-weight: 800;
-  color: white;
-  background: rgba(0,0,0,0.25);
+  font-weight: 700;
+  color: #B86A10;
+  background: rgba(212,130,26,0.18);
   border-radius: 8px;
   padding: 2px 9px;
 }
@@ -860,13 +861,13 @@ input[type="time"].champ-input {
 .btn-med-pris.deja-pris { background: #B8C8C4 !important; cursor: default; }
 .btn-med-pris:disabled  { background: #B8C8C4 !important; cursor: default; }
 
-.med-carte.matin .btn-med-pris:not(.deja-pris):not(:disabled) { background: #E08C00; }
-.med-carte.midi  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #1450C4; }
-.med-carte.soir  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #8B00CC; }
-.med-carte.nuit  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #3949AB; }
+.med-carte.matin .btn-med-pris:not(.deja-pris):not(:disabled) { background: #0B6650; }
+.med-carte.midi  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #0B6650; }
+.med-carte.soir  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #0B6650; }
+.med-carte.nuit  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #0B6650; }
 
-.med-carte.en-retard .med-carte-header { background: var(--rouge) !important; }
-.med-carte.en-retard .med-nom { color: var(--rouge); }
+.med-carte.en-retard .med-carte-header { background: #FEF3E8 !important; }
+.med-carte.en-retard .med-nom { color: var(--texte); }
 .med-carte.pas-aujourd .med-carte-corps { opacity: 0.28; }
 .med-carte.pas-aujourd .med-carte-header { opacity: 0.5; }
 .med-carte.desactive .med-carte-corps   { opacity: 0.35; filter: grayscale(0.6); }
