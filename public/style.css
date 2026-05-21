@@ -366,12 +366,12 @@ html, body {
 /* Aide saisie */
 .glyc-aide-saisie {
   text-align: center;
-  font-size: 14px;
-  color: var(--texte-doux);
-  margin: 2px 0 6px;
-  font-weight: 500;
-  font-style: italic;
-  transition: opacity 0.2s;
+  font-size: 15px;
+  color: var(--glyc-couleur);
+  margin: 0;
+  font-weight: 600;
+  opacity: 0.75;
+  transition: opacity 0.3s;
 }
 .glycemie-carte { border-left: 7px solid var(--glyc-couleur) !important; }
 .glycemie-valeur { font-size: 24px; font-weight: 800; margin-top: 6px; color: var(--texte); }
