@@ -2213,36 +2213,56 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
 
 /* ── ZONES ACCUEIL (Proposition 3) ───────────────────── */
 .accueil-zone {
-  margin: 0 16px 8px;
-  padding: 6px 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 16px 4px;
+  padding: 4px 0 10px;
 }
 .accueil-zone-titre {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--texte-doux);
-  margin-bottom: 10px;
-  padding-left: 4px;
+  padding-left: 2px;
+  margin-bottom: 2px;
 }
 .accueil-zone-urgence {
-  margin-top: 4px;
+  margin-top: 2px;
   padding-top: 14px;
-  border-top: 2px solid #eee;
+  border-top: 2px solid #ececec;
 }
-/* Bouton glycémie — mise en avant (couleur accent) */
+
+/* Icône SVG — rond neutre, couleur par bouton */
+.btn-icone {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0;
+}
+.btn-glycemie .btn-icone { background: #D6EDE5; color: #0B6650; }
+.btn-meds     .btn-icone { background: #E4ECF8; color: #3A5BA0; }
+.btn-repas    .btn-icone { background: #F5EDE0; color: #8B5E3C; }
+
+/* Glycémie : accent discret sans gradient */
 .btn-glycemie {
-  background: linear-gradient(135deg, #0B6650 0%, #1E8C6A 100%) !important;
-  color: #fff !important;
+  background: var(--blanc) !important;
+  color: var(--texte) !important;
+  border-left: 4px solid #0B6650 !important;
 }
-.btn-glycemie .btn-texte { color: #fff !important; }
+.btn-glycemie .btn-texte { color: var(--texte) !important; }
 
 /* Grille 2 colonnes pour 112 / 1733 */
 .grille-appels-urgence {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-top: 10px;
 }
 
 /* ── INDICATEUR DE CHARGEMENT TTS ────────────────────── */
