@@ -319,10 +319,10 @@
   <div id="ecran-glycemie" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-accueil')" aria-label="Retour à l'accueil">← Retour</button>
-      <h2>📊 Ma glycémie</h2>
+      <h2>Ma glycémie</h2>
     </div>
     <div class="contenu-ecran">
-      <p class="instruction">Quelle est votre valeur ?</p>
+      <p class="instruction">Votre glycémie du jour</p>
 
       <div class="glycemie-input-zone">
         <input type="number" id="inp-glycemie" step="1" min="20" max="600"
@@ -334,10 +334,26 @@
       <div id="glycemie-indicateur" class="glycemie-indicateur"></div>
 
       <div class="glycemie-reference">
-        🔴 Hypoglycémie : &lt; 70 mg/dL<br>
-        🟢 Normal : 70 – 126 mg/dL<br>
-        🟡 Élevé : 126 – 180 mg/dL<br>
-        🔴 Très élevé : &gt; 180 mg/dL
+        <div class="glyc-ref-ligne glyc-ref-hypo">
+          <span class="glyc-ref-puce"></span>
+          <span class="glyc-ref-nom">Hypoglycémie</span>
+          <span class="glyc-ref-val">&lt; 70 mg/dL</span>
+        </div>
+        <div class="glyc-ref-ligne glyc-ref-ok">
+          <span class="glyc-ref-puce"></span>
+          <span class="glyc-ref-nom">Normal</span>
+          <span class="glyc-ref-val">70 – 126 mg/dL</span>
+        </div>
+        <div class="glyc-ref-ligne glyc-ref-eleve">
+          <span class="glyc-ref-puce"></span>
+          <span class="glyc-ref-nom">Élevé</span>
+          <span class="glyc-ref-val">126 – 180 mg/dL</span>
+        </div>
+        <div class="glyc-ref-ligne glyc-ref-tres">
+          <span class="glyc-ref-puce"></span>
+          <span class="glyc-ref-nom">Très élevé</span>
+          <span class="glyc-ref-val">&gt; 180 mg/dL</span>
+        </div>
       </div>
 
       <div id="glycemie-erreur" class="erreur-msg zone-cachee" role="alert" aria-live="assertive"></div>

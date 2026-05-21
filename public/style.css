@@ -316,14 +316,44 @@ html, body {
 .glyc-ind-tres-elevee{ background: #FDECEA; color: #CC1F1F; }
 .glyc-ind-bas        { background: #FFE4C4; color: #D96500; }
 .glycemie-reference {
-  background: #F8F9FA;
-  border-radius: 14px;
-  padding: 14px 16px;
-  font-size: 15px;
-  color: var(--texte-doux);
-  line-height: 1.8;
-  text-align: center;
+  background: transparent;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  text-align: left;
 }
+.glyc-ref-ligne {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.glyc-ref-puce {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.glyc-ref-nom { flex: 1; }
+.glyc-ref-val { font-size: 14px; font-weight: 500; opacity: 0.6; }
+
+.glyc-ref-hypo { background: #FEF2F2; }
+.glyc-ref-hypo .glyc-ref-puce { background: #C0392B; }
+.glyc-ref-hypo .glyc-ref-nom  { color: #C0392B; }
+.glyc-ref-ok   { background: #EFF8F3; }
+.glyc-ref-ok   .glyc-ref-puce { background: #1E6E45; }
+.glyc-ref-ok   .glyc-ref-nom  { color: #1E6E45; }
+.glyc-ref-eleve { background: #FFFBEB; }
+.glyc-ref-eleve .glyc-ref-puce { background: #B8860B; }
+.glyc-ref-eleve .glyc-ref-nom  { color: #B8860B; }
+.glyc-ref-tres  { background: #FEF2F2; }
+.glyc-ref-tres  .glyc-ref-puce { background: #C0392B; }
+.glyc-ref-tres  .glyc-ref-nom  { color: #C0392B; }
 .glycemie-carte { border-left: 7px solid var(--glyc-couleur) !important; }
 .glycemie-valeur { font-size: 24px; font-weight: 800; margin-top: 6px; color: var(--texte); }
 .glyc-ok        { background: #EAF6EC !important; }
