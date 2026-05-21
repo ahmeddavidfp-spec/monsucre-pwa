@@ -1557,25 +1557,53 @@ function reinitGlyc() {
   if (ind) { ind.textContent = ''; ind.className = 'glycemie-indicateur'; }
   const err = document.getElementById('glycemie-erreur');
   if (err) err.classList.remove('visible');
+  // Réinitialise la ligne active dans le tableau de référence
+  document.querySelectorAll('.glyc-ref-ligne').forEach(l => l.classList.remove('glyc-ref-active'));
+  // Réaffiche le texte d'aide
+  const aide = document.getElementById('glyc-aide-saisie');
+  if (aide) aide.style.opacity = '1';
 }
 
 function mettreAJourIndicateurGlyc() {
   const val = parseInt(document.getElementById('inp-glycemie').value, 10);
   const ind = document.getElementById('glycemie-indicateur');
   if (!ind) return;
-  if (isNaN(val)) { ind.textContent = ''; ind.className = 'glycemie-indicateur'; return; }
+
+  // Masque le texte d'aide dès qu'une valeur est saisie
+  const aide = document.getElementById('glyc-aide-saisie');
+
+  // Réinitialise les lignes actives
+  document.querySelectorAll('.glyc-ref-ligne').forEach(l => l.classList.remove('glyc-ref-active'));
+
+  if (isNaN(val)) {
+    ind.textContent = '';
+    ind.className = 'glycemie-indicateur';
+    if (aide) aide.style.opacity = '1';
+    return;
+  }
+
+  if (aide) aide.style.opacity = '0';
+
   if (val < 70) {
-    ind.textContent = '🔴 Hypoglycémie — Consultez rapidement !';
+    ind.textContent = 'Hypoglycémie — Consultez rapidement !';
     ind.className = 'glycemie-indicateur glyc-ind-bas';
+    const ligne = document.querySelector('.glyc-ref-hypo');
+    if (ligne) ligne.classList.add('glyc-ref-active');
   } else if (val <= 126) {
-    ind.textContent = '🟢 Normal — Très bien !';
+    ind.textContent = 'Normal — Très bien !';
     ind.className = 'glycemie-indicateur glyc-ind-ok';
+    const ligne = document.querySelector('.glyc-ref-ok');
+    if (ligne) ligne.classList.add('glyc-ref-active');
   } else if (val <= 180) {
-    ind.textContent = '🟡 Élevé — Soyez attentif.';
+    ind.textContent = 'Élevé — Soyez attentif.';
     ind.className = 'glycemie-indicateur glyc-ind-elevee';
+    const ligne = document.querySelector('.glyc-ref-eleve');
+    if (ligne) ligne.classList.add('glyc-ref-active');
   } else {
-    ind.textContent = '🔴 Très élevé — Consultez votre médecin.';
+    ind.textContent = 'Très élevé — Consultez votre médecin.';
     ind.className = 'glycemie-indicateur glyc-ind-tres-elevee';
+    const ligne = document.querySelector('.glyc-ref-tres');
+    if (ligne) ligne.classList.add('glyc-ref-active');
   }
 }
 

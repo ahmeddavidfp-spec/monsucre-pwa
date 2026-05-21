@@ -346,7 +346,7 @@ html, body {
 .glyc-ref-hypo { background: #FEF2F2; }
 .glyc-ref-hypo .glyc-ref-puce { background: #C0392B; }
 .glyc-ref-hypo .glyc-ref-nom  { color: #C0392B; }
-.glyc-ref-ok   { background: #EFF8F3; }
+.glyc-ref-ok   { background: #D0ECD8; }
 .glyc-ref-ok   .glyc-ref-puce { background: #1E6E45; }
 .glyc-ref-ok   .glyc-ref-nom  { color: #1E6E45; }
 .glyc-ref-eleve { background: #FFFBEB; }
@@ -355,6 +355,24 @@ html, body {
 .glyc-ref-tres  { background: #FFF0E6; }
 .glyc-ref-tres  .glyc-ref-puce { background: #C96B2B; }
 .glyc-ref-tres  .glyc-ref-nom  { color: #C96B2B; }
+
+/* Ligne active quand la valeur de glycémie est saisie */
+.glyc-ref-ligne.glyc-ref-active {
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.20);
+  font-weight: 800;
+}
+.glyc-ref-ligne.glyc-ref-active .glyc-ref-val { opacity: 1; font-weight: 700; }
+
+/* Aide saisie */
+.glyc-aide-saisie {
+  text-align: center;
+  font-size: 14px;
+  color: var(--texte-doux);
+  margin: 2px 0 6px;
+  font-weight: 500;
+  font-style: italic;
+  transition: opacity 0.2s;
+}
 .glycemie-carte { border-left: 7px solid var(--glyc-couleur) !important; }
 .glycemie-valeur { font-size: 24px; font-weight: 800; margin-top: 6px; color: var(--texte); }
 .glyc-ok        { background: #EAF6EC !important; }
