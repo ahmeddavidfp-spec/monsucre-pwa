@@ -324,11 +324,14 @@
     <div class="contenu-ecran">
       <p class="instruction">Votre glycémie du jour</p>
 
-      <div class="glycemie-input-zone">
-        <input type="number" id="inp-glycemie" step="1" min="20" max="600"
-               placeholder="120" inputmode="numeric" class="champ-glycemie"
-               oninput="mettreAJourIndicateurGlyc()" />
-        <span class="glycemie-unite">mg/dL</span>
+      <div class="glycemie-input-zone" onclick="document.getElementById('inp-glycemie').focus()">
+        <div class="glycemie-input-row">
+          <input type="number" id="inp-glycemie" step="1" min="20" max="600"
+                 placeholder="120" inputmode="numeric" class="champ-glycemie"
+                 oninput="mettreAJourIndicateurGlyc()" />
+          <span class="glycemie-unite">mg/dL</span>
+        </div>
+        <p class="glyc-aide-saisie" id="glyc-aide-saisie">Appuyez ici pour saisir votre valeur</p>
       </div>
 
       <div id="glycemie-indicateur" class="glycemie-indicateur"></div>
