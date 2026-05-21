@@ -761,18 +761,17 @@ input[type="time"].champ-input {
 .med-carte.nuit  .med-carte-header { background: #E8ECF5; }
 
 .med-carte-periode-label {
-  font-size: 14px;
-  font-weight: 800;
-  color: #3A3A3A;
-  color: white;
-  letter-spacing: 0.4px;
+  font-size: 15px;
+  font-weight: 900;
+  color: #1A2530;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 .med-carte-heure-tag {
   font-size: 13px;
   font-weight: 700;
-  color: rgba(255,255,255,0.85);
-  background: rgba(0,0,0,0.18);
+  color: #4A5568;
+  background: rgba(0,0,0,0.08);
   border-radius: 8px;
   padding: 2px 9px;
   margin-left: auto;
