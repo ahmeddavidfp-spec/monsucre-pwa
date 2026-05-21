@@ -63,7 +63,7 @@ html, body {
   background: linear-gradient(160deg, #4F8A6D 0%, #3A6B55 100%);
   transition: background 0.8s ease;
   color: white;
-  padding: 36px 24px 28px;
+  padding: 48px 24px 36px;
   text-align: center;
   position: relative;
 }
@@ -71,21 +71,20 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
+  gap: 4px;
 }
-/* Bouton paramètres discret (coin haut droit) */
-.entete-settings-btn {
-  position: absolute;
-  top: 14px;
-  right: 16px;
+/* Goutte-bouton admin */
+.logo-btn {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.55);
-  padding: 8px;
+  padding: 0;
   cursor: pointer;
-  transition: opacity 0.15s;
+  border-radius: 50%;
+  transition: transform 0.15s, opacity 0.15s;
+  display: block;
 }
-.entete-settings-btn:active { opacity: 0.4; }
+.logo-btn:active { transform: scale(0.92); opacity: 0.8; }
+.logo { width: 46px; height: 46px; }
 .bonjour { font-size: 30px; font-weight: 800; opacity: 1; margin: 0; line-height: 1.2; }
 
 /* ── BOUTONS PRINCIPAUX ACCUEIL ─────────────────────── */
