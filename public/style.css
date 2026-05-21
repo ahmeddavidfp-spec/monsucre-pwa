@@ -2217,19 +2217,19 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   flex-direction: column;
   gap: 10px;
   margin: 0 16px 4px;
-  padding: 4px 0 10px;
+  padding: 16px 0 10px;
 }
 .accueil-zone-titre {
   font-size: 20px;
   font-weight: 800;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: #1A2530;
   padding-left: 2px;
   margin-bottom: 4px;
 }
 .accueil-zone-urgence {
-  margin-top: 2px;
-  padding-top: 14px;
+  padding-top: 16px;
   border-top: 2px solid #ececec;
 }
 
