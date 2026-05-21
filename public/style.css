@@ -178,6 +178,17 @@ html, body {
 }
 .btn-appel:active { transform: scale(0.96); }
 .btn-appel-left { display: none; }
+.grille-appels-urgence .btn-appel-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.grille-appels-urgence .btn-appel.rouge .btn-appel-left { background: rgba(192,57,43,0.10); color: #C0392B; }
+.grille-appels-urgence .btn-appel.vert  .btn-appel-left { background: rgba(30,110,69,0.10);  color: #1E6E45; }
 .btn-appel-right { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .btn-appel-numero { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
 .btn-appel-label  { font-size: 13px; font-weight: 600; opacity: 0.8; }
