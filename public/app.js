@@ -2518,7 +2518,19 @@ async function activerNotifications() {
   afficherStatutNotifications();
   if (permission === 'granted') getMedicaments().forEach(planifierNotification);
 }
-function demanderPermissionNotifications() { afficherStatutNotifications(); }
+async function demanderPermissionNotifications() {
+  afficherStatutNotifications();
+  if (!('Notification' in window)) return;
+  // Demande la permission si pas encore décidé
+  if (Notification.permission === 'default') {
+    await Notification.requestPermission();
+    afficherStatutNotifications();
+  }
+  if (Notification.permission === 'granted') {
+    getMedicaments().forEach(planifierNotification);
+    verifierMedsOublies();
+  }
+}
 
 async function swController() {
   if (!('serviceWorker' in navigator)) return null;
@@ -2544,11 +2556,17 @@ function verifierMedsOublies() {
   const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && !m.desactive && heureEnMinutes(m) + 30 <= now);
   mettreAJourBadge(oublies.length);
   if (oublies.length === 0) return;
+
+  // Déduplication : max 1 notif par heure par jour (évite le spam toutes les 15 min)
+  const cle = `notif_oubli_${new Date().toDateString()}_${Math.floor(now / 60)}`;
+  if (sessionStorage.getItem(cle)) return;
+  sessionStorage.setItem(cle, '1');
+
   const noms  = oublies.map(m => m.nom).join(', ');
   const corps = oublies.length === 1
     ? `Vous n'avez pas encore pris : ${noms}`
-    : `${oublies.length} médicaments oubliés : ${noms}`;
-  envoyerNotification('Mon Sucre 💊 — Rappel', corps);
+    : `${oublies.length} médicaments à prendre : ${noms}`;
+  envoyerNotification('Mon Sucre — Rappel médicament', corps);
 }
 
 async function planifierNotification(med) {
@@ -2569,7 +2587,7 @@ async function planifierNotification(med) {
       type: 'PLANIFIER_NOTIF',
       medId: med.id,
       slot:  'rappel',
-      titre: 'Mon Sucre 💊',
+      titre: 'Mon Sucre — Médicament',
       corps: `N'oubliez pas de prendre : ${med.nom}`,
       delai
     });
@@ -2577,19 +2595,19 @@ async function planifierNotification(med) {
       type: 'PLANIFIER_NOTIF',
       medId: med.id,
       slot:  'oubli',
-      titre: 'Mon Sucre ⚠️ Rappel',
-      corps: `Vous n'avez toujours pas pris : ${med.nom} !`,
+      titre: 'Mon Sucre — Rappel urgent',
+      corps: `Vous n'avez toujours pas pris : ${med.nom}`,
       delai: delai + 30 * 60 * 1000
     });
   } else {
     // Fallback : setTimeout dans la page (marche uniquement si l'app est ouverte)
     setTimeout(() => {
       const m = getMedicaments().find(x => x.id === med.id);
-      if (m && !m.pris && !m.desactive) envoyerNotification('Mon Sucre 💊', `N'oubliez pas de prendre : ${m.nom}`);
+      if (m && !m.pris && !m.desactive) envoyerNotification('Mon Sucre — Médicament', `N'oubliez pas de prendre : ${m.nom}`);
     }, delai);
     setTimeout(() => {
       const m = getMedicaments().find(x => x.id === med.id);
-      if (m && !m.pris && !m.desactive) envoyerNotification('Mon Sucre ⚠️ Rappel', `Vous n'avez toujours pas pris : ${m.nom} !`);
+      if (m && !m.pris && !m.desactive) envoyerNotification('Mon Sucre — Rappel urgent', `Vous n'avez toujours pas pris : ${m.nom}`);
     }, delai + 30 * 60 * 1000);
   }
 }
@@ -2744,6 +2762,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!session) { allerA('ecran-inscription'); return; }
 
   // Premier lancement ou onboarding non terminé → onboarding aidant
-  // Note : demarrerApp() appelle déjà hydraterDepuisServeur() en interne — pas de double appel
   demarrerApp();
+});
+
+// Vérifie les médicaments oubliés et met à jour la pastille dès que
+// l'utilisateur revient dans l'app (depuis l'arrière-plan)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    verifierMedsOublies();
+    getMedicaments().forEach(planifierNotification);
+  }
 });
