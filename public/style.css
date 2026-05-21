@@ -2250,6 +2250,7 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   border-left: 4px solid #0B6650 !important;
 }
 .btn-glycemie .btn-texte { color: var(--texte) !important; }
+.btn-urgence-home .btn-icone { background: rgba(192,57,43,0.12); color: #C0392B; }
 
 /* Grille 2 colonnes pour 112 / 1733 */
 .grille-appels-urgence {
