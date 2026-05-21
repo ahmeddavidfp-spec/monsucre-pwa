@@ -273,19 +273,13 @@ html, body {
 /* ── GLYCÉMIE ────────────────────────────────────────── */
 .glycemie-input-zone {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 6px;
+  align-items: center;
+  gap: 12px;
   background: white;
   border: 3px solid var(--glyc-couleur);
   border-radius: 20px;
-  padding: 16px 20px 12px;
+  padding: 16px 20px;
   cursor: pointer;
-}
-.glycemie-input-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 .champ-glycemie {
   font-size: 36px;
@@ -370,13 +364,17 @@ html, body {
 }
 .glyc-ref-ligne.glyc-ref-active .glyc-ref-val { opacity: 1; font-weight: 700; }
 
-/* Aide saisie — à l'intérieur de la zone de saisie */
+/* Aide saisie */
 .glyc-aide-saisie {
+  display: block !important;
   text-align: center;
-  font-size: 14px;
-  color: var(--texte-doux);
+  font-size: 15px;
+  color: #0B6650;
+  background: #EAF4EF;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
   margin: 0;
-  font-weight: 500;
   transition: opacity 0.3s;
 }
 .glycemie-carte { border-left: 7px solid var(--glyc-couleur) !important; }

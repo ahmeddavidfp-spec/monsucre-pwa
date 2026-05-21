@@ -1550,6 +1550,22 @@ function sauverGlycemieRepas() {
 // ════════════════════════════════════════════════════════
 // ── Glycémie ───────────────────────────────────────────
 // ════════════════════════════════════════════════════════
+function _getHintGlyc() {
+  // Retourne l'élément hint, ou le crée si le HTML est en vieux cache
+  let aide = document.getElementById('glyc-aide-saisie');
+  if (!aide) {
+    const zone = document.querySelector('#ecran-glycemie .glycemie-input-zone');
+    if (zone) {
+      aide = document.createElement('p');
+      aide.id = 'glyc-aide-saisie';
+      aide.className = 'glyc-aide-saisie';
+      aide.textContent = 'Appuyez sur le champ pour saisir votre valeur';
+      zone.insertAdjacentElement('afterend', aide);
+    }
+  }
+  return aide;
+}
+
 function reinitGlyc() {
   const inp = document.getElementById('inp-glycemie');
   if (inp) inp.value = '';
@@ -1559,9 +1575,9 @@ function reinitGlyc() {
   if (err) err.classList.remove('visible');
   // Réinitialise la ligne active dans le tableau de référence
   document.querySelectorAll('.glyc-ref-ligne').forEach(l => l.classList.remove('glyc-ref-active'));
-  // Réaffiche le texte d'aide
-  const aide = document.getElementById('glyc-aide-saisie');
-  if (aide) aide.style.opacity = '1';
+  // Affiche le hint (création dynamique si HTML en vieux cache)
+  const aide = _getHintGlyc();
+  if (aide) { aide.style.display = 'block'; aide.style.opacity = '1'; }
 }
 
 function mettreAJourIndicateurGlyc() {
@@ -1570,7 +1586,7 @@ function mettreAJourIndicateurGlyc() {
   if (!ind) return;
 
   // Masque le texte d'aide dès qu'une valeur est saisie
-  const aide = document.getElementById('glyc-aide-saisie');
+  const aide = _getHintGlyc();
 
   // Réinitialise les lignes actives
   document.querySelectorAll('.glyc-ref-ligne').forEach(l => l.classList.remove('glyc-ref-active'));
