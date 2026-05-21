@@ -2220,11 +2220,10 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   padding: 4px 0 10px;
 }
 .accueil-zone-titre {
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 800;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--texte-doux);
+  letter-spacing: 0.02em;
+  color: #4A5568;
   padding-left: 2px;
   margin-bottom: 2px;
 }
