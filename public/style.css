@@ -34,8 +34,8 @@
   --repas-clair:     #FEF3C7;
   --meds-couleur:    #2563EB;
   --meds-clair:      #EFF6FF;
-  --glyc-couleur:    #7C3AED;
-  --glyc-clair:      #F5F3FF;
+  --glyc-couleur:    #0B6650;
+  --glyc-clair:      #EAF4EF;
 }
 
 html, body {
@@ -310,6 +310,7 @@ html, body {
   align-items: center;
   justify-content: center;
 }
+.glycemie-indicateur:empty { min-height: 0; padding: 0; margin: 0; }
 .glyc-ind-ok         { background: #D4EDDA; color: #147A35; }
 .glyc-ind-attention  { background: #FFF3CD; color: #856404; }
 .glyc-ind-elevee     { background: #FFE4C4; color: #D96500; }
@@ -351,9 +352,9 @@ html, body {
 .glyc-ref-eleve { background: #FFFBEB; }
 .glyc-ref-eleve .glyc-ref-puce { background: #B8860B; }
 .glyc-ref-eleve .glyc-ref-nom  { color: #B8860B; }
-.glyc-ref-tres  { background: #FEF2F2; }
-.glyc-ref-tres  .glyc-ref-puce { background: #C0392B; }
-.glyc-ref-tres  .glyc-ref-nom  { color: #C0392B; }
+.glyc-ref-tres  { background: #FFF0E6; }
+.glyc-ref-tres  .glyc-ref-puce { background: #C96B2B; }
+.glyc-ref-tres  .glyc-ref-nom  { color: #C96B2B; }
 .glycemie-carte { border-left: 7px solid var(--glyc-couleur) !important; }
 .glycemie-valeur { font-size: 24px; font-weight: 800; margin-top: 6px; color: var(--texte); }
 .glyc-ok        { background: #EAF6EC !important; }
