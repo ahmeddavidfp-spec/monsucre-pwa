@@ -264,54 +264,71 @@
       <h2>Mon repas</h2>
     </div>
     <div class="contenu-ecran">
-      <p class="instruction">Qu'avez-vous mangé ?</p>
 
-      <button class="btn-action" onclick="ouvrirPhoto()">
-        <span class="btn-icone">📷</span>
-        <span class="btn-texte">Prendre une photo</span>
-      </button>
-      <input type="file" id="input-photo" accept="image/*" capture="environment" style="display:none" onchange="analyserPhoto(this)" />
+      <!-- Choix de saisie -->
+      <div id="zone-saisie-repas">
+        <p class="repas-question">Qu'avez-vous mangé ?</p>
 
-      <button class="btn-action" onclick="commencerVoix()">
-        <span class="btn-icone">🎤</span>
-        <span class="btn-texte">Dire à voix haute</span>
-      </button>
-
-      <!-- Saisie glycémie mesurée -->
-      <div class="glyc-saisie-carte">
-        <div class="glyc-saisie-titre">📟 Ma glycémie mesurée</div>
-        <div class="glyc-saisie-ligne">
-          <input type="number" id="inp-glycemie-repas" step="1" min="20" max="600"
-                 placeholder="Ex : 120" inputmode="numeric" class="glyc-saisie-input"
-                 oninput="mettreAJourIndicateurGlycRepas()" />
-          <span class="glyc-saisie-unite">mg/dL</span>
-        </div>
-        <div id="glyc-repas-indicateur" class="glycemie-indicateur" style="min-height:0"></div>
-        <button class="btn-confirmer" onclick="sauverGlycemieRepas()" style="margin-top:10px">
-          💾 Enregistrer ma glycémie
+        <button class="btn-repas-choix btn-repas-photo" onclick="ouvrirPhoto()">
+          <div class="btn-repas-icone">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </div>
+          <div class="btn-repas-textes">
+            <span class="btn-repas-titre">Prendre une photo</span>
+            <span class="btn-repas-sous">Photographiez votre assiette</span>
+          </div>
+          <svg class="btn-repas-fleche" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
-        <div id="glyc-repas-confirm" class="config-confirmation zone-cachee">✅ Glycémie enregistrée !</div>
+        <input type="file" id="input-photo" accept="image/*" capture="environment" style="display:none" onchange="analyserPhoto(this)" />
+
+        <button class="btn-repas-choix btn-repas-voix" onclick="commencerVoix()">
+          <div class="btn-repas-icone">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </div>
+          <div class="btn-repas-textes">
+            <span class="btn-repas-titre">Décrire à voix haute</span>
+            <span class="btn-repas-sous">Dites ce que vous avez mangé</span>
+          </div>
+          <svg class="btn-repas-fleche" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
       </div>
 
+      <!-- Écoute vocale -->
       <div id="zone-voix" class="zone-cachee">
-        <p class="ecoute-texte">🎙️ J'écoute…</p>
-        <p id="texte-reconnu" class="texte-reconnu"></p>
-        <button class="btn-confirmer" onclick="envoyerRepas()" style="display:none" id="btn-envoyer-repas">✅ C'est ça !</button>
+        <div class="repas-ecoute-carte">
+          <div class="repas-pulse-ring"></div>
+          <p class="repas-ecoute-label">J'écoute…</p>
+          <p id="texte-reconnu" class="texte-reconnu"></p>
+          <button class="btn-confirmer" onclick="envoyerRepas()" style="display:none" id="btn-envoyer-repas">C'est ça !</button>
+        </div>
       </div>
 
+      <!-- Analyse en cours -->
       <div id="zone-analyse" class="zone-cachee">
-        <div class="chargement">⏳ J'analyse votre repas…</div>
+        <div class="repas-analyse-carte">
+          <div class="repas-spinner"></div>
+          <p class="repas-analyse-label">J'analyse votre repas…</p>
+        </div>
       </div>
 
+      <!-- Conseil résultat -->
       <div id="zone-conseil" class="zone-cachee">
         <div class="conseil-card">
           <div id="repas-ig-zone" style="display:none"></div>
           <p id="texte-conseil" class="conseil-texte"></p>
-          <button class="btn-bravo" onclick="fermerConseil()">✅ Merci !</button>
+          <button class="btn-bravo" onclick="fermerConseil()">Merci !</button>
         </div>
       </div>
 
-      <button class="btn-historique" onclick="allerA('ecran-historique')">📅 Voir mes repas précédents</button>
+      <button class="btn-historique" onclick="allerA('ecran-historique')">Voir mes repas précédents</button>
     </div>
   </div>
 
