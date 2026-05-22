@@ -74,7 +74,7 @@ function planifierSync(patch) {
 }
 
 async function envoyerSync() {
-  const patch = syncPatchAccumule;
+  const patch = { ...syncPatchAccumule };
   syncPatchAccumule = {};
   syncTimer = null;
   if (Object.keys(patch).length === 0) return;
@@ -91,11 +91,28 @@ async function envoyerSync() {
       allerA('ecran-inscription');
       return;
     }
-    if (!r.ok) return;
+    if (!r.ok) throw new Error('http-' + r.status);
     const data = await r.json();
     if (data.user) sauverUserLocal(restaurerThumbnails(data.user));
-  } catch { /* offline */ }
+    localStorage.removeItem(cleUser('ms_sync_en_attente')); // sync réussie
+  } catch {
+    // Hors ligne ou erreur serveur : mémoriser pour réessai automatique
+    localStorage.setItem(cleUser('ms_sync_en_attente'), JSON.stringify(patch));
+  }
 }
+
+// Réessaie la sync en attente (appelé au retour en ligne ou focus app)
+function reessayerSyncEnAttente() {
+  try {
+    const raw = localStorage.getItem(cleUser('ms_sync_en_attente'));
+    if (!raw) return;
+    const pending = JSON.parse(raw);
+    if (Object.keys(pending).length > 0) planifierSync(pending);
+  } catch {}
+}
+
+// Retour en ligne → sync immédiate
+window.addEventListener('online', reessayerSyncEnAttente);
 
 async function hydraterDepuisServeur() {
   if (!getSession()) return null;
@@ -2883,6 +2900,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // l'utilisateur revient dans l'app (depuis l'arrière-plan)
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
+    reessayerSyncEnAttente();        // pousse les données hors-ligne en attente
     verifierMedsOublies();
     getMedicaments().forEach(planifierNotification);
   }
