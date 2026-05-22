@@ -2524,6 +2524,33 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
 }
 .pin-boite.pin-erreur { animation: pin-shake 0.5s ease; }
 
+/* ── SÉLECTEUR DE LANGUE ─────────────────────────────── */
+.langue-grid {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.btn-langue {
+  flex: 1;
+  padding: 12px 8px;
+  border-radius: 14px;
+  border: 2px solid #D0D0D0;
+  background: var(--blanc);
+  color: var(--texte);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  text-align: center;
+}
+.btn-langue:active { background: var(--accent-clair); }
+.btn-langue-actif {
+  border-color: var(--accent);
+  background: var(--accent-clair);
+  color: var(--accent-sombre);
+}
+
 /* ── BOUTON DEV ACCÈS ────────────────────────────────── */
 .btn-dev-acces {
   background: #F0F0F0;

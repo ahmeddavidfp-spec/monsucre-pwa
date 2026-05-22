@@ -167,7 +167,7 @@
       <p class="splash-sous" id="splash-bonjour">Bonjour !</p>
       <div class="splash-tap">
         <span class="splash-tap-point"></span>
-        Appuyez pour commencer
+        <span data-i18n="splash_tap">Appuyez pour commencer</span>
       </div>
     </div>
   </div>
@@ -199,40 +199,40 @@
 
     <!-- ── ZONE QUOTIDIEN ──────────────────────────────── -->
     <div class="accueil-zone accueil-zone-quotidien">
-      <div class="accueil-zone-titre">Mon quotidien</div>
+      <div class="accueil-zone-titre" data-i18n="zone_quotidien">Mon quotidien</div>
 
 <button class="btn-principal btn-glycemie" onclick="allerA('ecran-glycemie')">
         <span class="btn-icone">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
         </span>
-        <span class="btn-texte">Ma glycémie<span class="btn-sous-texte" id="sous-glycemie">Enregistrer ma valeur du jour</span></span>
+        <span class="btn-texte"><span data-i18n="ma_glycemie">Ma glycémie</span><span class="btn-sous-texte" id="sous-glycemie">Enregistrer ma valeur du jour</span></span>
       </button>
       <button class="btn-principal btn-meds" onclick="allerA('ecran-medicaments')">
         <span class="btn-icone">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
         </span>
-        <span class="btn-texte">Mes médicaments<span class="btn-sous-texte" id="sous-meds">Voir mes prises du jour</span></span>
+        <span class="btn-texte"><span data-i18n="mes_medicaments">Mes médicaments</span><span class="btn-sous-texte" id="sous-meds">Voir mes prises du jour</span></span>
         <span class="badge-meds" id="badge-meds" style="display:none">0</span>
       </button>
       <button class="btn-principal btn-repas" onclick="allerA('ecran-repas')">
         <span class="btn-icone">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2 1.1 0 2-.9 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h3v7"/></svg>
         </span>
-        <span class="btn-texte">Mon repas<span class="btn-sous-texte">Ajouter ce que j'ai mangé</span></span>
+        <span class="btn-texte"><span data-i18n="mon_repas">Mon repas</span><span class="btn-sous-texte" data-i18n="repas_sous">Ajouter ce que j'ai mangé</span></span>
       </button>
     </div>
 
     <!-- ── ZONE URGENCE ─────────────────────────────────── -->
     <div class="accueil-zone accueil-zone-urgence">
-      <div class="accueil-zone-titre">En cas de problème</div>
+      <div class="accueil-zone-titre" data-i18n="zone_urgence">En cas de problème</div>
       <button class="btn-urgence-home" onclick="allerA('ecran-urgence')">
         <span class="btn-icone btn-icone-urgence">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="urgence-tel"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
         </span>
         <span class="btn-texte">
-          Je ne me sens pas bien
-          <span class="btn-urgence-sous">Appeler un proche</span>
+          <span data-i18n="je_sens_pas_bien">Je ne me sens pas bien</span>
+          <span class="btn-urgence-sous" data-i18n="appeler_proche">Appeler un proche</span>
         </span>
       </button>
       <div class="grille-appels-urgence">
@@ -242,7 +242,7 @@
           </div>
           <div class="btn-appel-right">
             <span class="btn-appel-numero">112</span>
-            <span class="btn-appel-label">Urgences</span>
+            <span class="btn-appel-label" data-i18n="urgences">Urgences</span>
           </div>
         </button>
         <button class="btn-appel vert" onclick="confirmerAppel1733()">
@@ -251,7 +251,7 @@
           </div>
           <div class="btn-appel-right">
             <span class="btn-appel-numero">1733</span>
-            <span class="btn-appel-label">Médecin de garde</span>
+            <span class="btn-appel-label" data-i18n="medecin_garde">Médecin de garde</span>
           </div>
         </button>
       </div>
@@ -262,13 +262,13 @@
   <div id="ecran-repas" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-accueil')" aria-label="Retour à l'accueil">← Retour</button>
-      <h2>Mon repas</h2>
+      <h2 data-i18n="repas_titre">Mon repas</h2>
     </div>
     <div class="contenu-ecran">
 
       <!-- Saisie photo -->
       <div id="zone-saisie-repas">
-        <p class="repas-question">Qu'avez-vous mangé ?</p>
+        <p class="repas-question" data-i18n="quavez_mange">Qu'avez-vous mangé ?</p>
 
         <button class="btn-repas-choix btn-repas-photo" onclick="ouvrirPhoto()">
           <div class="btn-repas-icone">
@@ -278,8 +278,8 @@
             </svg>
           </div>
           <div class="btn-repas-textes">
-            <span class="btn-repas-titre">Prendre une photo</span>
-            <span class="btn-repas-sous">Photographiez votre assiette</span>
+            <span class="btn-repas-titre" data-i18n="prendre_photo">Prendre une photo</span>
+            <span class="btn-repas-sous" data-i18n="photo_sous">Photographiez votre assiette</span>
           </div>
           <svg class="btn-repas-fleche" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
@@ -295,8 +295,8 @@
             </svg>
           </div>
           <div class="btn-repas-textes">
-            <span class="btn-repas-titre">Décrire à voix haute</span>
-            <span class="btn-repas-sous">Dites ce que vous avez mangé</span>
+            <span class="btn-repas-titre" data-i18n="decrire_voix">Décrire à voix haute</span>
+            <span class="btn-repas-sous" data-i18n="voix_sous">Dites ce que vous avez mangé</span>
           </div>
           <svg class="btn-repas-fleche" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
@@ -329,7 +329,7 @@
         </div>
       </div>
 
-      <button class="btn-historique" onclick="allerA('ecran-historique-repas')">Voir mes repas précédents</button>
+      <button class="btn-historique" onclick="allerA('ecran-historique-repas')" data-i18n="voir_repas">Voir mes repas précédents</button>
 
     </div>
   </div>
@@ -349,10 +349,10 @@
   <div id="ecran-glycemie" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-accueil')" aria-label="Retour à l'accueil">← Retour</button>
-      <h2>Ma glycémie</h2>
+      <h2 data-i18n="glycemie_titre">Ma glycémie</h2>
     </div>
     <div class="contenu-ecran">
-      <p class="instruction">Votre glycémie du jour</p>
+      <p class="instruction" data-i18n="glycemie_du_jour">Votre glycémie du jour</p>
 
       <div class="glycemie-input-zone" onclick="document.getElementById('inp-glycemie').focus()">
         <input type="number" id="inp-glycemie" step="1" min="20" max="600"
@@ -360,39 +360,39 @@
                oninput="mettreAJourIndicateurGlyc()" />
         <span class="glycemie-unite">mg/dL</span>
       </div>
-      <p id="glyc-aide-saisie" class="glyc-aide-saisie">Appuyez sur le champ pour saisir votre valeur</p>
+      <p id="glyc-aide-saisie" class="glyc-aide-saisie" data-i18n="glyc_hint">Appuyez sur le champ pour saisir votre valeur</p>
 
       <div id="glycemie-indicateur" class="glycemie-indicateur"></div>
 
       <div class="glycemie-reference">
         <div class="glyc-ref-ligne glyc-ref-hypo">
           <span class="glyc-ref-puce"></span>
-          <span class="glyc-ref-nom">Hypoglycémie</span>
+          <span class="glyc-ref-nom" data-i18n="hypoglycemie">Hypoglycémie</span>
           <span class="glyc-ref-val">&lt; 70 mg/dL</span>
         </div>
         <div class="glyc-ref-ligne glyc-ref-ok">
           <span class="glyc-ref-puce"></span>
-          <span class="glyc-ref-nom">Normal</span>
+          <span class="glyc-ref-nom" data-i18n="normal">Normal</span>
           <span class="glyc-ref-val">70 – 126 mg/dL</span>
         </div>
         <div class="glyc-ref-ligne glyc-ref-eleve">
           <span class="glyc-ref-puce"></span>
-          <span class="glyc-ref-nom">Élevé</span>
+          <span class="glyc-ref-nom" data-i18n="eleve">Élevé</span>
           <span class="glyc-ref-val">126 – 180 mg/dL</span>
         </div>
         <div class="glyc-ref-ligne glyc-ref-tres">
           <span class="glyc-ref-puce"></span>
-          <span class="glyc-ref-nom">Très élevé</span>
+          <span class="glyc-ref-nom" data-i18n="tres_eleve">Très élevé</span>
           <span class="glyc-ref-val">&gt; 180 mg/dL</span>
         </div>
       </div>
 
       <div id="glycemie-erreur" class="erreur-msg zone-cachee" role="alert" aria-live="assertive"></div>
-      <div id="glyc-confirm" class="glyc-confirm zone-cachee">Glycémie enregistrée !</div>
+      <div id="glyc-confirm" class="glyc-confirm zone-cachee" data-i18n="glycemie_enregistree">Glycémie enregistrée !</div>
 
-      <button class="btn-confirmer" onclick="sauverGlycemie()">Enregistrer</button>
+      <button class="btn-confirmer" onclick="sauverGlycemie()" data-i18n="enregistrer">Enregistrer</button>
 
-      <button class="btn-historique-glyc" onclick="allerA('ecran-historique')">Voir mon historique</button>
+      <button class="btn-historique-glyc" onclick="allerA('ecran-historique')" data-i18n="voir_historique">Voir mon historique</button>
     </div>
   </div>
 
@@ -412,7 +412,7 @@
   <div id="ecran-medicaments" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-accueil')" aria-label="Retour à l'accueil">← Retour</button>
-      <h2>Mes médicaments</h2>
+      <h2 data-i18n="meds_titre">Mes médicaments</h2>
     </div>
     <div class="contenu-ecran">
       <div id="liste-medicaments">
@@ -420,7 +420,7 @@
       </div>
       <button class="btn-action" onclick="allerA('ecran-ajouter-med')">
         <span class="btn-icone">➕</span>
-        <span class="btn-texte">Ajouter un médicament</span>
+        <span class="btn-texte" data-i18n="ajouter_med">Ajouter un médicament</span>
       </button>
     </div>
   </div>
@@ -454,10 +454,10 @@
       <div class="champ-group">
         <label class="champ-label">Quand le prendre ? <span style="color:var(--rouge)">*</span><span class="champ-hint-inline"> (plusieurs choix possibles)</span></label>
         <div class="periode-grid">
-          <button class="btn-periode matin" data-periode="matin" onclick="selectionnerPeriode(this)">🌅<br><span>Matin</span></button>
-          <button class="btn-periode midi"  data-periode="midi"  onclick="selectionnerPeriode(this)">☀️<br><span>Midi</span></button>
-          <button class="btn-periode soir"  data-periode="soir"  onclick="selectionnerPeriode(this)">🌆<br><span>Soir</span></button>
-          <button class="btn-periode nuit"  data-periode="nuit"  onclick="selectionnerPeriode(this)">🌙<br><span>Nuit</span></button>
+          <button class="btn-periode matin" data-periode="matin" onclick="selectionnerPeriode(this)">🌅<br><span data-i18n="matin">Matin</span></button>
+          <button class="btn-periode midi"  data-periode="midi"  onclick="selectionnerPeriode(this)">☀️<br><span data-i18n="midi">Midi</span></button>
+          <button class="btn-periode soir"  data-periode="soir"  onclick="selectionnerPeriode(this)">🌆<br><span data-i18n="soir">Soir</span></button>
+          <button class="btn-periode nuit"  data-periode="nuit"  onclick="selectionnerPeriode(this)">🌙<br><span data-i18n="nuit">Nuit</span></button>
         </div>
       </div>
 
@@ -603,14 +603,14 @@
   <div id="ecran-urgence" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-accueil')" aria-label="Retour à l'accueil">← Retour</button>
-      <h2>Besoin d'aide</h2>
+      <h2 data-i18n="urgence_titre">Besoin d'aide</h2>
     </div>
     <div class="contenu-ecran urgence-contenu">
 
       <!-- Message rassurant -->
       <div class="urgence-rassurant">
         <div class="urgence-coeur">🤍</div>
-        <p class="urgence-rassurant-texte">Vous n'êtes pas seul.<br>Je suis là avec vous.</p>
+        <p class="urgence-rassurant-texte" data-i18n-br="pas_seul">Vous n'êtes pas seul.<br>Je suis là avec vous.</p>
       </div>
 
       <div id="urgence-proche-info" class="proche-info zone-cachee"></div>
@@ -620,14 +620,14 @@
 
       <button class="btn-urgence-gros" id="btn-alerter-proche" onclick="envoyerAlerteUrgence()">
         <span class="btn-icone">📞</span>
-        <span id="btn-alerter-texte" class="btn-texte">Prévenir ma famille</span>
+        <span id="btn-alerter-texte" class="btn-texte" data-i18n="prevenir_famille">Prévenir ma famille</span>
       </button>
 
       <div id="urgence-confirmation" class="zone-cachee">
         <div class="conseil-card" style="text-align:center;margin-top:16px;">
-          <p class="bravo-texte" style="font-size:20px;">✅ Votre proche a été prévenu.</p>
-          <p class="bravo-sous" style="margin-top:8px;">Restez calme, ils arrivent.</p>
-          <button class="btn-bravo" style="margin-top:20px;" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
+          <p class="bravo-texte" style="font-size:20px;" data-i18n="proche_prevenu">✅ Votre proche a été prévenu.</p>
+          <p class="bravo-sous" style="margin-top:8px;" data-i18n="restez_calme">Restez calme, ils arrivent.</p>
+          <button class="btn-bravo" style="margin-top:20px;" onclick="allerA('ecran-accueil')" data-i18n="retour_accueil">Retour à l'accueil</button>
         </div>
       </div>
 
@@ -644,7 +644,7 @@
       </div>
 
       <button class="btn-secondaire" onclick="allerA('ecran-proche')">⚙️ Configurer mon proche aidant</button>
-      <button class="btn-secondaire btn-je-vais-mieux" onclick="allerA('ecran-accueil')" style="margin-top:20px;border-color:#A8C8C4;">✅ Je vais mieux — retour à l'accueil</button>
+      <button class="btn-secondaire btn-je-vais-mieux" onclick="allerA('ecran-accueil')" style="margin-top:20px;border-color:#A8C8C4;" data-i18n="je_vais_mieux">✅ Je vais mieux — retour à l'accueil</button>
     </div>
   </div>
 
@@ -652,9 +652,9 @@
   <div id="ecran-bravo" class="ecran">
     <div class="bravo-ecran">
       <div class="bravo-icone">⭐</div>
-      <h2 class="bravo-titre">Bravo !</h2>
-      <p class="bravo-texte">C'est noté. Continuez comme ça !</p>
-      <button class="btn-bravo" onclick="allerA('ecran-accueil')">Retour à l'accueil</button>
+      <h2 class="bravo-titre" data-i18n="bravo_titre">Bravo !</h2>
+      <p class="bravo-texte" data-i18n="bravo_texte">C'est noté. Continuez comme ça !</p>
+      <button class="btn-bravo" onclick="allerA('ecran-accueil')" data-i18n="retour_accueil">Retour à l'accueil</button>
     </div>
   </div>
 
@@ -663,7 +663,7 @@
   <div id="ecran-proche" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-accueil')" aria-label="Retour à l'accueil">← Retour</button>
-      <h2>⚙️ Paramètres</h2>
+      <h2 data-i18n="parametres">⚙️ Paramètres</h2>
     </div>
     <div class="contenu-ecran">
 
@@ -774,11 +774,22 @@
         <div id="pin-sauve" class="config-confirmation zone-cachee">✅ Code PIN enregistré !</div>
       </div>
 
+      <!-- Langue -->
+      <div class="config-section">
+        <div class="config-section-titre" data-i18n="langue_titre">🌐 Langue</div>
+        <p class="config-section-sous" data-i18n="langue_sous">Choisissez la langue de l'application.</p>
+        <div class="langue-grid">
+          <button class="btn-langue" data-lang="fr" onclick="changerLangue('fr')">🇫🇷 Français</button>
+          <button class="btn-langue" data-lang="en" onclick="changerLangue('en')">🇬🇧 English</button>
+          <button class="btn-langue" data-lang="it" onclick="changerLangue('it')">🇮🇹 Italiano</button>
+        </div>
+      </div>
+
       <!-- Accès DEV -->
       <div class="config-section" style="border-left:4px solid #888">
         <div class="config-section-titre" style="color:#555">🛠️ Zone développeur</div>
         <p class="config-section-sous">Paramètres avancés et gestion des utilisateurs.</p>
-        <button class="btn-dev-acces" onclick="allerA('ecran-dev')">🛠️ Ouvrir la zone développeur →</button>
+        <button class="btn-dev-acces" onclick="ouvrirZoneDev()">🛠️ Ouvrir la zone développeur →</button>
       </div>
 
       <!-- Déconnexion -->

@@ -1,6 +1,272 @@
 'use strict';
 
 // ════════════════════════════════════════════════════════
+// ── Internationalisation (FR / EN / IT) ─────────────────
+// ════════════════════════════════════════════════════════
+const _TRANSLATIONS = {
+  fr: {
+    retour: '← Retour',
+    splash_tap: 'Appuyez pour commencer',
+    zone_quotidien: 'Mon quotidien',
+    ma_glycemie: 'Ma glycémie',
+    glycemie_sous_defaut: 'Enregistrer ma valeur du jour',
+    glycemie_derniere: (v, q) => `Dernière : ${v} mg/dL — ${q}`,
+    mes_medicaments: 'Mes médicaments',
+    meds_tous_pris: 'Tous les médicaments pris aujourd\'hui',
+    meds_restants: (n) => `${n} médicament${n > 1 ? 's' : ''} restant${n > 1 ? 's' : ''} aujourd\'hui`,
+    meds_sous_defaut: 'Voir mes prises du jour',
+    mon_repas: 'Mon repas',
+    repas_sous: 'Ajouter ce que j\'ai mangé',
+    zone_urgence: 'En cas de problème',
+    je_sens_pas_bien: 'Je ne me sens pas bien',
+    appeler_proche: 'Appeler un proche',
+    urgences: 'Urgences',
+    medecin_garde: 'Médecin de garde',
+    glycemie_titre: 'Ma glycémie',
+    glycemie_du_jour: 'Votre glycémie du jour',
+    glyc_hint: 'Appuyez sur le champ pour saisir votre valeur',
+    hypoglycemie: 'Hypoglycémie',
+    normal: 'Normal',
+    eleve: 'Élevé',
+    tres_eleve: 'Très élevé',
+    glycemie_enregistree: 'Glycémie enregistrée !',
+    enregistrer: 'Enregistrer',
+    voir_historique: 'Voir mon historique',
+    ind_hypo: '🔴 Hypoglycémie — Mangez quelque chose de sucré !',
+    ind_normal: '🟢 Normal — Bonne glycémie !',
+    ind_eleve: '🟡 Élevé — Attention à ce que vous mangez.',
+    ind_tres_eleve: '🔴 Très élevé — Consultez votre médecin.',
+    ind_hypo_c: 'Hypoglycémie — Consultez rapidement !',
+    ind_normal_c: 'Normal — Très bien !',
+    ind_eleve_c: 'Élevé — Soyez attentif.',
+    ind_tres_eleve_c: 'Très élevé — Consultez votre médecin.',
+    meds_titre: 'Mes médicaments',
+    ajouter_med: 'Ajouter un médicament',
+    matin: 'Matin',
+    midi: 'Midi',
+    soir: 'Soir',
+    nuit: 'Nuit',
+    urgence_titre: 'Besoin d\'aide',
+    pas_seul: 'Vous n\'êtes pas seul.\nJe suis là avec vous.',
+    prevenir_famille: 'Prévenir ma famille',
+    proche_prevenu: 'Votre proche a été prévenu.',
+    restez_calme: 'Restez calme, ils arrivent.',
+    retour_accueil: 'Retour à l\'accueil',
+    je_vais_mieux: '✅ Je vais mieux — retour à l\'accueil',
+    repas_titre: 'Mon repas',
+    quavez_mange: 'Qu\'avez-vous mangé ?',
+    prendre_photo: 'Prendre une photo',
+    photo_sous: 'Photographiez votre assiette',
+    decrire_voix: 'Décrire à voix haute',
+    voix_sous: 'Dites ce que vous avez mangé',
+    voir_repas: 'Voir mes repas précédents',
+    bravo_titre: 'Bravo !',
+    bravo_texte: 'C\'est noté. Continuez comme ça !',
+    bienetre_q_defaut: 'Comment vous sentez-vous aujourd\'hui ?',
+    g_matin:   (n) => `Bonjour${n}`,
+    g_appetit: (n) => `Bon appétit${n}`,
+    g_aprem:   (n) => `Bonne après-midi${n}`,
+    g_soir:    (n) => `Bonsoir${n}`,
+    g_nuit:    (n) => `Bonne nuit${n}`,
+    a_instant:  'à l\'instant',
+    il_y_a_min: (n) => `il y a ${n} min`,
+    il_y_a_h:   (n) => `il y a ${n}h`,
+    locale_date: 'fr-BE',
+    parametres: '⚙️ Paramètres',
+    langue_titre: '🌐 Langue',
+    langue_sous: 'Choisissez la langue de l\'application.',
+    partager: 'Partager',
+  },
+  en: {
+    retour: '← Back',
+    splash_tap: 'Tap to start',
+    zone_quotidien: 'My daily care',
+    ma_glycemie: 'My blood sugar',
+    glycemie_sous_defaut: 'Record today\'s value',
+    glycemie_derniere: (v, q) => `Last: ${v} mg/dL — ${q}`,
+    mes_medicaments: 'My medications',
+    meds_tous_pris: 'All medications taken today',
+    meds_restants: (n) => `${n} medication${n > 1 ? 's' : ''} remaining today`,
+    meds_sous_defaut: 'View today\'s doses',
+    mon_repas: 'My meal',
+    repas_sous: 'Add what I ate',
+    zone_urgence: 'If there\'s a problem',
+    je_sens_pas_bien: 'I don\'t feel well',
+    appeler_proche: 'Call a relative',
+    urgences: 'Emergency',
+    medecin_garde: 'On-call doctor',
+    glycemie_titre: 'My blood sugar',
+    glycemie_du_jour: 'Your blood sugar today',
+    glyc_hint: 'Tap the field to enter your value',
+    hypoglycemie: 'Low blood sugar',
+    normal: 'Normal',
+    eleve: 'High',
+    tres_eleve: 'Very high',
+    glycemie_enregistree: 'Blood sugar recorded!',
+    enregistrer: 'Save',
+    voir_historique: 'View my history',
+    ind_hypo: '🔴 Low blood sugar — Eat something sweet!',
+    ind_normal: '🟢 Normal — Good blood sugar!',
+    ind_eleve: '🟡 High — Watch what you eat.',
+    ind_tres_eleve: '🔴 Very high — Consult your doctor.',
+    ind_hypo_c: 'Low blood sugar — Consult quickly!',
+    ind_normal_c: 'Normal — Very good!',
+    ind_eleve_c: 'High — Be careful.',
+    ind_tres_eleve_c: 'Very high — Consult your doctor.',
+    meds_titre: 'My medications',
+    ajouter_med: 'Add a medication',
+    matin: 'Morning',
+    midi: 'Noon',
+    soir: 'Evening',
+    nuit: 'Night',
+    urgence_titre: 'I need help',
+    pas_seul: 'You are not alone.\nI am here with you.',
+    prevenir_famille: 'Alert my family',
+    proche_prevenu: 'Your relative has been notified.',
+    restez_calme: 'Stay calm, they\'re on their way.',
+    retour_accueil: 'Back to home',
+    je_vais_mieux: '✅ I feel better — back to home',
+    repas_titre: 'My meal',
+    quavez_mange: 'What did you eat?',
+    prendre_photo: 'Take a photo',
+    photo_sous: 'Photograph your plate',
+    decrire_voix: 'Describe out loud',
+    voix_sous: 'Say what you ate',
+    voir_repas: 'View previous meals',
+    bravo_titre: 'Well done!',
+    bravo_texte: 'Noted. Keep it up!',
+    bienetre_q_defaut: 'How are you feeling today?',
+    g_matin:   (n) => `Good morning${n}`,
+    g_appetit: (n) => `Bon appétit${n}`,
+    g_aprem:   (n) => `Good afternoon${n}`,
+    g_soir:    (n) => `Good evening${n}`,
+    g_nuit:    (n) => `Good night${n}`,
+    a_instant:  'just now',
+    il_y_a_min: (n) => `${n} min ago`,
+    il_y_a_h:   (n) => `${n}h ago`,
+    locale_date: 'en-GB',
+    parametres: '⚙️ Settings',
+    langue_titre: '🌐 Language',
+    langue_sous: 'Choose the application language.',
+    partager: 'Share',
+  },
+  it: {
+    retour: '← Indietro',
+    splash_tap: 'Tocca per iniziare',
+    zone_quotidien: 'La mia routine',
+    ma_glycemie: 'La mia glicemia',
+    glycemie_sous_defaut: 'Registra il valore di oggi',
+    glycemie_derniere: (v, q) => `Ultima: ${v} mg/dL — ${q}`,
+    mes_medicaments: 'I miei farmaci',
+    meds_tous_pris: 'Tutti i farmaci presi oggi',
+    meds_restants: (n) => `${n} farmac${n > 1 ? 'i' : 'o'} rimanent${n > 1 ? 'i' : 'e'} oggi`,
+    meds_sous_defaut: 'Vedi le dosi di oggi',
+    mon_repas: 'Il mio pasto',
+    repas_sous: 'Aggiungi cosa ho mangiato',
+    zone_urgence: 'In caso di problema',
+    je_sens_pas_bien: 'Non mi sento bene',
+    appeler_proche: 'Chiamare un familiare',
+    urgences: 'Emergenza',
+    medecin_garde: 'Medico di guardia',
+    glycemie_titre: 'La mia glicemia',
+    glycemie_du_jour: 'La tua glicemia di oggi',
+    glyc_hint: 'Tocca il campo per inserire il valore',
+    hypoglycemie: 'Ipoglicemia',
+    normal: 'Normale',
+    eleve: 'Alto',
+    tres_eleve: 'Molto alto',
+    glycemie_enregistree: 'Glicemia registrata!',
+    enregistrer: 'Salva',
+    voir_historique: 'Vedi la mia cronologia',
+    ind_hypo: '🔴 Ipoglicemia — Mangia qualcosa di dolce!',
+    ind_normal: '🟢 Normale — Buona glicemia!',
+    ind_eleve: '🟡 Alto — Attenzione a cosa mangi.',
+    ind_tres_eleve: '🔴 Molto alto — Consulta il tuo medico.',
+    ind_hypo_c: 'Ipoglicemia — Consulta rapidamente!',
+    ind_normal_c: 'Normale — Molto bene!',
+    ind_eleve_c: 'Alto — Fai attenzione.',
+    ind_tres_eleve_c: 'Molto alto — Consulta il tuo medico.',
+    meds_titre: 'I miei farmaci',
+    ajouter_med: 'Aggiungi un farmaco',
+    matin: 'Mattina',
+    midi: 'Mezzogiorno',
+    soir: 'Sera',
+    nuit: 'Notte',
+    urgence_titre: 'Ho bisogno di aiuto',
+    pas_seul: 'Non sei solo.\nSono qui con te.',
+    prevenir_famille: 'Avvisare la mia famiglia',
+    proche_prevenu: 'Il tuo familiare è stato avvisato.',
+    restez_calme: 'Stai calmo, stanno arrivando.',
+    retour_accueil: 'Torna alla home',
+    je_vais_mieux: '✅ Sto meglio — torna alla home',
+    repas_titre: 'Il mio pasto',
+    quavez_mange: 'Cosa hai mangiato?',
+    prendre_photo: 'Scatta una foto',
+    photo_sous: 'Fotografa il tuo piatto',
+    decrire_voix: 'Descrivere ad alta voce',
+    voix_sous: 'Di\' cosa hai mangiato',
+    voir_repas: 'Vedi i miei pasti precedenti',
+    bravo_titre: 'Bravo!',
+    bravo_texte: 'Annotato. Continua così!',
+    bienetre_q_defaut: 'Come ti senti oggi?',
+    g_matin:   (n) => `Buongiorno${n}`,
+    g_appetit: (n) => `Buon appetito${n}`,
+    g_aprem:   (n) => `Buon pomeriggio${n}`,
+    g_soir:    (n) => `Buona sera${n}`,
+    g_nuit:    (n) => `Buona notte${n}`,
+    a_instant:  'un momento fa',
+    il_y_a_min: (n) => `${n} min fa`,
+    il_y_a_h:   (n) => `${n}h fa`,
+    locale_date: 'it-IT',
+    parametres: '⚙️ Impostazioni',
+    langue_titre: '🌐 Lingua',
+    langue_sous: 'Scegli la lingua dell\'applicazione.',
+    partager: 'Condividi',
+  }
+};
+
+function getLang()     { return localStorage.getItem('ms_langue') || 'fr'; }
+function setLang(lang) { localStorage.setItem('ms_langue', lang); }
+
+function t(key) {
+  const T = _TRANSLATIONS[getLang()] || _TRANSLATIONS.fr;
+  return T[key] !== undefined ? T[key] : (_TRANSLATIONS.fr[key] !== undefined ? _TRANSLATIONS.fr[key] : key);
+}
+
+function appliquerTraductions() {
+  // Éléments avec data-i18n → textContent simple
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const val = t(el.dataset.i18n);
+    if (typeof val === 'string') el.textContent = val;
+  });
+  // Éléments avec data-i18n-br → innerHTML avec <br> sur \n
+  document.querySelectorAll('[data-i18n-br]').forEach(el => {
+    const val = t(el.dataset.i18nBr);
+    if (typeof val === 'string') el.innerHTML = val.replace(/\n/g, '<br>');
+  });
+  // Tous les boutons "← Retour"
+  document.querySelectorAll('.btn-retour').forEach(el => {
+    el.textContent = t('retour');
+  });
+  // Boutons langue — marquer l'actif
+  const lang = getLang();
+  document.querySelectorAll('.btn-langue').forEach(el => {
+    el.classList.toggle('btn-langue-actif', el.dataset.lang === lang);
+  });
+}
+
+function changerLangue(lang) {
+  setLang(lang);
+  appliquerTraductions();
+  // Rafraîchit les textes dynamiques
+  const el = document.getElementById('message-bonjour');
+  if (el) el.textContent = messageBonjourComplet();
+  mettreAJourResume();
+  const ind = document.getElementById('glycemie-indicateur');
+  if (ind && document.getElementById('inp-glycemie')?.value) mettreAJourIndicateurGlyc();
+}
+
+// ════════════════════════════════════════════════════════
 // ── Session ─────────────────────────────────────────────
 // ════════════════════════════════════════════════════════
 function getSession() {
@@ -770,14 +1036,13 @@ function mettreAJourResume() {
       const diffMin  = Math.floor(diffMs / 60000);
       const diffH    = Math.floor(diffMs / 3600000);
       let quand;
-      if (diffMin < 2)       quand = 'à l\'instant';
-      else if (diffMin < 60) quand = `il y a ${diffMin} min`;
-      else if (diffH < 24)   quand = `il y a ${diffH}h`;
-      else                   quand = d.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
-      const v = derniere.valeur;
-      sousGlyc.textContent = `Dernière : ${v} mg/dL — ${quand}`;
+      if (diffMin < 2)       quand = t('a_instant');
+      else if (diffMin < 60) quand = t('il_y_a_min')(diffMin);
+      else if (diffH < 24)   quand = t('il_y_a_h')(diffH);
+      else                   quand = d.toLocaleDateString(t('locale_date'), { day: 'numeric', month: 'long' });
+      sousGlyc.textContent = t('glycemie_derniere')(derniere.valeur, quand);
     } else {
-      sousGlyc.textContent = 'Enregistrer ma valeur du jour';
+      sousGlyc.textContent = t('glycemie_sous_defaut');
     }
   }
 
@@ -788,17 +1053,18 @@ function mettreAJourResume() {
     const restants = meds.filter(m => estDuAujourdhui(m) && !m.pris).length;
     const total    = meds.filter(m => estDuAujourdhui(m)).length;
     if (total === 0) {
-      sousMeds.textContent = 'Voir mes prises du jour';
+      sousMeds.textContent = t('meds_sous_defaut');
     } else if (restants === 0) {
-      sousMeds.textContent = 'Tous les médicaments pris aujourd\'hui';
+      sousMeds.textContent = t('meds_tous_pris');
     } else {
-      sousMeds.textContent = `${restants} médicament${restants > 1 ? 's' : ''} restant${restants > 1 ? 's' : ''} aujourd\'hui`;
+      sousMeds.textContent = t('meds_restants')(restants);
     }
   }
 }
 
 function entrerDansAccueil() {
   appliquerModeHeure();
+  appliquerTraductions();
   const el = document.getElementById('message-bonjour');
   if (el) el.textContent = messageBonjourComplet();
   allerA('ecran-accueil');
@@ -1130,17 +1396,15 @@ function afficherErreur(el, msg) {
 // ── Messages contextuels selon l'heure ────────────────
 // ════════════════════════════════════════════════════════
 function messageBonjourComplet() {
-  const h      = new Date().getHours();
-  const prenom = getPrenom();
-  const nom    = prenom ? `, ${prenom}` : '';
+  const h   = new Date().getHours();
+  const nom = getPrenom() ? `, ${getPrenom()}` : '';
 
-  if (h >= 5  && h < 8)  return `Bonjour${nom}`;
-  if (h >= 8  && h < 12) return `Bonjour${nom}`;
-  if (h >= 12 && h < 14) return `Bon appétit${nom}`;
-  if (h >= 14 && h < 17) return `Bonne après-midi${nom}`;
-  if (h >= 17 && h < 20) return `Bonsoir${nom}`;
-  if (h >= 20)           return `Bonsoir${nom}`;
-  return `Bonne nuit${nom}`;
+  if (h >= 5  && h < 12) return t('g_matin')(nom);
+  if (h >= 12 && h < 14) return t('g_appetit')(nom);
+  if (h >= 14 && h < 17) return t('g_aprem')(nom);
+  if (h >= 17 && h < 20) return t('g_soir')(nom);
+  if (h >= 20)           return t('g_soir')(nom);
+  return t('g_nuit')(nom);
 }
 
 // ════════════════════════════════════════════════════════
@@ -1577,11 +1841,11 @@ function afficherConseil(texte, description, type, analyse, thumbnail) {
 // ── Glycémie saisie directe (carte dans écran repas) ───
 // ════════════════════════════════════════════════════════
 function indicateurGlycTexte(val) {
-  if (isNaN(val))   return { texte: '', cls: '' };
-  if (val < 70)     return { texte: '🔴 Hypoglycémie — Mangez quelque chose de sucré !', cls: 'glyc-ind-bas' };
-  if (val <= 126)   return { texte: '🟢 Normal — Bonne glycémie !', cls: 'glyc-ind-ok' };
-  if (val <= 180)   return { texte: '🟡 Élevé — Attention à ce que vous mangez.', cls: 'glyc-ind-elevee' };
-  return { texte: '🔴 Très élevé — Consultez votre médecin.', cls: 'glyc-ind-tres-elevee' };
+  if (isNaN(val))  return { texte: '', cls: '' };
+  if (val < 70)    return { texte: t('ind_hypo'),       cls: 'glyc-ind-bas' };
+  if (val <= 126)  return { texte: t('ind_normal'),     cls: 'glyc-ind-ok' };
+  if (val <= 180)  return { texte: t('ind_eleve'),      cls: 'glyc-ind-elevee' };
+  return               { texte: t('ind_tres_eleve'), cls: 'glyc-ind-tres-elevee' };
 }
 
 function mettreAJourIndicateurGlycRepas() {
@@ -1721,22 +1985,22 @@ function mettreAJourIndicateurGlyc() {
   if (aide) aide.style.opacity = '0';
 
   if (val < 70) {
-    ind.textContent = 'Hypoglycémie — Consultez rapidement !';
+    ind.textContent = t('ind_hypo_c');
     ind.className = 'glycemie-indicateur glyc-ind-bas';
     const ligne = document.querySelector('.glyc-ref-hypo');
     if (ligne) ligne.classList.add('glyc-ref-active');
   } else if (val <= 126) {
-    ind.textContent = 'Normal — Très bien !';
+    ind.textContent = t('ind_normal_c');
     ind.className = 'glycemie-indicateur glyc-ind-ok';
     const ligne = document.querySelector('.glyc-ref-ok');
     if (ligne) ligne.classList.add('glyc-ref-active');
   } else if (val <= 180) {
-    ind.textContent = 'Élevé — Soyez attentif.';
+    ind.textContent = t('ind_eleve_c');
     ind.className = 'glycemie-indicateur glyc-ind-elevee';
     const ligne = document.querySelector('.glyc-ref-eleve');
     if (ligne) ligne.classList.add('glyc-ref-active');
   } else {
-    ind.textContent = 'Très élevé — Consultez votre médecin.';
+    ind.textContent = t('ind_tres_eleve_c');
     ind.className = 'glycemie-indicateur glyc-ind-tres-elevee';
     const ligne = document.querySelector('.glyc-ref-tres');
     if (ligne) ligne.classList.add('glyc-ref-active');
@@ -3175,6 +3439,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (_) { /* ignoré si non supporté (iOS Safari) */ }
 
   migrerAncienFormat();
+  appliquerTraductions();   // applique la langue sauvegardée dès le premier rendu
   const session = getSession();
   if (!session) { allerA('ecran-inscription'); return; }
 
