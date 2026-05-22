@@ -1623,13 +1623,19 @@ function appliquerModeHeure() {
   document.body.classList.add(periode);
 }
 
-function basculerModeNuit(checkbox) {
-  // Lit l'état depuis le DOM pour être fiable sur iOS
-  const estActif = document.getElementById('toggle-mode-nuit').checked;
-  localStorage.setItem('ms_mode_nuit', estActif ? 'auto' : 'off');
+function basculerModeNuit(event) {
+  // Empêche le label de toggler le checkbox nativement (on le fait manuellement)
+  if (event) event.preventDefault();
+  // Lit l'état ACTUEL depuis localStorage (source de vérité, pas le DOM)
+  const estActif = localStorage.getItem('ms_mode_nuit') !== 'off';
+  const nouveau   = !estActif;  // on inverse
+  localStorage.setItem('ms_mode_nuit', nouveau ? 'auto' : 'off');
+  // Met à jour visuellement le checkbox
+  const checkbox = document.getElementById('toggle-mode-nuit');
+  if (checkbox) checkbox.checked = nouveau;
   appliquerModeHeure();
   const label = document.getElementById('mode-nuit-label');
-  if (label) label.setAttribute('data-i18n', estActif ? 'mode_nuit_label_auto' : 'mode_nuit_label_off');
+  if (label) label.setAttribute('data-i18n', nouveau ? 'mode_nuit_label_auto' : 'mode_nuit_label_off');
   appliquerTraductions();
 }
 

@@ -789,8 +789,8 @@
       <div class="config-section">
         <div class="config-section-titre" data-i18n="mode_nuit_titre">🌙 Mode nuit</div>
         <p class="config-section-sous" data-i18n="mode_nuit_sous">Activez le mode nuit automatique (21h–6h) ou désactivez-le pour garder l'affichage normal.</p>
-        <label class="toggle-nuit">
-          <input type="checkbox" id="toggle-mode-nuit" onchange="basculerModeNuit(this)" />
+        <label class="toggle-nuit" onclick="basculerModeNuit(event)">
+          <input type="checkbox" id="toggle-mode-nuit" />
           <span class="toggle-nuit-slider"></span>
           <span class="toggle-nuit-label" id="mode-nuit-label" data-i18n="mode_nuit_label_auto">Automatique (21h–6h)</span>
         </label>
