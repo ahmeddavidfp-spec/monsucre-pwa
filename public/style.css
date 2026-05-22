@@ -2183,6 +2183,10 @@ html.force-light .scan-resultat { background: #FFFFFF !important; border-color: 
 html.force-light .champ-input,
 html.force-light .champ-code   { background: #FFFFFF !important; color: #1E1E1E !important; border-color: #D0D0D0 !important; }
 html.force-light .btn-principal { background: #FFFFFF !important; color: #1E1E1E !important; }
+html.force-light .btn-glycemie,
+html.force-light .btn-glycemie .btn-texte,
+html.force-light .btn-glycemie .btn-texte span,
+html.force-light .btn-glycemie .btn-sous-texte { color: #1A2530 !important; }
 html.force-light .btn-appel    { background: #F4F6F5 !important; }
 html.force-light .btn-frequence,
 html.force-light .btn-jour,
