@@ -2188,6 +2188,13 @@ html.force-light .btn-glycemie .btn-texte,
 html.force-light .btn-glycemie .btn-texte span,
 html.force-light .btn-glycemie .btn-sous-texte { color: #1A2530 !important; }
 html.force-light .btn-appel    { background: #F4F6F5 !important; }
+html.force-light .btn-urgence-home {
+  background: #FEF3E8 !important;
+  color: #B86A10 !important;
+}
+html.force-light .btn-urgence-home .btn-texte,
+html.force-light .btn-urgence-home .btn-texte span,
+html.force-light .btn-urgence-home .btn-urgence-sous { color: #B86A10 !important; }
 html.force-light .btn-frequence,
 html.force-light .btn-jour,
 html.force-light .btn-periode  { background: #FFFFFF !important; border-color: #E0E0E0 !important; }
