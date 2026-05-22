@@ -1642,6 +1642,7 @@ function sauverGlycemie() {
     conf.classList.add('visible');
     setTimeout(() => conf.classList.remove('visible'), 3000);
   }
+  _jouerTexteVocal(_texteCommentaireGlycemie(valeur));
   reinitGlyc();
 }
 
