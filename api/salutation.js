@@ -3,8 +3,17 @@
 // Par défaut : ElevenLabs (Matilda)
 // provider:"openai" → OpenAI TTS (nova) — pour tests DEV quand quota ElevenLabs épuisé
 // ⬆️ Après upgrade ElevenLabs : remplacer ELEVEN_VOICE_ID par 'tMyQcCxfGDdIt7wJ2RQw' (Marie-Alice)
+//
+// ── Cache TTS (Redis Upstash) ────────────────────────────────────────────────
+// Clé : tts:<provider>:<voiceOrModel>:<md5(texte)>
+// Valeur : audio MP3 encodé en base64
+// TTL : 30 jours (2 592 000 s) — partagé entre tous les utilisateurs
+// Économie estimée : ~60 % des appels ElevenLabs évités
+// ────────────────────────────────────────────────────────────────────────────
 
+import crypto from 'crypto';
 import { lireSessionDepuisRequete } from './_lib/session.js';
+import { redis } from './_lib/db.js';
 
 const ELEVEN_VOICE_ID = 'XrExE9yKIg1WjnnlVkGX'; // Matilda — gratuit
 // const ELEVEN_VOICE_ID = 'tMyQcCxfGDdIt7wJ2RQw'; // Marie-Alice — après upgrade
@@ -13,6 +22,35 @@ const ELEVEN_MODEL_ID = 'eleven_multilingual_v2';
 const OPENAI_VOICE    = 'nova';   // nova = voix féminine, douce, bon français
 const OPENAI_MODEL    = 'tts-1';
 
+const TTL_CACHE = 60 * 60 * 24 * 30; // 30 jours en secondes
+
+// ── Helpers cache ────────────────────────────────────────────────────────────
+function cleTTS(provider, voiceId, texte) {
+  const hash = crypto.createHash('md5').update(texte).digest('hex');
+  return `tts:${provider}:${voiceId}:${hash}`;
+}
+
+async function lireCache(cle) {
+  try {
+    const val = await redis.get(cle);
+    if (val && typeof val === 'string') return Buffer.from(val, 'base64');
+    return null;
+  } catch (e) {
+    console.error('TTS cache lecture erreur:', e.message);
+    return null; // erreur cache → on continue sans cache
+  }
+}
+
+async function ecrireCache(cle, buffer) {
+  try {
+    await redis.set(cle, buffer.toString('base64'), { ex: TTL_CACHE });
+  } catch (e) {
+    console.error('TTS cache écriture erreur:', e.message);
+    // erreur non bloquante : l'audio a déjà été envoyé
+  }
+}
+
+// ── Handler principal ────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -26,6 +64,17 @@ export default async function handler(req, res) {
 
   // ── OpenAI TTS ───────────────────────────────────────────
   if (provider === 'openai') {
+    const cle = cleTTS('openai', OPENAI_VOICE, texte);
+
+    // Vérification du cache
+    const cached = await lireCache(cle);
+    if (cached) {
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Cache-Control', 'private, max-age=86400');
+      res.setHeader('X-TTS-Cache', 'HIT');
+      return res.status(200).send(cached);
+    }
+
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) return res.status(500).json({ erreur: 'Clé OpenAI manquante.' });
     try {
@@ -48,9 +97,13 @@ export default async function handler(req, res) {
         return res.status(500).json({ erreur: 'Erreur OpenAI TTS.' });
       }
       const audio = await r.arrayBuffer();
+      const buf = Buffer.from(audio);
+      // Mise en cache en arrière-plan (non bloquant)
+      ecrireCache(cle, buf);
       res.setHeader('Content-Type', 'audio/mpeg');
-      res.setHeader('Cache-Control', 'no-store');
-      return res.status(200).send(Buffer.from(audio));
+      res.setHeader('Cache-Control', 'private, max-age=86400');
+      res.setHeader('X-TTS-Cache', 'MISS');
+      return res.status(200).send(buf);
     } catch (e) {
       console.error('OpenAI TTS exception:', e);
       return res.status(500).json({ erreur: 'Erreur serveur OpenAI.' });
@@ -58,6 +111,17 @@ export default async function handler(req, res) {
   }
 
   // ── ElevenLabs TTS (défaut) ──────────────────────────────
+  const cle = cleTTS('elevenlabs', ELEVEN_VOICE_ID, texte);
+
+  // Vérification du cache
+  const cached = await lireCache(cle);
+  if (cached) {
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Cache-Control', 'private, max-age=86400');
+    res.setHeader('X-TTS-Cache', 'HIT');
+    return res.status(200).send(cached);
+  }
+
   const apiKey = process.env.ELEVENLABS_API_KEY;
   if (!apiKey) return res.status(500).json({ erreur: 'Clé ElevenLabs manquante.' });
   try {
@@ -85,9 +149,13 @@ export default async function handler(req, res) {
       return res.status(500).json({ erreur: 'Erreur ElevenLabs TTS.' });
     }
     const audio = await r.arrayBuffer();
+    const buf = Buffer.from(audio);
+    // Mise en cache en arrière-plan (non bloquant)
+    ecrireCache(cle, buf);
     res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).send(Buffer.from(audio));
+    res.setHeader('Cache-Control', 'private, max-age=86400');
+    res.setHeader('X-TTS-Cache', 'MISS');
+    return res.status(200).send(buf);
   } catch (e) {
     console.error('ElevenLabs exception:', e);
     return res.status(500).json({ erreur: 'Erreur serveur ElevenLabs.' });
