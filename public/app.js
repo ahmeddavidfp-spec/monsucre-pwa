@@ -2439,7 +2439,7 @@ function chargerMedicaments() {
     const heureRef   = group[0]?.heure || '';
     const heureLabel = (heureRef && heureRef !== conf.label) ? heureRef : '';
 
-    let h = `<div class="med-bloc ${periode} ${toutPris ? 'bloc-tout-pris' : ''} ${!dj ? 'bloc-autre-jour' : ''}">
+    let h = `<div class="med-bloc ${periode} ${toutPris ? 'bloc-tout-pris' : ''} ${!dj ? 'bloc-autre-jour' : ''}" id="med-bloc-${periode}">
       <div class="med-bloc-header" style="background:${conf.fond};border-left:5px solid ${conf.bord}">
         <div class="med-bloc-header-left">
           <span class="med-bloc-periode" style="color:${conf.couleur}">${conf.label}</span>
@@ -2500,6 +2500,22 @@ function chargerMedicaments() {
 
   const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && !m.desactive && heureEnMinutes(m) + 30 <= now).length;
   mettreAJourBadge(oublies);
+
+  // ── Auto-scroll vers la période courante ──────────────
+  const h = new Date().getHours();
+  const periodeActive = h < 10 ? 'matin' : h < 14 ? 'midi' : h < 20 ? 'soir' : 'nuit';
+  // Fallback : si la période active n'a pas de bloc, prendre le premier disponible
+  const cible = document.getElementById('med-bloc-' + periodeActive)
+             || document.querySelector('.med-bloc');
+  if (cible) {
+    requestAnimationFrame(() => {
+      const conteneur = document.querySelector('#ecran-medicaments .contenu-ecran');
+      if (conteneur) {
+        const offsetTop = cible.offsetTop - 12;
+        conteneur.scrollTo({ top: offsetTop, behavior: 'smooth' });
+      }
+    });
+  }
 }
 
 // ── Modal unités insuline ─────────────────────────────
