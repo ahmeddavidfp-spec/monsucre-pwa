@@ -2200,6 +2200,24 @@ html.force-light .btn-jour,
 html.force-light .btn-periode  { background: #FFFFFF !important; border-color: #E0E0E0 !important; }
 html.force-light .glycemie-reference { background: #FFFFFF !important; }
 
+/* ── FORCE-LIGHT : calendrier + historique glycémies ── */
+html.force-light .calendrier { background: #FFFFFF !important; }
+html.force-light .calendrier-titre { color: #1A2530 !important; }
+html.force-light .cal-entete { color: #6B7280 !important; }
+html.force-light .cal-numero { color: #1A2530 !important; }
+html.force-light .cal-jour.cal-futur .cal-numero { color: #C0C0C0 !important; }
+html.force-light .cal-jour.cal-selectionne .cal-numero { color: #FFFFFF !important; }
+html.force-light .cal-jour.cal-aujourdhui { background: #E8F3EC !important; }
+html.force-light .cal-jour.cal-aujourdhui .cal-numero { color: #0B6650 !important; }
+html.force-light .btn-cal-nav { background: #E8F3EC !important; color: #0B6650 !important; }
+html.force-light .cal-legende-item { color: #6B7280 !important; }
+html.force-light .cal-vide { color: #6B7280 !important; }
+html.force-light .glych-carte { background: #FFFFFF !important; }
+html.force-light .glych-jour-titre { color: #1A2530 !important; border-top-color: #EEF0F2 !important; }
+html.force-light .glych-heure { color: #6B7280 !important; }
+html.force-light .glych-valeur { color: #1A2530 !important; }
+html.force-light .glych-unite { color: #6B7280 !important; }
+
 /* ── MODE NUIT SYSTÈME (prefers-color-scheme: dark) ── */
 @media (prefers-color-scheme: dark) {
   :root {
