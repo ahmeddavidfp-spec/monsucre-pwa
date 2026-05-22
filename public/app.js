@@ -1833,6 +1833,17 @@ function chargerHistoriqueRepas() {
     groupes[key].push(e);
   });
 
+  const igMap = {
+    bas:    { label: 'IG Bas',    cls: 'rh-ig-bas',    emoji: '🟢' },
+    modere: { label: 'IG Modéré', cls: 'rh-ig-modere', emoji: '🟡' },
+    eleve:  { label: 'IG Élevé',  cls: 'rh-ig-eleve',  emoji: '🔴' }
+  };
+  const idMap = {
+    ok:        { label: '✅ OK diabète',    cls: 'rh-id-ok' },
+    attention: { label: '⚠️ Attention',     cls: 'rh-id-attention' },
+    eviter:    { label: '🚫 À éviter',      cls: 'rh-id-eviter' }
+  };
+
   let html = '';
   ordre.forEach(key => {
     const d     = new Date(key);
@@ -1842,21 +1853,65 @@ function chargerHistoriqueRepas() {
     groupes[key]
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .forEach(e => {
-        const heure = new Date(e.date).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
-        const desc  = e.description ? `<p class="repas-hist-desc">"${esc(e.description)}"</p>` : '';
-        const conseil = e.conseil ? `<p class="repas-hist-conseil">${esc(e.conseil)}</p>` : '';
+        const heure   = new Date(e.date).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+        const a       = e.analyse || null;
+        const icone   = e.type === 'photo' ? '📷' : '🎤';
+
+        // Photo
         const photo = e.thumbnail
           ? `<img class="repas-hist-photo" src="${e.thumbnail}" alt="Photo du repas" onerror="this.style.display='none'" />`
           : '';
-        const icone = e.type === 'photo' ? '📷' : '🎤';
+
+        // Nom du plat
+        const platNom = a?.plat
+          ? `<div class="rh-plat-nom">${esc(a.plat)}${a.portion ? ` <span class="rh-portion">· ${esc(a.portion)}</span>` : ''}</div>`
+          : (e.description ? `<div class="rh-plat-nom">${esc(e.description)}</div>` : '');
+
+        // Calories
+        const calories = (a?.calories != null)
+          ? `<div class="rh-calories"><span class="rh-cal-valeur">${a.calories}</span><span class="rh-cal-unite">kcal</span></div>`
+          : '';
+
+        // Badges IG + indice diabète
+        const ig = a?.index_glycemique ? igMap[a.index_glycemique] : null;
+        const id = a?.indice_diabete   ? idMap[a.indice_diabete]   : null;
+        const badges = (ig || id) ? `<div class="rh-badges">
+          ${ig ? `<span class="rh-badge ${ig.cls}">${ig.emoji} ${ig.label}</span>` : ''}
+          ${id ? `<span class="rh-badge ${id.cls}">${id.label}</span>` : ''}
+        </div>` : '';
+
+        // Remarque diabète
+        const remarque = a?.remarque_diabete
+          ? `<p class="rh-remarque">💡 ${esc(a.remarque_diabete)}</p>`
+          : '';
+
+        // Conseil
+        const conseil = e.conseil ? `<p class="rh-conseil">${esc(e.conseil)}</p>` : '';
+
+        // Macros (glucides + sucres + protéines + lipides)
+        const macros = a ? (() => {
+          const items = [];
+          if (a.glucides_g  != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.glucides_g}g</span><span class="rh-macro-lab">Glucides</span></div>`);
+          if (a.sucres_g    != null) items.push(`<div class="rh-macro rh-macro-sucres"><span class="rh-macro-val">${a.sucres_g}g</span><span class="rh-macro-lab">dont sucres</span></div>`);
+          if (a.proteines_g != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.proteines_g}g</span><span class="rh-macro-lab">Protéines</span></div>`);
+          if (a.lipides_g   != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.lipides_g}g</span><span class="rh-macro-lab">Lipides</span></div>`);
+          return items.length ? `<div class="rh-macros">${items.join('')}</div>` : '';
+        })() : '';
+
         html += `<div class="repas-hist-carte">
-          <div class="repas-hist-entete">
-            <span class="repas-hist-icone">${icone}</span>
-            <span class="repas-hist-heure">${heure}</span>
-          </div>
           ${photo}
-          ${desc}
-          ${conseil}
+          <div class="rh-corps">
+            <div class="rh-entete">
+              <span class="repas-hist-icone">${icone}</span>
+              <span class="repas-hist-heure">${heure}</span>
+            </div>
+            ${platNom}
+            ${calories}
+            ${badges}
+            ${macros}
+            ${remarque}
+            ${conseil}
+          </div>
         </div>`;
       });
   });

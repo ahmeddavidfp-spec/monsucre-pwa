@@ -1581,6 +1581,105 @@ input[type="time"].champ-input {
   margin: 0;
 }
 
+/* ── REPAS HIST — corps & analyse ────────────────────── */
+.rh-corps { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.rh-entete { display: flex; align-items: center; gap: 10px; }
+
+.rh-plat-nom {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--texte);
+  line-height: 1.3;
+}
+.rh-portion {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--texte-doux);
+}
+
+/* Calories — grand et lisible pour seniors */
+.rh-calories {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  background: #FFF3E0;
+  border-radius: 12px;
+  padding: 6px 16px;
+  align-self: flex-start;
+}
+.rh-cal-valeur {
+  font-size: 28px;
+  font-weight: 900;
+  color: #C05E00;
+  line-height: 1;
+}
+.rh-cal-unite {
+  font-size: 14px;
+  font-weight: 700;
+  color: #C05E00;
+}
+
+/* Badges IG / indice diabète */
+.rh-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.rh-badge {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.rh-ig-bas    { background: #D1FAE5; color: #065F46; }
+.rh-ig-modere { background: #FEF9C3; color: #92400E; }
+.rh-ig-eleve  { background: #FEE2E2; color: #991B1B; }
+.rh-id-ok        { background: #D1FAE5; color: #065F46; }
+.rh-id-attention  { background: #FEF3C7; color: #92400E; }
+.rh-id-eviter     { background: #FEE2E2; color: #991B1B; }
+
+/* Macros grid */
+.rh-macros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: #F8F9FA;
+  border-radius: 12px;
+  padding: 10px 8px;
+}
+.rh-macro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.rh-macro-sucres { opacity: 0.7; }
+.rh-macro-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--texte);
+}
+.rh-macro-lab {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--texte-doux);
+  text-align: center;
+}
+
+/* Remarque & conseil */
+.rh-remarque {
+  font-size: 14px;
+  color: #6B7280;
+  line-height: 1.5;
+  margin: 0;
+  font-style: italic;
+}
+.rh-conseil {
+  font-size: 15px;
+  color: var(--texte-doux);
+  line-height: 1.5;
+  margin: 0;
+  padding-top: 4px;
+  border-top: 1px solid #F0F0F0;
+}
+
 /* ── HISTORIQUE CARTES (ancien, conservé) ───────────── */
 .historique-carte {
   background: white;
