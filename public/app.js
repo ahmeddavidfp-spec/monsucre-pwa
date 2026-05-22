@@ -2504,18 +2504,21 @@ function chargerMedicaments() {
   // ── Auto-scroll vers la période courante ──────────────
   const h = new Date().getHours();
   const periodeActive = h < 10 ? 'matin' : h < 14 ? 'midi' : h < 20 ? 'soir' : 'nuit';
-  // Fallback : si la période active n'a pas de bloc, prendre le premier disponible
   const cible = document.getElementById('med-bloc-' + periodeActive)
              || document.querySelector('.med-bloc');
   if (cible) {
     setTimeout(() => {
       const conteneur = document.querySelector('#ecran-medicaments .contenu-ecran');
       if (!conteneur) return;
-      const conteneurRect = conteneur.getBoundingClientRect();
-      const cibleRect     = cible.getBoundingClientRect();
-      const offset = cibleRect.top - conteneurRect.top + conteneur.scrollTop - 12;
-      conteneur.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
-    }, 80);
+      // Traverser la chaîne offsetParent pour obtenir la position réelle dans le conteneur
+      let top = 0;
+      let el  = cible;
+      while (el && el !== conteneur) {
+        top += el.offsetTop;
+        el   = el.offsetParent;
+      }
+      conteneur.scrollTop = Math.max(0, top - 12);
+    }, 200);
   }
 }
 
