@@ -1771,15 +1771,26 @@ function rendreCalendrier(historique) {
     }
     html += `</div>`;
   } else {
-    // Pas de jour sélectionné : afficher les 15 dernières mesures
-    const recentes = historique.slice(0, 15);
+    // Pas de jour sélectionné : regrouper par date (30 dernières mesures)
+    const recentes = historique.slice(0, 30);
     if (recentes.length > 0) {
-      html += `<div class="glych-groupe">
-        <div class="glych-jour-titre">Mesures récentes</div>`;
+      // Grouper par clé de date YYYY-MM-DD
+      const groupes = {};
+      const ordre   = [];
       recentes.forEach(e => {
-        const d = new Date(e.date);
-        const label = d.toLocaleDateString('fr-BE', { weekday:'short', day:'numeric', month:'short' });
-        html += `<div class="glych-ligne-date">${label}</div>` + rendreCarteGlycHist(e);
+        const d   = new Date(e.date);
+        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        if (!groupes[key]) { groupes[key] = []; ordre.push(key); }
+        groupes[key].push(e);
+      });
+      html += `<div class="glych-groupe">`;
+      ordre.forEach(key => {
+        const d      = new Date(key);
+        const label  = d.toLocaleDateString('fr-BE', { weekday:'long', day:'numeric', month:'long' });
+        html += `<div class="glych-jour-titre">${label.charAt(0).toUpperCase() + label.slice(1)}</div>`;
+        groupes[key]
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .forEach(e => { html += rendreCarteGlycHist(e); });
       });
       html += `</div>`;
     }
