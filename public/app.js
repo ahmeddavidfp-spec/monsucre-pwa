@@ -944,20 +944,15 @@ function _texteeSalutation() {
     message = `Bonjour, je suis ${VOIX_NOM}. `
             + `${prenom ? 'Bonjour ' + prenom + ' ! ' : ''}`
             + `Nous sommes heureux de vous retrouver ce matin. `
-            + `Comment vous sentez-vous aujourd'hui ? `
-            + `N'hésitez pas à nous le dire en appuyant sur le pouce en haut, ou le pouce en bas.`;
+            + `Passez une excellente journée.`;
   } else if (h >= 12 && h < 18) {
     message = `Bonjour, je suis ${VOIX_NOM}. `
             + `${prenom ? 'Bonjour ' + prenom + ' ! ' : ''}`
-            + `Nous espérons que votre journée se passe bien. `
-            + `Comment vous sentez-vous en ce moment ? `
-            + `Dites-le nous en appuyant sur le pouce en haut, ou le pouce en bas.`;
+            + `Nous espérons que votre journée se passe bien.`;
   } else {
     message = `Bonsoir, je suis ${VOIX_NOM}. `
             + `${prenom ? 'Bonsoir ' + prenom + ' ! ' : ''}`
-            + `Nous espérons que vous avez passé une belle journée. `
-            + `Comment vous sentez-vous ce soir ? `
-            + `Dites-le nous en appuyant sur le pouce en haut, ou le pouce en bas.`;
+            + `Nous espérons que vous avez passé une belle journée.`;
   }
   return message;
 }
