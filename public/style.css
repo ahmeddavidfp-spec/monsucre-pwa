@@ -2152,75 +2152,14 @@ input[type="time"].champ-input {
 }
 
 /* ── FORCE THÈME CLAIR (mode nuit désactivé par l'utilisateur) ─ */
-/* Annule le dark mode système quand l'utilisateur a désactivé le mode nuit */
-html.force-light {
-  color-scheme: only light;
-}
-html.force-light :root {
-  --fond:           #F4F6F5 !important;
-  --carte:          #E8F3EC !important;
-  --blanc:          #FFFFFF !important;
-  --texte:          #1E1E1E !important;
-  --texte-doux:     #6B7280 !important;
-  --accent-clair:   #E8F3EC !important;
-  --primaire-clair: #E8F3EC !important;
-  --sos-clair:      #FDF2F2 !important;
-  --gris-clair:     #F4F6F5 !important;
-  --repas-clair:    #FEF3C7 !important;
-  --meds-clair:     #EFF6FF !important;
-  --glyc-clair:     #EAF4EF !important;
-}
-html.force-light body,
-html.force-light .ecran        { background: #F4F6F5 !important; color: #1E1E1E !important; }
-html.force-light .config-section,
-html.force-light .conseil-card,
-html.force-light .historique-carte,
-html.force-light .calendrier,
-html.force-light .proche-info,
-html.force-light .texte-reconnu,
-html.force-light .glycemie-input-zone,
-html.force-light .scan-resultat { background: #FFFFFF !important; border-color: #E0E0E0 !important; color: #1E1E1E !important; }
-html.force-light .champ-input,
-html.force-light .champ-code   { background: #FFFFFF !important; color: #1E1E1E !important; border-color: #D0D0D0 !important; }
-html.force-light .btn-principal { background: #FFFFFF !important; color: #1E1E1E !important; }
-html.force-light .btn-glycemie,
-html.force-light .btn-glycemie .btn-texte,
-html.force-light .btn-glycemie .btn-texte span,
-html.force-light .btn-glycemie .btn-sous-texte { color: #1A2530 !important; }
-html.force-light .btn-appel    { background: #F4F6F5 !important; }
-html.force-light .btn-urgence-home {
-  background: #FEF3E8 !important;
-  color: #B86A10 !important;
-}
-html.force-light .btn-urgence-home .btn-texte,
-html.force-light .btn-urgence-home .btn-texte span,
-html.force-light .btn-urgence-home .btn-urgence-sous { color: #B86A10 !important; }
-html.force-light .btn-frequence,
-html.force-light .btn-jour,
-html.force-light .btn-periode  { background: #FFFFFF !important; border-color: #E0E0E0 !important; }
-html.force-light .glycemie-reference { background: #FFFFFF !important; }
-
-/* ── FORCE-LIGHT : calendrier + historique glycémies ── */
-html.force-light .calendrier { background: #FFFFFF !important; }
-html.force-light .calendrier-titre { color: #1A2530 !important; }
-html.force-light .cal-entete { color: #6B7280 !important; }
-html.force-light .cal-numero { color: #1A2530 !important; }
-html.force-light .cal-jour.cal-futur .cal-numero { color: #C0C0C0 !important; }
-html.force-light .cal-jour.cal-selectionne .cal-numero { color: #FFFFFF !important; }
-html.force-light .cal-jour.cal-aujourdhui { background: #E8F3EC !important; }
-html.force-light .cal-jour.cal-aujourdhui .cal-numero { color: #0B6650 !important; }
-html.force-light .btn-cal-nav { background: #E8F3EC !important; color: #0B6650 !important; }
-html.force-light .cal-legende-item { color: #6B7280 !important; }
-html.force-light .cal-vide { color: #6B7280 !important; }
-html.force-light .glych-carte { background: #FFFFFF !important; }
-html.force-light .glych-jour-titre { color: #1A2530 !important; border-top-color: #EEF0F2 !important; }
-html.force-light .glych-heure { color: #6B7280 !important; }
-html.force-light .glych-valeur { color: #1A2530 !important; }
-html.force-light .glych-unite { color: #6B7280 !important; }
+/* Stratégie : on préfixe TOUTES les règles dark mode avec html:not(.force-light)
+   → quand force-light est actif, aucune règle dark mode ne s'applique du tout.
+   Plus fiable que de surcharger des variables CSS sur iOS Safari. */
+html.force-light { color-scheme: only light; }
 
 /* ── MODE NUIT SYSTÈME (prefers-color-scheme: dark) ── */
 @media (prefers-color-scheme: dark) {
-  :root {
+  html:not(.force-light) :root {
     --fond:          #191E1C;
     --carte:         #222C28;
     --blanc:         #253028;
@@ -2234,43 +2173,52 @@ html.force-light .glych-unite { color: #6B7280 !important; }
     --meds-clair:    #1A2138;
     --glyc-clair:    #281C3C;
   }
-  html, body { background: var(--fond); }
-  .ecran { background: var(--fond); }
-  .entete {
+  html:not(.force-light) body,
+  html:not(.force-light) .ecran { background: var(--fond); }
+  html:not(.force-light) .entete {
     background: linear-gradient(160deg, #3A6B55 0%, #2C5042 100%);
   }
-  .btn-principal {
+  html:not(.force-light) .btn-principal {
     background: var(--blanc);
     box-shadow: 0 2px 16px rgba(0,0,0,0.32);
     color: var(--texte);
   }
-  .btn-urgence-home { background: var(--sos-clair); }
-  .config-section, .conseil-card, .historique-carte,
-  .calendrier, .proche-info, .texte-reconnu,
-  .glycemie-input-zone, .scan-resultat {
+  html:not(.force-light) .btn-urgence-home { background: var(--sos-clair); }
+  html:not(.force-light) .config-section,
+  html:not(.force-light) .conseil-card,
+  html:not(.force-light) .historique-carte,
+  html:not(.force-light) .calendrier,
+  html:not(.force-light) .proche-info,
+  html:not(.force-light) .texte-reconnu,
+  html:not(.force-light) .glycemie-input-zone,
+  html:not(.force-light) .scan-resultat {
     background: var(--blanc);
     border-color: #354540;
     color: var(--texte);
   }
-  .champ-input, .champ-code {
+  html:not(.force-light) .champ-input,
+  html:not(.force-light) .champ-code {
     background: var(--blanc);
     color: var(--texte);
     border-color: #354540;
   }
-  .btn-appel { background: #1E2A25; }
-  .btn-appel.non-configure { opacity: 0.3; }
-  .btn-frequence, .btn-jour, .btn-periode { background: var(--blanc); border-color: #354540; }
-  .btn-frequence, .btn-jour { color: var(--texte-doux); }
-  .med-carte.matin .med-carte-corps { background: #2D2412; }
-  .med-carte.midi  .med-carte-corps { background: #1A2138; }
-  .med-carte.soir  .med-carte-corps { background: #281C3C; }
-  .med-carte.nuit  .med-carte-corps { background: #1E2340; }
-  .med-carte-header { opacity: 0.9; }
-  .glycemie-reference { background: #222C28; }
-  .calendrier { background: var(--blanc); }
-  .cal-numero { color: var(--texte); }
-  .analyse-dev { background: #2D2412; border-color: #8B6800; }
-  .dev-code-affiche { background: #2D2412; border-color: #8B6800; color: #E8C84A; }
+  html:not(.force-light) .btn-appel { background: #1E2A25; }
+  html:not(.force-light) .btn-appel.non-configure { opacity: 0.3; }
+  html:not(.force-light) .btn-frequence,
+  html:not(.force-light) .btn-jour,
+  html:not(.force-light) .btn-periode { background: var(--blanc); border-color: #354540; }
+  html:not(.force-light) .btn-frequence,
+  html:not(.force-light) .btn-jour { color: var(--texte-doux); }
+  html:not(.force-light) .med-carte.matin .med-carte-corps { background: #2D2412; }
+  html:not(.force-light) .med-carte.midi  .med-carte-corps { background: #1A2138; }
+  html:not(.force-light) .med-carte.soir  .med-carte-corps { background: #281C3C; }
+  html:not(.force-light) .med-carte.nuit  .med-carte-corps { background: #1E2340; }
+  html:not(.force-light) .med-carte-header { opacity: 0.9; }
+  html:not(.force-light) .glycemie-reference { background: #222C28; }
+  html:not(.force-light) .calendrier { background: var(--blanc); }
+  html:not(.force-light) .cal-numero { color: var(--texte); }
+  html:not(.force-light) .analyse-dev { background: #2D2412; border-color: #8B6800; }
+  html:not(.force-light) .dev-code-affiche { background: #2D2412; border-color: #8B6800; color: #E8C84A; }
 }
 
 /* ── MODE NUIT INTELLIGENT (heure : 21h–6h) ──────── */
