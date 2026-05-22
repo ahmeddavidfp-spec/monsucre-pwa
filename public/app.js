@@ -131,6 +131,12 @@ const _TRANSLATIONS = {
     aucun_med_enregistre: 'Aucun médicament enregistré',
     jour_lun: 'Lun', jour_mar: 'Mar', jour_mer: 'Mer', jour_jeu: 'Jeu',
     jour_ven: 'Ven', jour_sam: 'Sam', jour_dim: 'Dim',
+    // ── Repas / nutrition ─────────────────────────────
+    ig_bas: 'IG Bas', ig_modere: 'IG Modéré', ig_eleve: 'IG Élevé',
+    ok_diabete: '✅ OK diabète', attention_diabete: '⚠️ Attention', eviter_diabete: '🚫 À éviter',
+    glucides: 'Glucides', dont_sucres: 'dont sucres', proteines: 'Protéines', lipides: 'Lipides',
+    fibres: 'Fibres', sel: 'Sel', index_glycemique: 'Index glycémique',
+    aucune_glycemie_jour: 'Aucune glycémie ce jour-là.',
     // ── Fiche médicament ──────────────────────────────
     fiche_med_titre: 'Fiche médicament',
     statut_desactive: '⏸ Désactivé',
@@ -347,6 +353,12 @@ const _TRANSLATIONS = {
     aucun_med_enregistre: 'No medications saved',
     jour_lun: 'Mon', jour_mar: 'Tue', jour_mer: 'Wed', jour_jeu: 'Thu',
     jour_ven: 'Fri', jour_sam: 'Sat', jour_dim: 'Sun',
+    // ── Meals / nutrition ─────────────────────────────
+    ig_bas: 'Low GI', ig_modere: 'Moderate GI', ig_eleve: 'High GI',
+    ok_diabete: '✅ OK diabetes', attention_diabete: '⚠️ Attention', eviter_diabete: '🚫 Avoid',
+    glucides: 'Carbs', dont_sucres: 'of which sugars', proteines: 'Protein', lipides: 'Fat',
+    fibres: 'Fibre', sel: 'Salt', index_glycemique: 'Glycaemic index',
+    aucune_glycemie_jour: 'No blood sugar for this day.',
     // ── Medication card ───────────────────────────────
     fiche_med_titre: 'Medication card',
     statut_desactive: '⏸ Deactivated',
@@ -563,6 +575,12 @@ const _TRANSLATIONS = {
     aucun_med_enregistre: 'Nessun farmaco salvato',
     jour_lun: 'Lun', jour_mar: 'Mar', jour_mer: 'Mer', jour_jeu: 'Gio',
     jour_ven: 'Ven', jour_sam: 'Sab', jour_dim: 'Dom',
+    // ── Pasti / nutrizione ────────────────────────────
+    ig_bas: 'IG Basso', ig_modere: 'IG Moderato', ig_eleve: 'IG Alto',
+    ok_diabete: '✅ OK diabete', attention_diabete: '⚠️ Attenzione', eviter_diabete: '🚫 Da evitare',
+    glucides: 'Carboidrati', dont_sucres: 'di cui zuccheri', proteines: 'Proteine', lipides: 'Grassi',
+    fibres: 'Fibre', sel: 'Sale', index_glycemique: 'Indice glicemico',
+    aucune_glycemie_jour: 'Nessuna glicemia per questo giorno.',
     // ── Scheda farmaco ────────────────────────────────
     fiche_med_titre: 'Scheda farmaco',
     statut_desactive: '⏸ Disattivato',
@@ -2610,7 +2628,7 @@ function rendreCalendrier(historique) {
     html += `<div class="glych-groupe">
       <div class="glych-jour-titre">${jourLabel.charAt(0).toUpperCase() + jourLabel.slice(1)}</div>`;
     if (entrees.length === 0) {
-      html += `<p class="cal-vide">Aucune glycémie ce jour-là.</p>`;
+      html += `<p class="cal-vide">${t('aucune_glycemie_jour')}</p>`;
     } else {
       entrees.forEach(e => { html += rendreCarteGlycHist(e); });
     }
@@ -2667,20 +2685,20 @@ function chargerHistoriqueRepas() {
   });
 
   const igMap = {
-    bas:    { label: 'IG Bas',    cls: 'rh-ig-bas',    emoji: '🟢' },
-    modere: { label: 'IG Modéré', cls: 'rh-ig-modere', emoji: '🟡' },
-    eleve:  { label: 'IG Élevé',  cls: 'rh-ig-eleve',  emoji: '🔴' }
+    bas:    { label: t('ig_bas'),    cls: 'rh-ig-bas',    emoji: '🟢' },
+    modere: { label: t('ig_modere'), cls: 'rh-ig-modere', emoji: '🟡' },
+    eleve:  { label: t('ig_eleve'),  cls: 'rh-ig-eleve',  emoji: '🔴' }
   };
   const idMap = {
-    ok:        { label: '✅ OK diabète',    cls: 'rh-id-ok' },
-    attention: { label: '⚠️ Attention',     cls: 'rh-id-attention' },
-    eviter:    { label: '🚫 À éviter',      cls: 'rh-id-eviter' }
+    ok:        { label: t('ok_diabete'),        cls: 'rh-id-ok' },
+    attention: { label: t('attention_diabete'), cls: 'rh-id-attention' },
+    eviter:    { label: t('eviter_diabete'),    cls: 'rh-id-eviter' }
   };
 
   let html = '';
   ordre.forEach(key => {
     const d     = new Date(key);
-    const label = d.toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' });
+    const label = d.toLocaleDateString(t('locale_date'), { weekday: 'long', day: 'numeric', month: 'long' });
     html += `<div class="glych-jour-titre">${label.charAt(0).toUpperCase() + label.slice(1)}</div>`;
 
     groupes[key]
@@ -2724,10 +2742,10 @@ function chargerHistoriqueRepas() {
         // Macros (glucides + sucres + protéines + lipides)
         const macros = a ? (() => {
           const items = [];
-          if (a.glucides_g  != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.glucides_g}g</span><span class="rh-macro-lab">Glucides</span></div>`);
-          if (a.sucres_g    != null) items.push(`<div class="rh-macro rh-macro-sucres"><span class="rh-macro-val">${a.sucres_g}g</span><span class="rh-macro-lab">dont sucres</span></div>`);
-          if (a.proteines_g != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.proteines_g}g</span><span class="rh-macro-lab">Protéines</span></div>`);
-          if (a.lipides_g   != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.lipides_g}g</span><span class="rh-macro-lab">Lipides</span></div>`);
+          if (a.glucides_g  != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.glucides_g}g</span><span class="rh-macro-lab">${t('glucides')}</span></div>`);
+          if (a.sucres_g    != null) items.push(`<div class="rh-macro rh-macro-sucres"><span class="rh-macro-val">${a.sucres_g}g</span><span class="rh-macro-lab">${t('dont_sucres')}</span></div>`);
+          if (a.proteines_g != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.proteines_g}g</span><span class="rh-macro-lab">${t('proteines')}</span></div>`);
+          if (a.lipides_g   != null) items.push(`<div class="rh-macro"><span class="rh-macro-val">${a.lipides_g}g</span><span class="rh-macro-lab">${t('lipides')}</span></div>`);
           return items.length ? `<div class="rh-macros">${items.join('')}</div>` : '';
         })() : '';
 
@@ -3225,13 +3243,12 @@ function ajouterMedicament() {
     if (!j || j < 1 || j > 31) return afficherErreur(erreur, 'Entrez un jour du mois (1 à 31).');
   }
   const icones = { matin:'🌅', midi:'☀️', soir:'🌆', nuit:'🌙' };
-  const labels = { matin:'Matin', midi:'Midi', soir:'Soir', nuit:'Nuit' };
   const meds = getMedicaments();
   // Crée une entrée par période sélectionnée
   periodesCourantes.forEach((periode, idx) => {
     const med = {
       id: Date.now() + idx, nom, periode,
-      heure: heure || labels[periode], icone: insuline ? '💉' : icones[periode],
+      heure: heure || '', icone: insuline ? '💉' : icones[periode],
       frequence: frequenceCourante,
       jourSemaine: frequenceCourante === 'hebdomadaire' ? jourSemaineCourant : null,
       jourMois: frequenceCourante === 'mensuel' ? parseInt(document.getElementById('inp-jour-mois').value, 10) : null,
@@ -3317,7 +3334,7 @@ function chargerMedicaments() {
     const toutPris   = dj && group.every(m => m.pris);
     const nbOublies  = dj ? group.filter(m => !m.pris && heureEnMinutes(m) + 30 <= now).length : 0;
     const heureRef   = group[0]?.heure || '';
-    const heureLabel = (heureRef && heureRef !== conf.label) ? heureRef : '';
+    const heureLabel = (heureRef && heureRef.includes(':')) ? heureRef : '';
 
     let h = `<div class="med-bloc ${periode} ${toutPris ? 'bloc-tout-pris' : ''} ${!dj ? 'bloc-autre-jour' : ''}" id="med-bloc-${periode}">
       <div class="med-bloc-header" style="background:${conf.fond};border-left:5px solid ${conf.bord}">
