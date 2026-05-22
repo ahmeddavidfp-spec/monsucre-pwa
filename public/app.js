@@ -1608,14 +1608,16 @@ function appliquerModeHeure() {
   }
 
   // Classe colorée selon la plage horaire
+  // Si mode nuit désactivé, on force 'heure-matin' (bleu clair) la nuit pour
+  // que le header soit clairement différent du mode nuit
   let periode;
-  if      (h >= 21 || h <  5)  periode = modeNuit ? 'heure-nuit' : 'heure-crepuscule';
+  if      (h >= 21 || h <  5)  periode = modeNuit ? 'heure-nuit' : 'heure-matin';
   else if (h >= 5  && h <  8)  periode = 'heure-aube';
   else if (h >= 8  && h < 12)  periode = 'heure-matin';
   else if (h >= 12 && h < 14)  periode = 'heure-midi';
   else if (h >= 14 && h < 18)  periode = 'heure-aprem';
   else if (h >= 18 && h < 20)  periode = 'heure-soir';
-  else                          periode = 'heure-crepuscule';
+  else                          periode = modeNuit ? 'heure-crepuscule' : 'heure-soir';
 
   PERIODES_HEURE.forEach(p => document.body.classList.remove(p));
   document.body.classList.add(periode);
