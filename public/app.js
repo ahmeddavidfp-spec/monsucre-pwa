@@ -1641,11 +1641,13 @@ function sauverGlycemie() {
   });
   patchUserLocal({ historique_repas: historique.slice(0, 60) });
 
-  // Confirmation inline — pas de redirection Bravo
+  // Confirmation inline — on reste sur l'écran glycémie
   const conf = document.getElementById('glyc-confirm');
-  if (conf) { conf.classList.add('visible'); }
-  _jouerTexteVocal(_texteCommentaireGlycemie(valeur));
-  setTimeout(() => allerA('ecran-accueil'), 2000);
+  if (conf) {
+    conf.classList.add('visible');
+    setTimeout(() => conf.classList.remove('visible'), 3000);
+  }
+  reinitGlyc();
 }
 
 // ════════════════════════════════════════════════════════
