@@ -76,6 +76,54 @@ const _TRANSLATIONS = {
     langue_titre: '🌐 Langue',
     langue_sous: 'Choisissez la langue de l\'application.',
     partager: 'Partager',
+    // ── Vocal ──────────────────────────────────────────
+    salut_matin: (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous sommes heureux de vous retrouver ce matin. Passez une excellente journée.`,
+    salut_midi:  (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous espérons que votre journée se passe bien.`,
+    salut_soir:  (nom, voix) => `Bonsoir, je suis ${voix}. ${nom ? 'Bonsoir ' + nom + ' ! ' : ''}Nous espérons que vous avez passé une belle journée.`,
+    glyc_vocal_hypo:       (p, v) => `${p}votre glycémie est de ${v} milligrammes par décilitre. C'est en dessous de la normale — on appelle ça une hypoglycémie. Prenez un peu de sucre maintenant, un verre de jus de fruit ou quelques bonbons, et reposez-vous. Si vous ne vous sentez pas mieux dans quelques minutes, appelez votre médecin.`,
+    glyc_vocal_ok:         (p, v) => `${p}votre glycémie est de ${v} milligrammes par décilitre. C'est une très bonne valeur, dans la zone normale. Bravo, continuez comme ça !`,
+    glyc_vocal_eleve:      (p, v) => `${p}votre glycémie est de ${v} milligrammes par décilitre. C'est un peu élevé. Essayez d'éviter les sucreries lors de votre prochain repas et pensez à boire de l'eau. Votre médecin suit cela avec vous.`,
+    glyc_vocal_tres_eleve: (p, v) => `${p}votre glycémie est de ${v} milligrammes par décilitre. C'est assez élevé. Essayez de vous reposer, buvez de l'eau, et signalez cette valeur à votre médecin lors de votre prochaine consultation. N'hésitez pas à utiliser le bouton Besoin d'aide si vous ne vous sentez pas bien.`,
+    notif_med_titre:    'Mon Sucre — Médicament',
+    notif_med_corps:    (nom) => `N'oubliez pas de prendre : ${nom}`,
+    notif_rappel_titre: 'Mon Sucre — Rappel urgent',
+    notif_rappel_corps: (nom) => `Vous n'avez toujours pas pris : ${nom}`,
+    questions_bienetre: [
+      { q: 'Comment vous sentez-vous en ce moment ?', e: '💛' },
+      { q: 'Avez-vous bien dormi cette nuit ?',        e: '🌙' },
+      { q: 'Êtes-vous de bonne humeur aujourd\'hui ?', e: '😊' },
+      { q: 'Vous sentez-vous en forme ce matin ?',     e: '🌅' },
+      { q: 'Avez-vous mangé quelque chose de bon ?',   e: '🍳' },
+      { q: 'Êtes-vous au chaud et confortable ?',      e: '🏠' },
+      { q: 'Avez-vous bu assez d\'eau aujourd\'hui ?', e: '💧' },
+      { q: 'Avez-vous eu de bonnes nouvelles aujourd\'hui ?', e: '📬' },
+      { q: 'Faites-vous quelque chose d\'agréable ?',  e: '🌸' },
+      { q: 'Avez-vous parlé à quelqu\'un de cher ?',   e: '💬' },
+      { q: 'Vous sentez-vous calme et serein(e) ?',    e: '🍃' },
+      { q: 'Avez-vous pris le temps de vous reposer ?',e: '☕' },
+      { q: 'La journée se passe bien pour vous ?',     e: '🌈' },
+      { q: 'Avez-vous souri aujourd\'hui ?',           e: '😄' },
+      { q: 'Êtes-vous bien entouré(e) ?',              e: '🤗' },
+      { q: 'Vous sentez-vous d\'attaque pour la journée ?', e: '⚡' },
+      { q: 'Avez-vous fait une petite promenade ?',    e: '🌿' },
+      { q: 'La météo est agréable pour vous aujourd\'hui ?', e: '☀️' },
+      { q: 'Avez-vous quelque chose de sympa prévu ?', e: '🎉' },
+      { q: 'Prenez-vous bien soin de vous ?',          e: '💖' },
+    ],
+    reponses_oui: [
+      'Quelle belle nouvelle, ça me réjouit ! 🌟',
+      'Super ! Profitez bien de cette belle journée 🌈',
+      'Fantastique ! Continuez comme ça 💪',
+      'Voilà qui fait chaud au cœur ! ☀️',
+      'Merveilleux ! Vous méritez ça 🌸',
+    ],
+    reponses_non: [
+      'Merci de me le dire… Prenez bien soin de vous 💙',
+      'Je suis là avec vous. N\'hésitez pas à appeler un proche 🤗',
+      'Ça ira mieux bientôt. Courage ! 💛',
+      'Soyez doux(ce) avec vous-même aujourd\'hui 🍃',
+      'Pensez à vous reposer. Je veille sur vous 💜',
+    ],
   },
   en: {
     retour: '← Back',
@@ -149,6 +197,54 @@ const _TRANSLATIONS = {
     langue_titre: '🌐 Language',
     langue_sous: 'Choose the application language.',
     partager: 'Share',
+    // ── Vocal ──────────────────────────────────────────
+    salut_matin: (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good morning ' + nom + '! ' : ''}We're happy to see you this morning. Have a wonderful day.`,
+    salut_midi:  (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good afternoon ' + nom + '! ' : ''}We hope your day is going well.`,
+    salut_soir:  (nom, voix) => `Good evening, I'm ${voix}. ${nom ? 'Good evening ' + nom + '! ' : ''}We hope you've had a lovely day.`,
+    glyc_vocal_hypo:       (p, v) => `${p}your blood sugar is ${v} milligrams per deciliter. That's below normal — this is called hypoglycemia. Have something sweet now, a glass of fruit juice or a few candies, and rest. If you don't feel better in a few minutes, call your doctor.`,
+    glyc_vocal_ok:         (p, v) => `${p}your blood sugar is ${v} milligrams per deciliter. That's a great value, in the normal range. Well done, keep it up!`,
+    glyc_vocal_eleve:      (p, v) => `${p}your blood sugar is ${v} milligrams per deciliter. That's a bit high. Try to avoid sugary foods at your next meal and remember to drink water. Your doctor is monitoring this with you.`,
+    glyc_vocal_tres_eleve: (p, v) => `${p}your blood sugar is ${v} milligrams per deciliter. That's quite high. Try to rest, drink water, and let your doctor know at your next appointment. Don't hesitate to use the help button if you don't feel well.`,
+    notif_med_titre:    'Mon Sucre — Medication',
+    notif_med_corps:    (nom) => `Don't forget to take: ${nom}`,
+    notif_rappel_titre: 'Mon Sucre — Urgent reminder',
+    notif_rappel_corps: (nom) => `You still haven't taken: ${nom}`,
+    questions_bienetre: [
+      { q: 'How are you feeling right now?',         e: '💛' },
+      { q: 'Did you sleep well last night?',         e: '🌙' },
+      { q: 'Are you in a good mood today?',          e: '😊' },
+      { q: 'Do you feel well this morning?',         e: '🌅' },
+      { q: 'Have you eaten something good today?',   e: '🍳' },
+      { q: 'Are you warm and comfortable?',          e: '🏠' },
+      { q: 'Have you had enough water today?',       e: '💧' },
+      { q: 'Have you had any good news today?',      e: '📬' },
+      { q: 'Are you doing something enjoyable?',     e: '🌸' },
+      { q: 'Have you spoken to someone dear today?', e: '💬' },
+      { q: 'Do you feel calm and peaceful?',         e: '🍃' },
+      { q: 'Have you taken time to rest today?',     e: '☕' },
+      { q: 'Is the day going well for you?',         e: '🌈' },
+      { q: 'Have you smiled today?',                 e: '😄' },
+      { q: 'Do you feel well surrounded?',           e: '🤗' },
+      { q: 'Do you feel ready for the day?',         e: '⚡' },
+      { q: 'Have you taken a little walk?',          e: '🌿' },
+      { q: 'Is the weather nice for you today?',     e: '☀️' },
+      { q: 'Do you have something fun planned?',     e: '🎉' },
+      { q: 'Are you taking good care of yourself?',  e: '💖' },
+    ],
+    reponses_oui: [
+      'What great news, I\'m so happy to hear it! 🌟',
+      'Wonderful! Enjoy this beautiful day 🌈',
+      'Fantastic! Keep it up 💪',
+      'That warms my heart! ☀️',
+      'Marvellous! You deserve it 🌸',
+    ],
+    reponses_non: [
+      'Thank you for telling me… Take good care of yourself 💙',
+      'I\'m here with you. Don\'t hesitate to call a loved one 🤗',
+      'It will get better soon. Courage! 💛',
+      'Be gentle with yourself today 🍃',
+      'Remember to rest. I\'m watching over you 💜',
+    ],
   },
   it: {
     retour: '← Indietro',
@@ -222,6 +318,54 @@ const _TRANSLATIONS = {
     langue_titre: '🌐 Lingua',
     langue_sous: 'Scegli la lingua dell\'applicazione.',
     partager: 'Condividi',
+    // ── Vocal ──────────────────────────────────────────
+    salut_matin: (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Siamo felici di ritrovarti stamattina. Passa una giornata meravigliosa.`,
+    salut_midi:  (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Speriamo che la tua giornata stia andando bene.`,
+    salut_soir:  (nom, voix) => `Buona sera, sono ${voix}. ${nom ? 'Buona sera ' + nom + '! ' : ''}Speriamo che tu abbia trascorso una bella giornata.`,
+    glyc_vocal_hypo:       (p, v) => `${p}la tua glicemia è di ${v} milligrammi per decilitro. È al di sotto della norma — si chiama ipoglicemia. Prendi qualcosa di dolce adesso, un bicchiere di succo di frutta o qualche caramella, e riposati. Se non ti senti meglio in pochi minuti, chiama il tuo medico.`,
+    glyc_vocal_ok:         (p, v) => `${p}la tua glicemia è di ${v} milligrammi per decilitro. È un ottimo valore, nella zona normale. Bravo, continua così!`,
+    glyc_vocal_eleve:      (p, v) => `${p}la tua glicemia è di ${v} milligrammi per decilitro. È un po' elevata. Cerca di evitare i dolci al prossimo pasto e ricordati di bere acqua. Il tuo medico sta monitorando questo con te.`,
+    glyc_vocal_tres_eleve: (p, v) => `${p}la tua glicemia è di ${v} milligrammi per decilitro. È piuttosto elevata. Cerca di riposare, bevi acqua e segnala questo valore al tuo medico alla prossima visita. Non esitare a usare il pulsante di aiuto se non ti senti bene.`,
+    notif_med_titre:    'Mon Sucre — Farmaco',
+    notif_med_corps:    (nom) => `Non dimenticare di prendere: ${nom}`,
+    notif_rappel_titre: 'Mon Sucre — Promemoria urgente',
+    notif_rappel_corps: (nom) => `Non hai ancora preso: ${nom}`,
+    questions_bienetre: [
+      { q: 'Come ti senti in questo momento?',          e: '💛' },
+      { q: 'Hai dormito bene stanotte?',                e: '🌙' },
+      { q: 'Sei di buon umore oggi?',                   e: '😊' },
+      { q: 'Ti senti in forma stamattina?',             e: '🌅' },
+      { q: 'Hai mangiato qualcosa di buono?',           e: '🍳' },
+      { q: 'Sei al caldo e a tuo agio?',                e: '🏠' },
+      { q: 'Hai bevuto abbastanza acqua oggi?',         e: '💧' },
+      { q: 'Hai avuto buone notizie oggi?',             e: '📬' },
+      { q: 'Stai facendo qualcosa di piacevole?',       e: '🌸' },
+      { q: 'Hai parlato con qualcuno di caro oggi?',    e: '💬' },
+      { q: 'Ti senti calmo e sereno?',                  e: '🍃' },
+      { q: 'Hai avuto il tempo di riposare oggi?',      e: '☕' },
+      { q: 'La giornata sta andando bene?',             e: '🌈' },
+      { q: 'Hai sorriso oggi?',                         e: '😄' },
+      { q: 'Ti senti ben circondato?',                  e: '🤗' },
+      { q: 'Ti senti pronto per la giornata?',          e: '⚡' },
+      { q: 'Hai fatto una piccola passeggiata?',        e: '🌿' },
+      { q: 'Il tempo è bello per te oggi?',             e: '☀️' },
+      { q: 'Hai qualcosa di bello in programma?',       e: '🎉' },
+      { q: 'Ti stai prendendo cura di te?',             e: '💖' },
+    ],
+    reponses_oui: [
+      'Che bella notizia, mi fa molto piacere! 🌟',
+      'Meraviglioso! Goditi questa bella giornata 🌈',
+      'Fantastico! Continua così 💪',
+      'Mi scalda il cuore! ☀️',
+      'Magnifico! Te lo meriti 🌸',
+    ],
+    reponses_non: [
+      'Grazie per dirmelo… Prenditi cura di te 💙',
+      'Sono qui con te. Non esitare a chiamare un familiare 🤗',
+      'Andrà meglio presto. Coraggio! 💛',
+      'Sii gentile con te stesso oggi 🍃',
+      'Ricordati di riposare. Vegli su di te 💜',
+    ],
   }
 };
 
@@ -570,28 +714,11 @@ function afficherBravo(message, messageVocal) {
 
 // Génère un commentaire vocal adapté à la valeur de glycémie (mg/dL)
 function _texteCommentaireGlycemie(valeur) {
-  const prenom = getPrenom();
-  const p = prenom ? `${prenom}, ` : '';
-
-  if (valeur < 70) {
-    return `${p}votre glycémie est de ${valeur} milligrammes par décilitre. `
-      + `C'est en dessous de la normale — on appelle ça une hypoglycémie. `
-      + `Prenez un peu de sucre maintenant, un verre de jus de fruit ou quelques bonbons, `
-      + `et reposez-vous. Si vous ne vous sentez pas mieux dans quelques minutes, appelez votre médecin.`;
-  }
-  if (valeur <= 126) {
-    return `${p}votre glycémie est de ${valeur} milligrammes par décilitre. `
-      + `C'est une très bonne valeur, dans la zone normale. Bravo, continuez comme ça !`;
-  }
-  if (valeur <= 180) {
-    return `${p}votre glycémie est de ${valeur} milligrammes par décilitre. `
-      + `C'est un peu élevé. Essayez d'éviter les sucreries lors de votre prochain repas `
-      + `et pensez à boire de l'eau. Votre médecin suit cela avec vous.`;
-  }
-  return `${p}votre glycémie est de ${valeur} milligrammes par décilitre. `
-    + `C'est assez élevé. Essayez de vous reposer, buvez de l'eau, `
-    + `et signalez cette valeur à votre médecin lors de votre prochaine consultation. `
-    + `N'hésitez pas à utiliser le bouton "Besoin d'aide" si vous ne vous sentez pas bien.`;
+  const p = getPrenom() ? `${getPrenom()}, ` : '';
+  if (valeur < 70)    return t('glyc_vocal_hypo')(p, valeur);
+  if (valeur <= 126)  return t('glyc_vocal_ok')(p, valeur);
+  if (valeur <= 180)  return t('glyc_vocal_eleve')(p, valeur);
+  return t('glyc_vocal_tres_eleve')(p, valeur);
 }
 
 function allerA(ecranId) {
@@ -1336,22 +1463,9 @@ const VOIX_NOM = 'Matilda';
 function _texteeSalutation() {
   const prenom = getPrenom() || '';
   const h = new Date().getHours();
-  let message;
-  if (h >= 5 && h < 12) {
-    message = `Bonjour, je suis ${VOIX_NOM}. `
-            + `${prenom ? 'Bonjour ' + prenom + ' ! ' : ''}`
-            + `Nous sommes heureux de vous retrouver ce matin. `
-            + `Passez une excellente journée.`;
-  } else if (h >= 12 && h < 18) {
-    message = `Bonjour, je suis ${VOIX_NOM}. `
-            + `${prenom ? 'Bonjour ' + prenom + ' ! ' : ''}`
-            + `Nous espérons que votre journée se passe bien.`;
-  } else {
-    message = `Bonsoir, je suis ${VOIX_NOM}. `
-            + `${prenom ? 'Bonsoir ' + prenom + ' ! ' : ''}`
-            + `Nous espérons que vous avez passé une belle journée.`;
-  }
-  return message;
+  if (h >= 5 && h < 12) return t('salut_matin')(prenom, VOIX_NOM);
+  if (h >= 12 && h < 18) return t('salut_midi')(prenom, VOIX_NOM);
+  return t('salut_soir')(prenom, VOIX_NOM);
 }
 
 async function _parlerSalutation(texteOverride) {
@@ -1472,9 +1586,10 @@ const REPONSES_NON = [
 ];
 
 function questionDuJour() {
+  const questions = t('questions_bienetre') || QUESTIONS_BIENETRE;
   const d   = new Date();
-  const idx = (d.getFullYear() * 366 + d.getMonth() * 31 + d.getDate()) % QUESTIONS_BIENETRE.length;
-  return QUESTIONS_BIENETRE[idx];
+  const idx = (d.getFullYear() * 366 + d.getMonth() * 31 + d.getDate()) % questions.length;
+  return questions[idx];
 }
 
 function afficherQuestionBienEtre() {
@@ -1510,7 +1625,9 @@ async function repondreBienEtre(reponse) {
   const btns   = document.getElementById('bienetre-btns');
   const merci  = document.getElementById('bienetre-merci');
   if (btns)  btns.style.display  = 'none';
-  const pool        = reponse === 'ok' ? REPONSES_OUI : REPONSES_NON;
+  const pool = reponse === 'ok'
+    ? (t('reponses_oui') || REPONSES_OUI)
+    : (t('reponses_non') || REPONSES_NON);
   const texteReponse = pool[Math.floor(Math.random() * pool.length)];
   if (merci) {
     merci.textContent = texteReponse;
@@ -3268,27 +3385,27 @@ async function planifierNotification(med) {
       type: 'PLANIFIER_NOTIF',
       medId: med.id,
       slot:  'rappel',
-      titre: 'Mon Sucre — Médicament',
-      corps: `N'oubliez pas de prendre : ${med.nom}`,
+      titre: t('notif_med_titre'),
+      corps: t('notif_med_corps')(med.nom),
       delai
     });
     sw.postMessage({
       type: 'PLANIFIER_NOTIF',
       medId: med.id,
       slot:  'oubli',
-      titre: 'Mon Sucre — Rappel urgent',
-      corps: `Vous n'avez toujours pas pris : ${med.nom}`,
+      titre: t('notif_rappel_titre'),
+      corps: t('notif_rappel_corps')(med.nom),
       delai: delai + 30 * 60 * 1000
     });
   } else {
     // Fallback : setTimeout dans la page (marche uniquement si l'app est ouverte)
     setTimeout(() => {
       const m = getMedicaments().find(x => x.id === med.id);
-      if (m && !m.pris && !m.desactive) envoyerNotification('Mon Sucre — Médicament', `N'oubliez pas de prendre : ${m.nom}`);
+      if (m && !m.pris && !m.desactive) envoyerNotification(t('notif_med_titre'), t('notif_med_corps')(m.nom));
     }, delai);
     setTimeout(() => {
       const m = getMedicaments().find(x => x.id === med.id);
-      if (m && !m.pris && !m.desactive) envoyerNotification('Mon Sucre — Rappel urgent', `Vous n'avez toujours pas pris : ${m.nom}`);
+      if (m && !m.pris && !m.desactive) envoyerNotification(t('notif_rappel_titre'), t('notif_rappel_corps')(m.nom));
     }, delai + 30 * 60 * 1000);
   }
 }
