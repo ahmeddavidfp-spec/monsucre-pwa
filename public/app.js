@@ -136,6 +136,22 @@ async function hydraterDepuisServeur() {
 // ════════════════════════════════════════════════════════
 let _pinSaisi = '';
 let _pinModeCreation = false;  // true = premier PIN à créer, false = vérification
+let _pinModeDev = false;       // true = accès zone développeur
+
+// ── Zone Développeur (PIN en dur) ──────────────────────
+const _DEV_PIN = '2327';
+
+function ouvrirZoneDev() {
+  _pinModeDev = true;
+  _pinModeCreation = false;
+  _pinSaisi = '';
+  _majAffichagePin();
+  document.getElementById('modal-pin').style.display = 'flex';
+  const titre = document.querySelector('.pin-titre');
+  if (titre) titre.textContent = '🛠️ Accès développeur';
+  const sousTitre = document.querySelector('.pin-sous');
+  if (sousTitre) sousTitre.textContent = 'Entrez le code développeur à 4 chiffres.';
+}
 
 function ouvrirParametres() {
   const pin = localStorage.getItem(cleUser('ms_pin'));
@@ -183,6 +199,21 @@ function _majAffichagePin() {
 }
 
 function _verifierPin() {
+  // ── Mode Zone Développeur ──────────────────────────────
+  if (_pinModeDev) {
+    if (_pinSaisi === _DEV_PIN) {
+      document.getElementById('modal-pin').style.display = 'none';
+      _pinModeDev = false;
+      allerA('ecran-dev');
+    } else {
+      const boite = document.querySelector('.pin-boite');
+      if (boite) { boite.classList.add('pin-erreur'); setTimeout(() => boite.classList.remove('pin-erreur'), 600); }
+      _pinSaisi = '';
+      setTimeout(_majAffichagePin, 100);
+    }
+    return;
+  }
+  // ── Mode Création ──────────────────────────────────────
   if (_pinModeCreation) {
     // Mode création : on enregistre le PIN saisi et on ouvre les paramètres
     localStorage.setItem(cleUser('ms_pin'), _pinSaisi);
@@ -191,6 +222,7 @@ function _verifierPin() {
     allerA('ecran-proche');
     return;
   }
+  // ── Mode Vérification ──────────────────────────────────
   const pinSauve = localStorage.getItem(cleUser('ms_pin'));
   if (_pinSaisi === pinSauve) {
     document.getElementById('modal-pin').style.display = 'none';
@@ -207,6 +239,7 @@ function _verifierPin() {
 function fermerModalPin() {
   _pinSaisi = '';
   _pinModeCreation = false;
+  _pinModeDev = false;
   _majAffichagePin();
   document.getElementById('modal-pin').style.display = 'none';
 }
