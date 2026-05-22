@@ -1647,7 +1647,7 @@ function sauverGlycemie() {
 }
 
 // ════════════════════════════════════════════════════════
-// ── Historique — Calendrier ─────────────────────────────
+// ── Historique Glycémies — Calendrier + Liste ───────────
 // ════════════════════════════════════════════════════════
 const calendrierEtat = {
   annee: new Date().getFullYear(),
@@ -1657,12 +1657,32 @@ const calendrierEtat = {
 
 function chargerHistorique() {
   const conteneur  = document.getElementById('liste-historique');
-  const historique = getHistorique();
+  const historique = getHistorique().filter(e => e.type === 'glycemie');
   if (historique.length === 0) {
-    conteneur.innerHTML = '<p class="chargement-meds">Aucune entrée enregistrée pour le moment.</p>';
+    conteneur.innerHTML = '<p class="cal-vide" style="margin-top:32px">Aucune glycémie enregistrée pour le moment.</p>';
     return;
   }
   conteneur.innerHTML = rendreCalendrier(historique);
+}
+
+function _glycStatut(vRef) {
+  if (vRef < 70)  return { label: 'Hypoglycémie', cls: 'glych-bas'  };
+  if (vRef <= 126) return { label: 'Normal',        cls: 'glych-ok'   };
+  if (vRef <= 180) return { label: 'Élevé',          cls: 'glych-haut' };
+  return               { label: 'Très élevé',    cls: 'glych-tres' };
+}
+
+function rendreCarteGlycHist(e) {
+  const d    = new Date(e.date);
+  const heure = d.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+  const v     = e.valeur;
+  const vRef  = (e.unite === 'mg/dL' || v > 40) ? v : v * 18;
+  const st    = _glycStatut(vRef);
+  return `<div class="glych-carte ${st.cls}">
+    <div class="glych-heure">${heure}</div>
+    <div class="glych-valeur">${v} <span class="glych-unite">mg/dL</span></div>
+    <div class="glych-statut">${st.label}</div>
+  </div>`;
 }
 
 function rendreCalendrier(historique) {
@@ -1702,11 +1722,20 @@ function rendreCalendrier(historique) {
   for (let i = 0; i < debutLundi; i++) html += `<div class="cal-jour vide"></div>`;
 
   for (let j = 1; j <= nbJours; j++) {
-    const key     = `${annee}-${String(mois+1).padStart(2,'0')}-${String(j).padStart(2,'0')}`;
+    const key    = `${annee}-${String(mois+1).padStart(2,'0')}-${String(j).padStart(2,'0')}`;
     const entrees = parJour[key] || [];
-    const hasRepas = entrees.some(e => e.type === 'photo' || e.type === 'vocal');
-    const hasGlyc  = entrees.some(e => e.type === 'glycemie');
-    const futur    = estFutur(j);
+    const hasGlyc = entrees.length > 0;
+    const futur   = estFutur(j);
+
+    // Couleur dominante du point selon la pire valeur du jour
+    let dotCls = 'dot-glyc';
+    if (hasGlyc) {
+      const pire = Math.max(...entrees.map(e => {
+        const v = e.valeur; return (e.unite === 'mg/dL' || v > 40) ? v : v * 18;
+      }));
+      dotCls = pire < 70 ? 'dot-glyc-bas' : pire <= 126 ? 'dot-glyc' : pire <= 180 ? 'dot-glyc-haut' : 'dot-glyc-tres';
+    }
+
     const cls = ['cal-jour',
       estAujourd(j)         ? 'cal-aujourdhui' : '',
       jourSelectionne === j ? 'cal-selectionne' : '',
@@ -1715,30 +1744,47 @@ function rendreCalendrier(historique) {
 
     html += `<div class="${cls}" ${!futur ? `onclick="selectionnerJour(${j})"` : ''}>
       <span class="cal-numero">${j}</span>
-      <div class="cal-dots">
-        ${hasRepas ? '<span class="cal-dot dot-repas"></span>' : ''}
-        ${hasGlyc  ? '<span class="cal-dot dot-glyc"></span>'  : ''}
-      </div>
+      <div class="cal-dots">${hasGlyc ? `<span class="cal-dot ${dotCls}"></span>` : ''}</div>
     </div>`;
   }
+
   html += `</div>
     <div class="cal-legende">
-      <span class="cal-legende-item"><span class="cal-dot dot-repas cal-legende-dot"></span> Repas enregistré</span>
-      <span class="cal-legende-item"><span class="cal-dot dot-glyc cal-legende-dot"></span> Glycémie mesurée</span>
+      <span class="cal-legende-item"><span class="cal-dot dot-glyc cal-legende-dot"></span> Normal</span>
+      <span class="cal-legende-item"><span class="cal-dot dot-glyc-haut cal-legende-dot"></span> Élevé</span>
+      <span class="cal-legende-item"><span class="cal-dot dot-glyc-bas cal-legende-dot"></span> Hypo</span>
     </div>
   </div>`;
 
+  // Détail du jour sélectionné
   if (jourSelectionne) {
     const key     = `${annee}-${String(mois+1).padStart(2,'0')}-${String(jourSelectionne).padStart(2,'0')}`;
     const entrees = (parJour[key] || []).sort((a, b) => new Date(a.date) - new Date(b.date));
-    html += `<div class="cal-detail"><div class="cal-detail-titre">📅 ${jourSelectionne} ${moisNoms[mois]} ${annee}</div>`;
+    const jourLabel = new Date(annee, mois, jourSelectionne)
+      .toLocaleDateString('fr-BE', { weekday:'long', day:'numeric', month:'long' });
+    html += `<div class="glych-groupe">
+      <div class="glych-jour-titre">${jourLabel.charAt(0).toUpperCase() + jourLabel.slice(1)}</div>`;
     if (entrees.length === 0) {
-      html += `<p class="cal-vide">Aucune entrée ce jour-là.</p>`;
+      html += `<p class="cal-vide">Aucune glycémie ce jour-là.</p>`;
     } else {
-      entrees.forEach(e => { html += rendreEntreeHistorique(e); });
+      entrees.forEach(e => { html += rendreCarteGlycHist(e); });
     }
     html += `</div>`;
+  } else {
+    // Pas de jour sélectionné : afficher les 15 dernières mesures
+    const recentes = historique.slice(0, 15);
+    if (recentes.length > 0) {
+      html += `<div class="glych-groupe">
+        <div class="glych-jour-titre">Mesures récentes</div>`;
+      recentes.forEach(e => {
+        const d = new Date(e.date);
+        const label = d.toLocaleDateString('fr-BE', { weekday:'short', day:'numeric', month:'short' });
+        html += `<div class="glych-ligne-date">${label}</div>` + rendreCarteGlycHist(e);
+      });
+      html += `</div>`;
+    }
   }
+
   return html;
 }
 
@@ -1755,37 +1801,52 @@ function selectionnerJour(jour) {
   chargerHistorique();
 }
 
+async function exporterGlycemies() {
+  const glycemies = getHistorique().filter(e => e.type === 'glycemie');
+  if (glycemies.length === 0) {
+    alert('Aucune glycémie à exporter.');
+    return;
+  }
+  const prenom = getPrenom() || 'patient';
+  const dateStr = new Date().toISOString().slice(0, 10);
+  const lignes = ['Date,Heure,Valeur (mg/dL),Statut'].concat(glycemies.map(e => {
+    const d = new Date(e.date);
+    const date  = d.toLocaleDateString('fr-BE');
+    const heure = d.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+    const v     = e.valeur;
+    const vRef  = (e.unite === 'mg/dL' || v > 40) ? v : v * 18;
+    const st    = _glycStatut(vRef).label;
+    return `${date},${heure},${v},${st}`;
+  }));
+  const csv = lignes.join('\n');
+  const filename = `glycemies_${prenom}_${dateStr}.csv`;
+  const file = new File(['﻿' + csv], filename, { type: 'text/csv;charset=utf-8' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: 'Mes glycémies', text: `Historique de glycémie — ${prenom}` });
+    } catch (err) {
+      if (err.name !== 'AbortError') console.error('Share error', err);
+    }
+  } else {
+    // Fallback téléchargement
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = filename;
+    a.click();
+  }
+}
+
 function rendreEntreeHistorique(repas) {
+  // Utilisé uniquement pour les repas (depuis admin/dev)
   const date  = new Date(repas.date);
   const heure = date.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
-
-  if (repas.type === 'glycemie') {
-    const v   = repas.valeur;
-    // Support ancien format mmol/L (valeurs < 40) + nouveau mg/dL
-    const estMgDL = (repas.unite === 'mg/dL' || v > 40);
-    const vRef    = estMgDL ? v : v * 18; // normalise en mg/dL pour la comparaison
-    const cls = vRef < 70 ? 'glyc-bas' : vRef <= 126 ? 'glyc-ok' : vRef <= 180 ? 'glyc-haut' : 'glyc-tres-haut';
-    const ico = vRef < 70 ? '🔴' : vRef <= 126 ? '🟢' : vRef <= 180 ? '🟡' : '🔴';
-    return `<div class="historique-carte glycemie-carte ${cls}">
-      <div class="historique-entete">
-        <span class="historique-icone">📊</span>
-        <div class="historique-date">
-          <span class="historique-jour">Glycémie</span>
-          <span class="historique-heure">${heure}</span>
-        </div>
-      </div>
-      <div class="glycemie-valeur">${v} ${repas.unite} ${ico}</div>
-    </div>`;
-  }
-
-  const modeDev  = estModeDevActif();
-  const icone    = repas.type === 'photo' ? '📷' : '🎤';
-  const tableau  = (modeDev && repas.analyse) ? rendreTableauNutritionnel(repas.analyse) : '';
+  const modeDev   = estModeDevActif();
+  const icone     = repas.type === 'photo' ? '📷' : '🎤';
+  const tableau   = (modeDev && repas.analyse) ? rendreTableauNutritionnel(repas.analyse) : '';
   const dateLabel = repas.date ? new Date(repas.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' }) : '';
   const photoHtml = repas.thumbnail
     ? `<img class="historique-photo" src="${repas.thumbnail}" alt="Photo du repas du ${dateLabel}" onerror="this.style.display='none'" />`
     : '';
-
   return `<div class="historique-carte">
     <div class="historique-entete">
       <span class="historique-icone">${icone}</span>

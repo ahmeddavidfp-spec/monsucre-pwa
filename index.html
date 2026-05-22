@@ -366,11 +366,12 @@
     </div>
   </div>
 
-  <!-- ÉCRAN HISTORIQUE -->
+  <!-- ÉCRAN HISTORIQUE GLYCÉMIES -->
   <div id="ecran-historique" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-glycemie')" aria-label="Retour">← Retour</button>
-      <h2>Mes repas &amp; glycémies</h2>
+      <h2>Mes glycémies</h2>
+      <button class="btn-export-glyc" onclick="exporterGlycemies()" aria-label="Exporter">Partager</button>
     </div>
     <div class="contenu-ecran" id="liste-historique">
       <p class="chargement-meds">Aucune entrée enregistrée.</p>

@@ -212,8 +212,12 @@ html, body {
 }
 .entete-ecran h2 { font-size: 22px; font-weight: 800; }
 
-#ecran-repas      .entete-ecran,
-#ecran-historique .entete-ecran { background: var(--repas-couleur); }
+#ecran-repas .entete-ecran { background: var(--repas-couleur); }
+#ecran-historique .entete-ecran {
+  background: var(--glyc-couleur);
+  justify-content: space-between;
+}
+#ecran-historique .entete-ecran h2 { flex: 1; text-align: center; }
 
 #ecran-medicaments .entete-ecran,
 #ecran-ajouter-med .entete-ecran { background: var(--meds-couleur); }
@@ -1346,44 +1350,118 @@ input[type="time"].champ-input {
 .cal-jour.cal-selectionne .cal-numero { color: white !important; }
 .cal-dots { display: flex; gap: 3px; justify-content: center; }
 .cal-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.dot-repas { background: var(--repas-couleur); }
-.dot-glyc  { background: var(--glyc-couleur); }
+.dot-repas     { background: var(--repas-couleur); }
+.dot-glyc      { background: #0B6650; }
+.dot-glyc-haut { background: #D4821A; }
+.dot-glyc-bas  { background: #C0392B; }
+.dot-glyc-tres { background: #C0392B; }
 
 .cal-legende {
   display: flex;
-  gap: 18px;
+  gap: 16px;
   justify-content: center;
-  padding: 12px 0 4px;
+  padding: 10px 0 4px;
   flex-wrap: wrap;
 }
 .cal-legende-item {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--texte-doux);
   font-weight: 600;
 }
-.cal-legende-dot {
-  width: 10px;
-  height: 10px;
-  display: inline-block;
-}
+.cal-legende-dot { width: 10px; height: 10px; display: inline-block; }
 
-.cal-detail {
-  margin-top: 14px;
+.cal-vide { font-size: 16px; color: var(--texte-doux); text-align: center; padding: 12px 0; }
+
+/* ── NOUVELLES CARTES GLYCÉMIE HISTORIQUE ───────────── */
+.glych-groupe {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 14px;
-  border-top: 2px solid #EEF0F2;
+  gap: 8px;
+  margin-top: 4px;
 }
-.cal-detail-titre {
-  font-size: 16px;
+.glych-jour-titre {
+  font-size: 17px;
   font-weight: 800;
   color: var(--texte);
+  padding: 14px 0 2px;
+  border-top: 2px solid #EEF0F2;
+  text-transform: capitalize;
 }
-.cal-vide { font-size: 16px; color: var(--texte-doux); text-align: center; padding: 12px 0; }
+.glych-ligne-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--texte-doux);
+  text-transform: capitalize;
+  margin-top: 6px;
+  padding-left: 4px;
+}
+.glych-carte {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  min-height: 72px;
+}
+.glych-carte::before {
+  content: '';
+  width: 7px;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-radius: 0;
+}
+.glych-carte.glych-ok::before   { background: #0B6650; }
+.glych-carte.glych-haut::before { background: #D4821A; }
+.glych-carte.glych-bas::before  { background: #C0392B; }
+.glych-carte.glych-tres::before { background: #C0392B; }
+.glych-heure {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--texte-doux);
+  padding: 0 14px;
+  min-width: 68px;
+  flex-shrink: 0;
+}
+.glych-valeur {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--texte);
+  flex: 1;
+}
+.glych-unite {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texte-doux);
+}
+.glych-statut {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+.glych-ok   .glych-statut { color: #0B6650; }
+.glych-haut .glych-statut { color: #D4821A; }
+.glych-bas  .glych-statut { color: #C0392B; }
+.glych-tres .glych-statut { color: #C0392B; }
+
+/* ── BOUTON EXPORT / PARTAGER ────────────────────────── */
+.btn-export-glyc {
+  background: #EAF4EF;
+  color: #0B6650;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  touch-action: manipulation;
+}
 
 /* ── HISTORIQUE CARTES ──────────────────────────────── */
 .historique-carte {
