@@ -2546,16 +2546,17 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   text-align: center;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   animation: modal-entree 0.22s ease;
+  color-scheme: only light;    /* force le rendu clair même en dark mode iOS */
 }
 .pin-titre {
   font-size: 22px;
   font-weight: 900;
-  color: var(--texte);
+  color: #1A2530;              /* toujours sombre */
   margin-bottom: 6px;
 }
 .pin-sous {
   font-size: 15px;
-  color: var(--texte-doux);
+  color: #6B7280;              /* toujours gris moyen */
   margin-bottom: 24px;
 }
 .pin-points {
@@ -2587,7 +2588,7 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   border-radius: 16px;
   font-size: 26px;
   font-weight: 700;
-  color: var(--texte);
+  color: #1A2530;          /* toujours sombre — modal est toujours blanc */
   padding: 18px 10px;
   min-height: 64px;
   cursor: pointer;
@@ -2595,8 +2596,8 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
   transition: background 0.1s, transform 0.08s;
 }
 .pin-touche:active { background: #DDE4E0; transform: scale(0.94); }
-.pin-eff  { font-size: 22px; color: var(--texte-doux); }
-.pin-ann  { font-size: 18px; color: var(--rouge); background: #FDF1F1; }
+.pin-eff  { font-size: 22px; color: #6B7280; }
+.pin-ann  { font-size: 18px; color: #D64545; background: #FDF1F1; }
 .pin-ann:active { background: #f5d5d5; }
 
 @keyframes pin-shake {
