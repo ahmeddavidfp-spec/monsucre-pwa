@@ -700,19 +700,58 @@ async function renvoyerCode() {
   } catch { /* silencieux */ }
 }
 
-// ── Sous-titre dynamique bouton médicaments ────────────────────────────────
+// ── Résumé accueil : dernière glycémie + sous-titre médicaments ───────────
 function mettreAJourResume() {
+  // ── Dernière glycémie (ligne discrète sans icône) ───
+  const resume   = document.getElementById('accueil-resume');
+  const histoGlyc = getHistorique().filter(e => e.type === 'glycemie');
+  if (resume) {
+    if (histoGlyc.length > 0) {
+      const derniere = histoGlyc[0];
+      const d        = new Date(derniere.date);
+      const diffMs   = Date.now() - d;
+      const diffMin  = Math.floor(diffMs / 60000);
+      const diffH    = Math.floor(diffMs / 3600000);
+      let quand;
+      if (diffMin < 2)       quand = 'à l\'instant';
+      else if (diffMin < 60) quand = `il y a ${diffMin} min`;
+      else if (diffH < 24)   quand = `il y a ${diffH}h`;
+      else                   quand = d.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
+
+      const v  = derniere.valeur;
+      const st = _glycStatut((derniere.unite === 'mg/dL' || v > 40) ? v : v * 18);
+      resume.innerHTML = '';
+      const ligne = document.createElement('div');
+      ligne.className = 'resume-item';
+      const texte = document.createElement('span');
+      const val = document.createElement('strong');
+      val.className = `resume-val ${st.cls}`;
+      val.textContent = `${v} mg/dL`;
+      const quandSpan = document.createElement('span');
+      quandSpan.className = 'resume-quand';
+      quandSpan.textContent = ` — ${quand}`;
+      texte.append('Dernière glycémie : ', val, quandSpan);
+      ligne.appendChild(texte);
+      resume.appendChild(ligne);
+      resume.style.display = 'flex';
+    } else {
+      resume.style.display = 'none';
+    }
+  }
+
+  // ── Sous-titre dynamique bouton médicaments ─────────
   const sousMeds = document.getElementById('sous-meds');
-  if (!sousMeds) return;
-  const meds     = getMedicaments().filter(m => !m.desactive);
-  const restants = meds.filter(m => estDuAujourdhui(m) && !m.pris).length;
-  const total    = meds.filter(m => estDuAujourdhui(m)).length;
-  if (total === 0) {
-    sousMeds.textContent = 'Voir mes prises du jour';
-  } else if (restants === 0) {
-    sousMeds.textContent = 'Tous les médicaments pris aujourd\'hui';
-  } else {
-    sousMeds.textContent = `${restants} médicament${restants > 1 ? 's' : ''} restant${restants > 1 ? 's' : ''} aujourd\'hui`;
+  if (sousMeds) {
+    const meds     = getMedicaments().filter(m => !m.desactive);
+    const restants = meds.filter(m => estDuAujourdhui(m) && !m.pris).length;
+    const total    = meds.filter(m => estDuAujourdhui(m)).length;
+    if (total === 0) {
+      sousMeds.textContent = 'Voir mes prises du jour';
+    } else if (restants === 0) {
+      sousMeds.textContent = 'Tous les médicaments pris aujourd\'hui';
+    } else {
+      sousMeds.textContent = `${restants} médicament${restants > 1 ? 's' : ''} restant${restants > 1 ? 's' : ''} aujourd\'hui`;
+    }
   }
 }
 
