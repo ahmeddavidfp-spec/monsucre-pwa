@@ -1600,6 +1600,13 @@ function appliquerModeHeure() {
   const h = new Date().getHours();
   const modeNuit = localStorage.getItem('ms_mode_nuit') !== 'off';
 
+  // force-light sur <html> : annule le dark mode système quand nuit désactivée
+  if (modeNuit) {
+    document.documentElement.classList.remove('force-light');
+  } else {
+    document.documentElement.classList.add('force-light');
+  }
+
   // Applique / retire la classe mode-nuit explicitement (évite les bugs iOS avec toggle+force)
   if (modeNuit && (h < 6 || h >= 21)) {
     document.body.classList.add('mode-nuit-heure');

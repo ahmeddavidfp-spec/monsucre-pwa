@@ -2151,6 +2151,44 @@ input[type="time"].champ-input {
   justify-content: center;
 }
 
+/* ── FORCE THÈME CLAIR (mode nuit désactivé par l'utilisateur) ─ */
+/* Annule le dark mode système quand l'utilisateur a désactivé le mode nuit */
+html.force-light {
+  color-scheme: only light;
+}
+html.force-light :root {
+  --fond:           #F4F6F5 !important;
+  --carte:          #E8F3EC !important;
+  --blanc:          #FFFFFF !important;
+  --texte:          #1E1E1E !important;
+  --texte-doux:     #6B7280 !important;
+  --accent-clair:   #E8F3EC !important;
+  --primaire-clair: #E8F3EC !important;
+  --sos-clair:      #FDF2F2 !important;
+  --gris-clair:     #F4F6F5 !important;
+  --repas-clair:    #FEF3C7 !important;
+  --meds-clair:     #EFF6FF !important;
+  --glyc-clair:     #EAF4EF !important;
+}
+html.force-light body,
+html.force-light .ecran        { background: #F4F6F5 !important; color: #1E1E1E !important; }
+html.force-light .config-section,
+html.force-light .conseil-card,
+html.force-light .historique-carte,
+html.force-light .calendrier,
+html.force-light .proche-info,
+html.force-light .texte-reconnu,
+html.force-light .glycemie-input-zone,
+html.force-light .scan-resultat { background: #FFFFFF !important; border-color: #E0E0E0 !important; color: #1E1E1E !important; }
+html.force-light .champ-input,
+html.force-light .champ-code   { background: #FFFFFF !important; color: #1E1E1E !important; border-color: #D0D0D0 !important; }
+html.force-light .btn-principal { background: #FFFFFF !important; color: #1E1E1E !important; }
+html.force-light .btn-appel    { background: #F4F6F5 !important; }
+html.force-light .btn-frequence,
+html.force-light .btn-jour,
+html.force-light .btn-periode  { background: #FFFFFF !important; border-color: #E0E0E0 !important; }
+html.force-light .glycemie-reference { background: #FFFFFF !important; }
+
 /* ── MODE NUIT SYSTÈME (prefers-color-scheme: dark) ── */
 @media (prefers-color-scheme: dark) {
   :root {
