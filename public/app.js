@@ -46,6 +46,16 @@ const _TRANSLATIONS = {
     midi: 'Midi',
     soir: 'Soir',
     nuit: 'Nuit',
+    aucun_med: 'Aucun médicament actif. Utilisez le bouton + pour en ajouter.',
+    med_aujourd_hui: 'Aujourd\'hui',
+    med_autres_jours: 'Autres jours',
+    med_tout_pris: 'Tout pris',
+    med_oublie: 'Oublié',
+    med_oublies: (n) => `${n} oubliés`,
+    med_pris: '✓ Pris',
+    marquer_pris: 'Marquer comme pris',
+    med_freq_hebdo: (jour) => `chaque ${jour}`,
+    med_freq_mensuel: (j) => `le ${j} du mois`,
     urgence_titre: 'Besoin d\'aide',
     pas_seul: 'Vous n\'êtes pas seul.\nJe suis là avec vous.',
     prevenir_famille: 'Prévenir ma famille',
@@ -84,6 +94,10 @@ const _TRANSLATIONS = {
     salut_matin: (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous sommes heureux de vous retrouver ce matin. Passez une excellente journée.`,
     salut_midi:  (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous espérons que votre journée se passe bien.`,
     salut_soir:  (nom, voix) => `Bonsoir, je suis ${voix}. ${nom ? 'Bonsoir ' + nom + ' ! ' : ''}Nous espérons que vous avez passé une belle journée.`,
+    urgence_vocal_112:    (p) => `${p ? 'Ne vous inquiétez pas, ' + p + '.' : 'Ne vous inquiétez pas.'} Vous êtes sur le point d'appeler le 1-1-2, le numéro des secours d'urgence. Si vous avez vraiment besoin d'aide immédiate, appuyez sur le bouton rouge pour confirmer. Sinon, appuyez sur Annuler. Je suis là avec vous.`,
+    urgence_vocal_1733:   (p) => `${p ? 'Ne vous inquiétez pas, ' + p + '.' : 'Ne vous inquiétez pas.'} Le 1733 est le numéro du médecin et de la pharmacie de garde. C'est le bon numéro quand vous avez besoin d'un avis médical, mais que ce n'est pas une urgence vitale. Souhaitez-vous appeler maintenant ? Appuyez sur le bouton vert pour confirmer, ou sur Annuler.`,
+    urgence_vocal_proche: (p, proche) => `${p ? 'Ne vous inquiétez pas, ' + p + '. Vous n\'êtes pas seul.' : 'Ne vous inquiétez pas. Vous n\'êtes pas seul.'} Je suis là avec vous. ${proche} peut venir vous aider. Appuyez sur le bouton pour que j'appelle ${proche} maintenant.`,
+    urgence_vocal_seul:   (p) => `${p ? 'Ne vous inquiétez pas, ' + p + '. Vous n\'êtes pas seul.' : 'Ne vous inquiétez pas. Vous n\'êtes pas seul.'} Je suis là avec vous. Restez calme. Vous pouvez configurer un proche aidant pour qu'il soit prévenu rapidement.`,
     glyc_vocal_hypo:       (p, v) => `${p}votre glycémie est de ${v} milligrammes par décilitre. C'est en dessous de la normale — on appelle ça une hypoglycémie. Prenez un peu de sucre maintenant, un verre de jus de fruit ou quelques bonbons, et reposez-vous. Si vous ne vous sentez pas mieux dans quelques minutes, appelez votre médecin.`,
     glyc_vocal_ok:         (p, v) => `${p}votre glycémie est de ${v} milligrammes par décilitre. C'est une très bonne valeur, dans la zone normale. Bravo, continuez comme ça !`,
     glyc_vocal_eleve:      (p, v) => `${p}votre glycémie est de ${v} milligrammes par décilitre. C'est un peu élevé. Essayez d'éviter les sucreries lors de votre prochain repas et pensez à boire de l'eau. Votre médecin suit cela avec vous.`,
@@ -171,6 +185,16 @@ const _TRANSLATIONS = {
     midi: 'Noon',
     soir: 'Evening',
     nuit: 'Night',
+    aucun_med: 'No active medication. Use the + button to add one.',
+    med_aujourd_hui: 'Today',
+    med_autres_jours: 'Other days',
+    med_tout_pris: 'All taken',
+    med_oublie: 'Missed',
+    med_oublies: (n) => `${n} missed`,
+    med_pris: '✓ Taken',
+    marquer_pris: 'Mark as taken',
+    med_freq_hebdo: (jour) => `every ${jour}`,
+    med_freq_mensuel: (j) => `on the ${j}th`,
     urgence_titre: 'I need help',
     pas_seul: 'You are not alone.\nI am here with you.',
     prevenir_famille: 'Alert my family',
@@ -209,6 +233,10 @@ const _TRANSLATIONS = {
     salut_matin: (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good morning ' + nom + '! ' : ''}We're happy to see you this morning. Have a wonderful day.`,
     salut_midi:  (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good afternoon ' + nom + '! ' : ''}We hope your day is going well.`,
     salut_soir:  (nom, voix) => `Good evening, I'm ${voix}. ${nom ? 'Good evening ' + nom + '! ' : ''}We hope you've had a lovely day.`,
+    urgence_vocal_112:    (p) => `${p ? 'Don\'t worry, ' + p + '.' : 'Don\'t worry.'} You are about to call 1-1-2, the emergency services number. If you really need immediate help, press the red button to confirm. Otherwise, press Cancel. I am here with you.`,
+    urgence_vocal_1733:   (p) => `${p ? 'Don\'t worry, ' + p + '.' : 'Don\'t worry.'} 1733 is the number for on-call doctors and pharmacies. It is the right number when you need medical advice, but it is not a life-threatening emergency. Would you like to call now? Press the green button to confirm, or press Cancel.`,
+    urgence_vocal_proche: (p, proche) => `${p ? 'Don\'t worry, ' + p + '. You are not alone.' : 'Don\'t worry. You are not alone.'} I am here with you. ${proche} can come and help you. Press the button for me to call ${proche} now.`,
+    urgence_vocal_seul:   (p) => `${p ? 'Don\'t worry, ' + p + '. You are not alone.' : 'Don\'t worry. You are not alone.'} I am here with you. Stay calm. You can set up a family contact so they can be notified quickly.`,
     glyc_vocal_hypo:       (p, v) => `${p}your blood sugar is ${v} milligrams per deciliter. That's below normal — this is called hypoglycemia. Have something sweet now, a glass of fruit juice or a few candies, and rest. If you don't feel better in a few minutes, call your doctor.`,
     glyc_vocal_ok:         (p, v) => `${p}your blood sugar is ${v} milligrams per deciliter. That's a great value, in the normal range. Well done, keep it up!`,
     glyc_vocal_eleve:      (p, v) => `${p}your blood sugar is ${v} milligrams per deciliter. That's a bit high. Try to avoid sugary foods at your next meal and remember to drink water. Your doctor is monitoring this with you.`,
@@ -296,6 +324,16 @@ const _TRANSLATIONS = {
     midi: 'Mezzogiorno',
     soir: 'Sera',
     nuit: 'Notte',
+    aucun_med: 'Nessun farmaco attivo. Usa il pulsante + per aggiungerne uno.',
+    med_aujourd_hui: 'Oggi',
+    med_autres_jours: 'Altri giorni',
+    med_tout_pris: 'Tutto preso',
+    med_oublie: 'Dimenticato',
+    med_oublies: (n) => `${n} dimenticati`,
+    med_pris: '✓ Preso',
+    marquer_pris: 'Segna come preso',
+    med_freq_hebdo: (jour) => `ogni ${jour}`,
+    med_freq_mensuel: (j) => `il ${j} del mese`,
     urgence_titre: 'Ho bisogno di aiuto',
     pas_seul: 'Non sei solo.\nSono qui con te.',
     prevenir_famille: 'Avvisare la mia famiglia',
@@ -334,6 +372,10 @@ const _TRANSLATIONS = {
     salut_matin: (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Siamo felici di ritrovarti stamattina. Passa una giornata meravigliosa.`,
     salut_midi:  (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Speriamo che la tua giornata stia andando bene.`,
     salut_soir:  (nom, voix) => `Buona sera, sono ${voix}. ${nom ? 'Buona sera ' + nom + '! ' : ''}Speriamo che tu abbia trascorso una bella giornata.`,
+    urgence_vocal_112:    (p) => `${p ? 'Non si preoccupi, ' + p + '.' : 'Non si preoccupi.'} Sta per chiamare il 1-1-2, il numero dei soccorsi d'emergenza. Se ha davvero bisogno di aiuto immediato, prema il pulsante rosso per confermare. Altrimenti, prema Annulla. Sono qui con lei.`,
+    urgence_vocal_1733:   (p) => `${p ? 'Non si preoccupi, ' + p + '.' : 'Non si preoccupi.'} Il 1733 è il numero del medico e della farmacia di guardia. È il numero giusto quando ha bisogno di un parere medico, ma non si tratta di un'emergenza vitale. Vuole chiamare adesso? Prema il pulsante verde per confermare, oppure prema Annulla.`,
+    urgence_vocal_proche: (p, proche) => `${p ? 'Non si preoccupi, ' + p + '. Non è solo.' : 'Non si preoccupi. Non è solo.'} Sono qui con lei. ${proche} può venire ad aiutarla. Prema il pulsante perché io chiami ${proche} adesso.`,
+    urgence_vocal_seul:   (p) => `${p ? 'Non si preoccupi, ' + p + '. Non è solo.' : 'Non si preoccupi. Non è solo.'} Sono qui con lei. Resti calmo. Può configurare un familiare di riferimento in modo che venga avvisato rapidamente.`,
     glyc_vocal_hypo:       (p, v) => `${p}la tua glicemia è di ${v} milligrammi per decilitro. È al di sotto della norma — si chiama ipoglicemia. Prendi qualcosa di dolce adesso, un bicchiere di succo di frutta o qualche caramella, e riposati. Se non ti senti meglio in pochi minuti, chiama il tuo medico.`,
     glyc_vocal_ok:         (p, v) => `${p}la tua glicemia è di ${v} milligrammi per decilitro. È un ottimo valore, nella zona normale. Bravo, continua così!`,
     glyc_vocal_eleve:      (p, v) => `${p}la tua glicemia è di ${v} milligrammi per decilitro. È un po' elevata. Cerca di evitare i dolci al prossimo pasto e ricordati di bere acqua. Il tuo medico sta monitorando questo con te.`,
@@ -420,6 +462,10 @@ function changerLangue(lang) {
   mettreAJourResume();
   const ind = document.getElementById('glycemie-indicateur');
   if (ind && document.getElementById('inp-glycemie')?.value) mettreAJourIndicateurGlyc();
+  // Invalide le cache audio urgence (textes changés de langue)
+  if (typeof _invaliderEtRechargerCacheUrgence === 'function') _invaliderEtRechargerCacheUrgence();
+  // Recharge la liste médicaments si l'écran est actif
+  if (document.getElementById('ecran-medicaments')?.classList.contains('actif')) chargerMedicaments();
 }
 
 // ════════════════════════════════════════════════════════
@@ -1721,15 +1767,11 @@ function mettreAJourBoutonsAppel() {
 const _cacheAudioUrgence = { '112': null, '1733': null, 'urgence': null };
 
 function _texte112() {
-  const p = getPrenom();
-  const intro = p ? `Ne vous inquiétez pas, ${p}.` : `Ne vous inquiétez pas.`;
-  return `${intro} Vous êtes sur le point d'appeler le 1-1-2, le numéro des secours d'urgence. Si vous avez vraiment besoin d'aide immédiate, appuyez sur le bouton rouge pour confirmer. Sinon, appuyez sur Annuler. Je suis là avec vous.`;
+  return t('urgence_vocal_112')(getPrenom());
 }
 
 function _texte1733() {
-  const p = getPrenom();
-  const intro = p ? `Ne vous inquiétez pas, ${p}.` : `Ne vous inquiétez pas.`;
-  return `${intro} Le 1733 est le numéro du médecin et de la pharmacie de garde. C'est le bon numéro quand vous avez besoin d'un avis médical, mais que ce n'est pas une urgence vitale. Souhaitez-vous appeler maintenant ? Appuyez sur le bouton vert pour confirmer, ou sur Annuler.`;
+  return t('urgence_vocal_1733')(getPrenom());
 }
 
 // Pré-fetche les 3 clips en parallèle en arrière-plan.
@@ -2681,19 +2723,13 @@ function appelerPharmacie() {
 }
 
 function _texteUrgence() {
-  const prenomUser  = getPrenom();
-  const proche      = getProcheContact();
-  const nomProche   = proche?.prenom || 'votre proche';
-
-  const intro = prenomUser
-    ? `Ne vous inquiétez pas, ${prenomUser}. Vous n'êtes pas seul.`
-    : `Ne vous inquiétez pas. Vous n'êtes pas seul.`;
-
-  const corps = proche
-    ? `Je suis là avec vous. ${nomProche} peut venir vous aider. Appuyez sur le bouton pour que j'appelle ${nomProche} maintenant.`
-    : `Je suis là avec vous. Restez calme. Vous pouvez configurer un proche aidant pour qu'il soit prévenu rapidement.`;
-
-  return `${intro} ${corps}`;
+  const prenomUser = getPrenom();
+  const proche     = getProcheContact();
+  if (proche) {
+    const nomProche = proche.prenom || 'votre proche';
+    return t('urgence_vocal_proche')(prenomUser, nomProche);
+  }
+  return t('urgence_vocal_seul')(prenomUser);
 }
 
 async function _parlerUrgence() {
@@ -2987,26 +3023,30 @@ function chargerMedicaments() {
   const medsActifs = meds.filter(m => !m.desactive);
 
   if (medsActifs.length === 0) {
-    liste.innerHTML = '<p class="chargement-meds">Aucun médicament actif. Utilisez le bouton + pour en ajouter.</p>';
+    liste.innerHTML = `<p class="chargement-meds">${t('aucun_med')}</p>`;
     mettreAJourBadge(0);
     return;
   }
 
   const now   = minutesMaintenant();
   const ordre = ['matin','midi','soir','nuit'];
-  const jours = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  // Jours abrégés localisés
+  const joursDate = [0,1,2,3,4,5,6].map(i => {
+    const d = new Date(2024, 0, 7 + i); // 7 jan 2024 = dimanche
+    return d.toLocaleDateString(t('locale_date'), { weekday: 'short' });
+  });
 
   const periodeConf = {
-    matin: { label: 'Matin', couleur: '#C47D0A', fond: '#FFF8ED', bord: '#F59E0B' },
-    midi:  { label: 'Midi',  couleur: '#0B6650', fond: '#EDFAF5', bord: '#0B9E78' },
-    soir:  { label: 'Soir',  couleur: '#6D28D9', fond: '#F5F3FF', bord: '#8B5CF6' },
-    nuit:  { label: 'Nuit',  couleur: '#1D4ED8', fond: '#EFF6FF', bord: '#3B82F6' },
+    matin: { label: t('matin'), couleur: '#C47D0A', fond: '#FFF8ED', bord: '#F59E0B' },
+    midi:  { label: t('midi'),  couleur: '#0B6650', fond: '#EDFAF5', bord: '#0B9E78' },
+    soir:  { label: t('soir'),  couleur: '#6D28D9', fond: '#F5F3FF', bord: '#8B5CF6' },
+    nuit:  { label: t('nuit'),  couleur: '#1D4ED8', fond: '#EFF6FF', bord: '#3B82F6' },
   };
 
   const labelFrequence = med => {
     const f = med.frequence || 'quotidien';
-    if (f === 'hebdomadaire') return `chaque ${jours[med.jourSemaine]}`;
-    if (f === 'mensuel')      return `le ${med.jourMois} du mois`;
+    if (f === 'hebdomadaire') return t('med_freq_hebdo')(joursDate[med.jourSemaine] ?? med.jourSemaine);
+    if (f === 'mensuel')      return t('med_freq_mensuel')(med.jourMois);
     return '';
   };
 
@@ -3026,8 +3066,8 @@ function chargerMedicaments() {
           <span class="med-bloc-periode" style="color:${conf.couleur}">${conf.label}</span>
           ${heureLabel ? `<span class="med-bloc-heure-ref">${heureLabel}</span>` : ''}
         </div>
-        ${toutPris    ? `<span class="med-bloc-badge-pris">Tout pris</span>`
-          : nbOublies > 0 ? `<span class="med-bloc-badge-oubli">${nbOublies > 1 ? nbOublies + ' oubliés' : 'Oublié'}</span>`
+        ${toutPris    ? `<span class="med-bloc-badge-pris">${t('med_tout_pris')}</span>`
+          : nbOublies > 0 ? `<span class="med-bloc-badge-oubli">${nbOublies > 1 ? t('med_oublies')(nbOublies) : t('med_oublie')}</span>`
           : ''}
       </div>`;
 
@@ -3047,7 +3087,7 @@ function chargerMedicaments() {
         <button class="btn-med-pris ${med.pris ? 'deja-pris' : ''}"
                 onclick="event.stopPropagation(); marquerPris(${med.id}, this)"
                 ${med.pris || !dj ? 'disabled' : ''}>
-          ${med.pris ? '✓ Pris' : dj ? 'Marquer comme pris' : '—'}
+          ${med.pris ? t('med_pris') : dj ? t('marquer_pris') : '—'}
         </button>
       </div>`;
     });
@@ -3059,7 +3099,7 @@ function chargerMedicaments() {
   let html = '';
 
   if (duJour.length > 0) {
-    html += `<div class="med-section-titre">Aujourd'hui</div>`;
+    html += `<div class="med-section-titre">${t('med_aujourd_hui')}</div>`;
     ordre.forEach(p => {
       const g = duJour.filter(m => m.periode === p);
       if (g.length) html += rendreBloc(g, p, true);
@@ -3067,7 +3107,7 @@ function chargerMedicaments() {
   }
 
   if (pasAujourd.length > 0) {
-    html += `<div class="med-section-titre" style="margin-top:16px">Autres jours</div>`;
+    html += `<div class="med-section-titre" style="margin-top:16px">${t('med_autres_jours')}</div>`;
     ordre.forEach(p => {
       const g = pasAujourd.filter(m => m.periode === p);
       if (g.length) html += rendreBloc(g, p, false);
