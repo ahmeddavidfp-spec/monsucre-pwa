@@ -2402,7 +2402,7 @@ body.heure-crepuscule .entete { background: linear-gradient(160deg, #8A74C4 0%, 
 }
 .btn-glycemie .btn-icone { background: #D6EDE5; color: #0B6650; }
 .btn-meds     .btn-icone { background: #E4ECF8; color: #3A5BA0; }
-.btn-repas    .btn-icone { background: #EEF0FB; color: #4A5BB8; }
+.btn-repas    .btn-icone { background: #F3EAFA; color: #7C3DB5; }
 
 /* Glycémie : accent discret sans gradient */
 .btn-glycemie {
