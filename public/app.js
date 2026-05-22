@@ -788,6 +788,7 @@ function allerA(ecranId) {
   if (cible) cible.classList.add('actif');
   window.scrollTo(0, 0);
 
+  if (ecranId === 'ecran-accueil')      appliquerModeHeure();
   if (ecranId === 'ecran-urgence')      chargerEcranUrgence();
   if (ecranId === 'ecran-proche')       chargerFormulaireProche();
   if (ecranId === 'ecran-dev')          chargerEcranDev();
@@ -1598,32 +1599,35 @@ const PERIODES_HEURE = ['heure-nuit','heure-aube','heure-matin','heure-midi','he
 function appliquerModeHeure() {
   const h = new Date().getHours();
   const modeNuit = localStorage.getItem('ms_mode_nuit') !== 'off';
-  document.body.classList.toggle('mode-nuit-heure', modeNuit && (h < 6 || h >= 21));
+
+  // Applique / retire la classe mode-nuit explicitement (évite les bugs iOS avec toggle+force)
+  if (modeNuit && (h < 6 || h >= 21)) {
+    document.body.classList.add('mode-nuit-heure');
+  } else {
+    document.body.classList.remove('mode-nuit-heure');
+  }
 
   // Classe colorée selon la plage horaire
   let periode;
-  if      (!modeNuit)            periode = 'heure-matin';  // forcer neutre si nuit désactivée
-  else if (h >= 21 || h <  5)   periode = 'heure-nuit';
-  else if (h >= 5  && h <  8)   periode = 'heure-aube';
-  else if (h >= 8  && h < 12)   periode = 'heure-matin';
-  else if (h >= 12 && h < 14)   periode = 'heure-midi';
-  else if (h >= 14 && h < 18)   periode = 'heure-aprem';
-  else if (h >= 18 && h < 20)   periode = 'heure-soir';
-  else                           periode = 'heure-crepuscule';
+  if      (h >= 21 || h <  5)  periode = modeNuit ? 'heure-nuit' : 'heure-crepuscule';
+  else if (h >= 5  && h <  8)  periode = 'heure-aube';
+  else if (h >= 8  && h < 12)  periode = 'heure-matin';
+  else if (h >= 12 && h < 14)  periode = 'heure-midi';
+  else if (h >= 14 && h < 18)  periode = 'heure-aprem';
+  else if (h >= 18 && h < 20)  periode = 'heure-soir';
+  else                          periode = 'heure-crepuscule';
 
   PERIODES_HEURE.forEach(p => document.body.classList.remove(p));
   document.body.classList.add(periode);
 }
 
 function basculerModeNuit(checkbox) {
-  if (checkbox.checked) {
-    localStorage.setItem('ms_mode_nuit', 'auto');
-  } else {
-    localStorage.setItem('ms_mode_nuit', 'off');
-  }
+  // Lit l'état depuis le DOM pour être fiable sur iOS
+  const estActif = document.getElementById('toggle-mode-nuit').checked;
+  localStorage.setItem('ms_mode_nuit', estActif ? 'auto' : 'off');
   appliquerModeHeure();
   const label = document.getElementById('mode-nuit-label');
-  if (label) label.setAttribute('data-i18n', checkbox.checked ? 'mode_nuit_label_auto' : 'mode_nuit_label_off');
+  if (label) label.setAttribute('data-i18n', estActif ? 'mode_nuit_label_auto' : 'mode_nuit_label_off');
   appliquerTraductions();
 }
 
@@ -3645,6 +3649,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // l'utilisateur revient dans l'app (depuis l'arrière-plan)
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
+    appliquerModeHeure();            // rafraîchit le mode nuit (respect de la préférence)
     reessayerSyncEnAttente();        // pousse les données hors-ligne en attente
     verifierMedsOublies();
     getMedicaments().forEach(planifierNotification);
