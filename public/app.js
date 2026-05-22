@@ -2508,9 +2508,8 @@ function chargerMedicaments() {
              || document.querySelector('.med-bloc');
   if (cible) {
     setTimeout(() => {
-      const conteneur = document.querySelector('#ecran-medicaments .contenu-ecran');
+      const conteneur = document.getElementById('ecran-medicaments'); // c'est lui qui scroll (overflow-y: auto)
       if (!conteneur) return;
-      // Traverser la chaîne offsetParent pour obtenir la position réelle dans le conteneur
       let top = 0;
       let el  = cible;
       while (el && el !== conteneur) {
