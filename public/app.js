@@ -729,12 +729,27 @@ function _lancerSession() {
 
 // À utiliser après chaque connexion / vérification de code.
 function demarrerApp() {
-  if (localStorage.getItem(cleUser('ms_onboarding_done')) !== 'true') {
-    obAfficherEtape(1);
-    allerA('ecran-onboarding');
+  // 1. Flag local présent → déjà fait sur cet appareil
+  if (localStorage.getItem(cleUser('ms_onboarding_done')) === 'true') {
+    _lancerSession();
     return;
   }
-  _lancerSession();
+  // 2. Utilisateur existant (données sur le serveur) → skip onboarding et marquer fait
+  const user = getUserLocal();
+  const estExistant = user && (
+    user.prenom ||
+    (user.medicaments  && user.medicaments.length  > 0) ||
+    (user.historique_repas && user.historique_repas.length > 0) ||
+    user.proche
+  );
+  if (estExistant) {
+    localStorage.setItem(cleUser('ms_onboarding_done'), 'true');
+    _lancerSession();
+    return;
+  }
+  // 3. Vraiment nouvel utilisateur → onboarding aidant
+  obAfficherEtape(1);
+  allerA('ecran-onboarding');
 }
 
 // ════════════════════════════════════════════════════════
