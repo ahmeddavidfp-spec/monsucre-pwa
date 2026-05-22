@@ -2283,8 +2283,9 @@ function chargerMedicaments() {
   reinitialiserPrisSiNouveauJour();
   const liste = document.getElementById('liste-medicaments');
   const meds  = getMedicaments();
-  const medsNonDesactives = meds.filter(m => !m.desactive);
-  if (medsNonDesactives.length === 0) {
+  const medsActifs = meds.filter(m => !m.desactive);
+
+  if (medsActifs.length === 0) {
     liste.innerHTML = '<p class="chargement-meds">Aucun médicament actif. Utilisez le bouton + pour en ajouter.</p>';
     mettreAJourBadge(0);
     return;
@@ -2294,60 +2295,86 @@ function chargerMedicaments() {
   const ordre = ['matin','midi','soir','nuit'];
   const jours = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 
+  const periodeConf = {
+    matin: { label: 'Matin', couleur: '#C47D0A', fond: '#FFF8ED', bord: '#F59E0B' },
+    midi:  { label: 'Midi',  couleur: '#0B6650', fond: '#EDFAF5', bord: '#0B9E78' },
+    soir:  { label: 'Soir',  couleur: '#6D28D9', fond: '#F5F3FF', bord: '#8B5CF6' },
+    nuit:  { label: 'Nuit',  couleur: '#1D4ED8', fond: '#EFF6FF', bord: '#3B82F6' },
+  };
+
   const labelFrequence = med => {
     const f = med.frequence || 'quotidien';
-    if (f === 'hebdomadaire') return ` · chaque ${jours[med.jourSemaine]}`;
-    if (f === 'mensuel')      return ` · le ${med.jourMois} du mois`;
+    if (f === 'hebdomadaire') return `chaque ${jours[med.jourSemaine]}`;
+    if (f === 'mensuel')      return `le ${med.jourMois} du mois`;
     return '';
   };
 
-  const medsActifs = meds.filter(m => !m.desactive);
   const duJour     = medsActifs.filter(m =>  estDuAujourdhui(m));
   const pasAujourd = medsActifs.filter(m => !estDuAujourdhui(m));
-  const tries = [
-    ...[...duJour    ].sort((a,b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode)),
-    ...[...pasAujourd].sort((a,b) => ordre.indexOf(a.periode) - ordre.indexOf(b.periode))
-  ];
 
-  let html = '';
-  if (duJour.length > 0) html += `<div class="med-section-titre">Aujourd'hui</div>`;
+  const rendreBloc = (group, periode, dj) => {
+    const conf       = periodeConf[periode] || { label: periode, couleur: '#555', fond: '#F5F5F5', bord: '#999' };
+    const toutPris   = dj && group.every(m => m.pris);
+    const nbOublies  = dj ? group.filter(m => !m.pris && heureEnMinutes(m) + 30 <= now).length : 0;
+    const heureRef   = group[0]?.heure || '';
+    const heureLabel = (heureRef && heureRef !== conf.label) ? heureRef : '';
 
-  tries.forEach((med, idx) => {
-    if (!estDuAujourdhui(med) && (idx === 0 || estDuAujourdhui(tries[idx - 1]))) {
-      html += `<div class="med-section-titre" style="margin-top:8px">Autres jours</div>`;
-    }
-    const dj       = estDuAujourdhui(med);
-    const enRetard = dj && !med.pris && heureEnMinutes(med) + 30 <= now;
-    const labelsPeriode = { matin:'Matin', midi:'Midi', soir:'Soir', nuit:'Nuit' };
-    const heureAffichee = (med.heure && med.heure !== labelsPeriode[med.periode]) ? med.heure : '';
-    // Nettoie la posologie : retire les textes étrangers entre parenthèses
-    const posologiePropre = med.posologie
-      ? esc(med.posologie).replace(/\s*\([^)]*\)/g, '').trim()
-      : '';
-    html += `
-    <div class="med-carte ${med.periode} ${med.pris ? 'pris' : ''} ${enRetard ? 'en-retard' : ''} ${!dj ? 'pas-aujourd' : ''} ${med.desactive ? 'desactive' : ''}"
-         onclick="ouvrirFicheMed(${med.id})">
-      <div class="med-carte-header">
-        <span class="med-carte-periode-label">${labelsPeriode[med.periode] || med.periode}</span>
-        ${heureAffichee ? `<span class="med-carte-heure-tag">${heureAffichee}</span>` : ''}
-        ${enRetard ? '<span class="med-retard">Oublié</span>' : ''}
-      </div>
-      <div class="med-carte-corps">
-        <div class="med-nom">${esc(med.nom)}${med.insuline ? ' <span class="med-badge-insuline">Insuline</span>' : ''}${med.desactive ? ' <span class="med-desactive-tag">désactivé</span>' : ''}</div>
-        ${posologiePropre ? `<div class="med-posologie">${posologiePropre}</div>` : ''}
-        ${labelFrequence(med) ? `<div class="med-freq-tag">${labelFrequence(med).trim()}</div>` : ''}
+    let h = `<div class="med-bloc ${periode} ${toutPris ? 'bloc-tout-pris' : ''} ${!dj ? 'bloc-autre-jour' : ''}">
+      <div class="med-bloc-header" style="background:${conf.fond};border-left:5px solid ${conf.bord}">
+        <div class="med-bloc-header-left">
+          <span class="med-bloc-periode" style="color:${conf.couleur}">${conf.label}</span>
+          ${heureLabel ? `<span class="med-bloc-heure-ref">${heureLabel}</span>` : ''}
+        </div>
+        ${toutPris    ? `<span class="med-bloc-badge-pris">Tout pris</span>`
+          : nbOublies > 0 ? `<span class="med-bloc-badge-oubli">${nbOublies > 1 ? nbOublies + ' oubliés' : 'Oublié'}</span>`
+          : ''}
+      </div>`;
+
+    group.forEach((med, i) => {
+      const enRetard = dj && !med.pris && heureEnMinutes(med) + 30 <= now;
+      const posologiePropre = med.posologie
+        ? esc(med.posologie).replace(/\s*\([^)]*\)/g, '').trim()
+        : '';
+      const freq = labelFrequence(med);
+      h += `<div class="med-bloc-item ${med.pris ? 'item-pris' : ''} ${enRetard ? 'item-retard' : ''} ${i > 0 ? 'item-sep' : ''}"
+                 onclick="ouvrirFicheMed(${med.id})">
+        <div class="med-bloc-info">
+          <div class="med-bloc-nom">${esc(med.nom)}${med.insuline ? ' <span class="med-badge-insuline">Insuline</span>' : ''}</div>
+          ${posologiePropre ? `<div class="med-bloc-posologie">${posologiePropre}</div>` : ''}
+          ${freq ? `<div class="med-bloc-freq">${freq}</div>` : ''}
+        </div>
         <button class="btn-med-pris ${med.pris ? 'deja-pris' : ''}"
                 onclick="event.stopPropagation(); marquerPris(${med.id}, this)"
-                ${med.pris || !dj || med.desactive ? 'disabled' : ''}>
-          ${med.pris ? 'Pris — bien joué !' : med.desactive ? 'Désactivé' : dj ? 'Marquer comme pris' : '—'}
+                ${med.pris || !dj ? 'disabled' : ''}>
+          ${med.pris ? '✓ Pris' : dj ? 'Marquer comme pris' : '—'}
         </button>
-      </div>
-    </div>`;
-  });
+      </div>`;
+    });
+
+    h += `</div>`;
+    return h;
+  };
+
+  let html = '';
+
+  if (duJour.length > 0) {
+    html += `<div class="med-section-titre">Aujourd'hui</div>`;
+    ordre.forEach(p => {
+      const g = duJour.filter(m => m.periode === p);
+      if (g.length) html += rendreBloc(g, p, true);
+    });
+  }
+
+  if (pasAujourd.length > 0) {
+    html += `<div class="med-section-titre" style="margin-top:16px">Autres jours</div>`;
+    ordre.forEach(p => {
+      const g = pasAujourd.filter(m => m.periode === p);
+      if (g.length) html += rendreBloc(g, p, false);
+    });
+  }
 
   liste.innerHTML = html;
 
-  // Masquer/afficher le bouton Ajouter selon le mode Senior Only
   const btnAjouter = document.querySelector('#ecran-medicaments .btn-action');
   if (btnAjouter) btnAjouter.style.display = estSeniorOnly() ? 'none' : '';
 
@@ -2393,8 +2420,20 @@ function _marquerPrisAvecUnites(id, btn, unites) {
   btn.textContent = '✅ Pris — bien joué !';
   btn.classList.add('deja-pris');
   btn.disabled = true;
-  const carte = btn.closest('.med-carte');
-  if (carte) { carte.classList.add('pris'); carte.classList.remove('en-retard'); }
+  const carte = btn.closest('.med-carte, .med-bloc-item');
+  if (carte) { carte.classList.add('pris'); carte.classList.remove('en-retard', 'item-retard'); }
+  // Si tous les items du bloc sont pris, marquer le bloc
+  const bloc = btn.closest('.med-bloc');
+  if (bloc) {
+    const items = bloc.querySelectorAll('.med-bloc-item:not(.item-pris)');
+    // Compte les restants hors celui qu'on vient de cocher
+    const restants = [...items].filter(it => !it.querySelector('.btn-med-pris.deja-pris'));
+    if (restants.length === 0) {
+      bloc.classList.add('bloc-tout-pris');
+      const badge = bloc.querySelector('.med-bloc-badge-oubli');
+      if (badge) { badge.className = 'med-bloc-badge-pris'; badge.textContent = 'Tout pris'; }
+    }
+  }
 
   const meds = getMedicaments().map(m => m.id === id ? { ...m, pris: true } : m);
   sauverMedicaments(meds);

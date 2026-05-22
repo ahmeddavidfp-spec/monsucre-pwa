@@ -737,148 +737,124 @@ input[type="time"].champ-input {
   margin-top: 4px;
 }
 
-.med-carte {
+/* ── BLOCS MÉDICAMENTS PAR PÉRIODE ────────────────────── */
+.med-bloc {
+  background: white;
   border-radius: 20px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.09);
-  transition: opacity 0.3s, transform 0.1s;
   overflow: hidden;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.09);
+  transition: transform 0.1s;
 }
-.med-carte.pris .med-posologie,
-.med-carte.pris .med-freq-tag { opacity: 0.45; }
-.med-carte.pris .med-carte-corps { background: #F5F5F5; }
+.med-bloc:active { transform: scale(0.99); }
 
-/* ── En-tête colorée horizontale ─────────────────────── */
-.med-carte-header {
+/* En-tête du bloc (période) */
+.med-bloc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 10px 16px;
+  padding: 13px 18px;
+  gap: 10px;
 }
-.med-carte.matin .med-carte-header { background: #F5EDE0; }
-.med-carte.midi  .med-carte-header { background: #EAF4EF; }
-.med-carte.soir  .med-carte-header { background: #F0EBF8; }
-.med-carte.nuit  .med-carte-header { background: #E8ECF5; }
-
-.med-carte-periode-label {
-  font-size: 15px;
+.med-bloc-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.med-bloc-periode {
+  font-size: 17px;
   font-weight: 900;
-  color: #1A2530;
-  letter-spacing: 0.5px;
   text-transform: uppercase;
+  letter-spacing: 0.6px;
 }
-.med-carte-heure-tag {
+.med-bloc-heure-ref {
   font-size: 13px;
   font-weight: 700;
-  color: #4A5568;
-  background: rgba(0,0,0,0.08);
+  color: #777;
+  background: rgba(0,0,0,0.07);
   border-radius: 8px;
   padding: 2px 9px;
-  margin-left: auto;
 }
-.med-retard {
+.med-bloc-badge-pris {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0B6650;
+  background: #D0ECD8;
+  border-radius: 20px;
+  padding: 3px 12px;
+}
+.med-bloc-badge-oubli {
   font-size: 13px;
   font-weight: 700;
   color: #B86A10;
   background: rgba(212,130,26,0.18);
-  border-radius: 8px;
-  padding: 2px 9px;
+  border-radius: 20px;
+  padding: 3px 12px;
 }
 
-/* Corps de la carte */
-.med-carte-corps {
-  flex: 1;
-  padding: 14px 16px 14px;
+/* Item médicament dans le bloc */
+.med-bloc-item {
+  padding: 16px 18px 14px;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   background: white;
+  transition: background 0.1s;
 }
+.med-bloc-item:active { background: #F8FAF9; }
+.item-sep { border-top: 1px solid #F0F0F0; }
+.item-retard { background: #FFFBF5; }
+.item-retard:active { background: #FFF3E0; }
+.item-pris { opacity: 0.52; }
 
-/* Couleurs de fond léger pour les corps */
-.med-carte.matin .med-carte-corps { background: #FFFDF5; }
-.med-carte.midi  .med-carte-corps { background: #F4F8FF; }
-.med-carte.soir  .med-carte-corps { background: #FAF5FF; }
-.med-carte.nuit  .med-carte-corps { background: #F4F5FB; }
+.med-bloc-info { display: flex; flex-direction: column; gap: 3px; }
+.med-bloc-nom  { font-size: 19px; font-weight: 800; color: var(--texte); line-height: 1.2; }
+.med-bloc-posologie { font-size: 14px; color: var(--texte-doux); font-style: italic; }
+.med-bloc-freq { font-size: 13px; color: var(--texte-doux); font-weight: 600; }
 
-.med-freq-tag {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--texte-doux);
-}
-.med-desactive-tag {
-  font-size: 13px;
-  font-weight: 700;
-  background: #F0F0F0;
-  color: #888;
-  border-radius: 6px;
-  padding: 2px 8px;
-  vertical-align: middle;
-  margin-left: 4px;
-}
-
-.med-carte-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-/* Couleurs par période (fond global) */
-/* La couleur de période est portée uniquement par .med-carte-header */
-
-.med-nom  { font-size: 20px; font-weight: 800; color: var(--texte); }
-.med-posologie { font-size: 14px; color: var(--texte-doux); margin-top: 3px; font-style: italic; }
+/* Badge insuline */
 .med-badge-insuline { font-size: 13px; font-weight: 700; background: #E0F0FF; color: #1A6FB0; border-radius: 6px; padding: 2px 8px; vertical-align: middle; margin-left: 4px; }
-.med-heure {
-  font-size: 15px;
-  color: var(--texte-doux);
-  margin-top: 3px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-}
+
 /* Bouton pris — grand, full-width */
 .btn-med-pris {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   border: none;
   border-radius: 14px;
-  padding: 16px 20px;
-  font-size: 18px;
+  padding: 15px 20px;
+  font-size: 17px;
   font-weight: 800;
   color: white;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 10px;
   width: 100%;
+  background: #0B6650;
   transition: transform 0.1s;
+  touch-action: manipulation;
 }
-.btn-med-pris:active { transform: scale(0.98); }
-.btn-med-pris.deja-pris { background: #B8C8C4 !important; cursor: default; }
-.btn-med-pris:disabled  { background: #B8C8C4 !important; cursor: default; }
+.btn-med-pris:active   { transform: scale(0.98); }
+.btn-med-pris.deja-pris,
+.btn-med-pris:disabled { background: #C8D8D4 !important; cursor: default; color: #5A7A74; }
 
-.med-carte.matin .btn-med-pris:not(.deja-pris):not(:disabled) { background: #0B6650; }
-.med-carte.midi  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #0B6650; }
-.med-carte.soir  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #0B6650; }
-.med-carte.nuit  .btn-med-pris:not(.deja-pris):not(:disabled) { background: #0B6650; }
+/* Bloc tout-pris : header légèrement atténué */
+.med-bloc.bloc-tout-pris .med-bloc-header { opacity: 0.7; }
 
-.med-carte.en-retard .med-carte-header { background: #FEF3E8 !important; }
-.med-carte.en-retard .med-nom { color: var(--texte); }
-.med-carte.pas-aujourd .med-carte-corps { opacity: 0.28; }
-.med-carte.pas-aujourd .med-carte-header { opacity: 0.5; }
-.med-carte.desactive .med-carte-corps   { opacity: 0.35; filter: grayscale(0.6); }
-.med-carte.desactive .med-carte-header  { opacity: 0.5; filter: grayscale(0.5); }
+/* Autres jours : fondu */
+.med-bloc.bloc-autre-jour { opacity: 0.5; }
+.med-bloc.bloc-autre-jour .btn-med-pris { display: none; }
 
-/* Carte cliquable */
-.med-carte { cursor: pointer; }
-.med-carte:active { transform: scale(0.985); }
+/* Anciens styles conservés pour compatibilité fiche */
+.med-nom  { font-size: 20px; font-weight: 800; color: var(--texte); }
+.med-posologie { font-size: 14px; color: var(--texte-doux); margin-top: 3px; font-style: italic; }
+.med-freq-tag  { font-size: 14px; font-weight: 600; color: var(--texte-doux); }
+.med-desactive-tag { font-size: 13px; font-weight: 700; background: #F0F0F0; color: #888; border-radius: 6px; padding: 2px 8px; vertical-align: middle; margin-left: 4px; }
+.med-retard { font-size: 13px; font-weight: 700; color: #B86A10; background: rgba(212,130,26,0.18); border-radius: 8px; padding: 2px 9px; }
+
+/* Ancien .med-carte conservé pour fiche médicament */
+.med-carte { border-radius: 20px; padding: 0; display: flex; flex-direction: column; box-shadow: 0 2px 12px rgba(0,0,0,0.09); overflow: hidden; cursor: pointer; }
+.med-carte-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; }
+.med-carte-corps  { flex: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; background: white; }
 
 /* ── Fiche médicament ─────────────────────────────────── */
 .fiche-med-carte {
