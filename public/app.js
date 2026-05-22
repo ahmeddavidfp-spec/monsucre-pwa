@@ -1517,12 +1517,6 @@ function verifierRappelGlyc() {
   const labels = { matin: 'ce matin', midi: 'ce midi', soir: 'ce soir' };
   const label  = labels[slot];
 
-  // Message vocal
-  const prenom = getPrenom();
-  const intro  = prenom ? `${prenom}, ` : '';
-  const texte  = `${intro}avant d'enregistrer votre repas, avez-vous mesuré votre glycémie ${label} ? Pensez à la mesurer juste avant de manger. Vous pouvez l'enregistrer directement sur cet écran.`;
-  _jouerTexteVocal(texte);
-
   // Notification push (via Service Worker) si les notifs sont autorisées
   if (navigator.serviceWorker?.controller && Notification.permission === 'granted') {
     navigator.serviceWorker.controller.postMessage({

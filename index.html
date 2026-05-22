@@ -283,6 +283,32 @@
           <svg class="btn-repas-fleche" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
         <input type="file" id="input-photo" accept="image/*" capture="environment" style="display:none" onchange="analyserPhoto(this)" />
+
+        <button class="btn-repas-choix btn-repas-voix" onclick="commencerVoix()">
+          <div class="btn-repas-icone">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </div>
+          <div class="btn-repas-textes">
+            <span class="btn-repas-titre">Décrire à voix haute</span>
+            <span class="btn-repas-sous">Dites ce que vous avez mangé</span>
+          </div>
+          <svg class="btn-repas-fleche" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <!-- Zone écoute vocale -->
+      <div id="zone-voix" class="zone-cachee">
+        <div class="repas-ecoute-carte">
+          <div class="repas-pulse-ring"></div>
+          <p class="repas-ecoute-label">J'écoute…</p>
+          <p id="texte-reconnu" class="texte-reconnu"></p>
+          <button class="btn-confirmer" onclick="envoyerRepas()" style="display:none" id="btn-envoyer-repas">C'est ça !</button>
+        </div>
       </div>
 
       <!-- Analyse en cours -->
