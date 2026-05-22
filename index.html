@@ -614,7 +614,7 @@
       </div>
 
       <div id="urgence-proche-info" class="proche-info zone-cachee"></div>
-      <p id="urgence-pas-de-proche" class="instruction urgence-message zone-cachee">
+      <p id="urgence-pas-de-proche" class="instruction urgence-message zone-cachee" data-i18n-br="aucun_proche_configure">
         Aucun proche configuré.<br>Ajoutez un proche d'abord.
       </p>
 
@@ -643,7 +643,7 @@
         </button>
       </div>
 
-      <button class="btn-secondaire" onclick="allerA('ecran-proche')">⚙️ Configurer mon proche aidant</button>
+      <button class="btn-secondaire" onclick="allerA('ecran-proche')" data-i18n="configurer_proche_btn">⚙️ Configurer mon proche aidant</button>
       <button class="btn-secondaire btn-je-vais-mieux" onclick="allerA('ecran-accueil')" style="margin-top:20px;border-color:#A8C8C4;" data-i18n="je_vais_mieux">✅ Je vais mieux — retour à l'accueil</button>
     </div>
   </div>
@@ -920,13 +920,13 @@
   <div id="modal-1733" class="modal-overlay" style="display:none" onclick="fermerModal1733(event)">
     <div class="modal-112-boite">
       <div class="modal-112-icone">🩺</div>
-      <h2 class="modal-112-titre" style="color:#1E6E45;">Appeler le 1733 ?</h2>
-      <p class="modal-112-texte">Le 1733 vous met en contact avec le médecin ou la pharmacie de garde.<br>Pour toute question médicale non urgente.</p>
+      <h2 class="modal-112-titre" style="color:#1E6E45;" data-i18n="modal_1733_titre">Appeler le 1733 ?</h2>
+      <p class="modal-112-texte" data-i18n-br="modal_1733_texte">Le 1733 vous met en contact avec le médecin ou la pharmacie de garde.<br>Pour toute question médicale non urgente.</p>
       <div class="modal-112-boutons">
         <button class="modal-btn-oui" style="background:#1E6E45;box-shadow:0 4px 16px rgba(30,110,69,0.35);" onclick="lancerAppel1733()">
-          <span>📞</span> Oui, appeler le 1733
+          <span>📞</span> <span data-i18n="modal_1733_oui">Oui, appeler le 1733</span>
         </button>
-        <button class="modal-btn-non" onclick="fermerModal1733()">
+        <button class="modal-btn-non" onclick="fermerModal1733()" data-i18n="modal_annuler">
           Non, annuler
         </button>
       </div>
@@ -937,13 +937,13 @@
   <div id="modal-112" class="modal-overlay" style="display:none" onclick="fermerModal112(event)">
     <div class="modal-112-boite">
       <div class="modal-112-icone">🚨</div>
-      <h2 class="modal-112-titre">Appeler le 112 ?</h2>
-      <p class="modal-112-texte">Le 112 est le numéro des secours d'urgence.<br>Ne l'appelez qu'en cas de danger réel.</p>
+      <h2 class="modal-112-titre" data-i18n="modal_112_titre">Appeler le 112 ?</h2>
+      <p class="modal-112-texte" data-i18n-br="modal_112_texte">Le 112 est le numéro des secours d'urgence.<br>Ne l'appelez qu'en cas de danger réel.</p>
       <div class="modal-112-boutons">
         <button class="modal-btn-oui" onclick="lancerAppel112()">
-          <span>📞</span> Oui, appeler le 112
+          <span>📞</span> <span data-i18n="modal_112_oui">Oui, appeler le 112</span>
         </button>
-        <button class="modal-btn-non" onclick="fermerModal112()">
+        <button class="modal-btn-non" onclick="fermerModal112()" data-i18n="modal_annuler">
           Non, annuler
         </button>
       </div>
