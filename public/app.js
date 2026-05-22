@@ -700,92 +700,20 @@ async function renvoyerCode() {
   } catch { /* silencieux */ }
 }
 
-// ── Résumé contextuel accueil (dernière glycémie + prochain médicament) ──────
+// ── Sous-titre dynamique bouton médicaments ────────────────────────────────
 function mettreAJourResume() {
-  const resume = document.getElementById('accueil-resume');
-  if (!resume) return;
-
-  const items = [];
-
-  // ── Dernière glycémie ───────────────────────────────
-  const histoGlyc = getHistorique().filter(e => e.type === 'glycemie');
-  if (histoGlyc.length > 0) {
-    const derniere = histoGlyc[0];
-    const d = new Date(derniere.date);
-    const diffMs = Date.now() - d;
-    const diffMin = Math.floor(diffMs / 60000);
-    const diffH   = Math.floor(diffMs / 3600000);
-    let quand;
-    if (diffMin < 2)        quand = 'à l\'instant';
-    else if (diffMin < 60)  quand = `il y a ${diffMin} min`;
-    else if (diffH < 24)    quand = `il y a ${diffH}h`;
-    else                    quand = d.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
-
-    const v   = derniere.valeur;
-    const st  = _glycStatut((derniere.unite === 'mg/dL' || v > 40) ? v : v * 18);
-    const div = document.createElement('div');
-    div.className = 'resume-item';
-    // Icône
-    const icone = document.createElement('span');
-    icone.className = 'resume-icone';
-    icone.textContent = '💧';
-    // Texte
-    const texte = document.createElement('span');
-    const val = document.createElement('strong');
-    val.className = `resume-val ${st.cls}`;
-    val.textContent = `${v} mg/dL`;
-    const quandSpan = document.createElement('span');
-    quandSpan.className = 'resume-quand';
-    quandSpan.textContent = ` — ${quand}`;
-    texte.append('Dernière glycémie : ', val, quandSpan);
-    div.append(icone, texte);
-    items.push(div);
-  }
-
-  // ── Prochain médicament à prendre ──────────────────
-  const meds = getMedicaments().filter(m => !m.desactive);
-  const now  = minutesMaintenant();
-  const prochains = meds
-    .filter(m => estDuAujourdhui(m) && !m.pris)
-    .sort((a, b) => heureEnMinutes(a) - heureEnMinutes(b));
-
-  if (prochains.length > 0) {
-    const prochain = prochains[0];
-    const heure = prochain.heure || { matin: '8h00', midi: '12h00', soir: '19h00', nuit: '22h00' }[prochain.periode] || '';
-    const div = document.createElement('div');
-    div.className = 'resume-item';
-    const icone = document.createElement('span');
-    icone.className = 'resume-icone';
-    icone.textContent = '💊';
-    const texte = document.createElement('span');
-    const nomSpan = document.createElement('strong');
-    nomSpan.textContent = prochain.nom;
-    texte.append('Prochain médicament : ', nomSpan, heure ? ` à ${heure}` : '');
-    div.append(icone, texte);
-    items.push(div);
-  }
-
-  // ── Sous-titre dynamique bouton médicaments ─────────
   const sousMeds = document.getElementById('sous-meds');
-  if (sousMeds) {
-    const restants = meds.filter(m => estDuAujourdhui(m) && !m.pris).length;
-    const total    = meds.filter(m => estDuAujourdhui(m)).length;
-    if (total === 0) {
-      sousMeds.textContent = 'Voir mes prises du jour';
-    } else if (restants === 0) {
-      sousMeds.textContent = 'Tous les médicaments pris aujourd\'hui';
-    } else {
-      sousMeds.textContent = `${restants} médicament${restants > 1 ? 's' : ''} restant${restants > 1 ? 's' : ''} aujourd\'hui`;
-    }
+  if (!sousMeds) return;
+  const meds     = getMedicaments().filter(m => !m.desactive);
+  const restants = meds.filter(m => estDuAujourdhui(m) && !m.pris).length;
+  const total    = meds.filter(m => estDuAujourdhui(m)).length;
+  if (total === 0) {
+    sousMeds.textContent = 'Voir mes prises du jour';
+  } else if (restants === 0) {
+    sousMeds.textContent = 'Tous les médicaments pris aujourd\'hui';
+  } else {
+    sousMeds.textContent = `${restants} médicament${restants > 1 ? 's' : ''} restant${restants > 1 ? 's' : ''} aujourd\'hui`;
   }
-
-  if (items.length === 0) {
-    resume.style.display = 'none';
-    return;
-  }
-  resume.innerHTML = '';
-  items.forEach(el => resume.appendChild(el));
-  resume.style.display = 'flex';
 }
 
 function entrerDansAccueil() {
