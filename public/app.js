@@ -131,6 +131,42 @@ const _TRANSLATIONS = {
     aucun_med_enregistre: 'Aucun médicament enregistré',
     jour_lun: 'Lun', jour_mar: 'Mar', jour_mer: 'Mer', jour_jeu: 'Jeu',
     jour_ven: 'Ven', jour_sam: 'Sam', jour_dim: 'Dim',
+    // ── Fiche médicament ──────────────────────────────
+    fiche_med_titre: 'Fiche médicament',
+    statut_desactive: '⏸ Désactivé',
+    statut_actif: '✅ Actif',
+    reactiver_med: '▶ Réactiver ce médicament',
+    desactiver_med: '⏸ Désactiver ce médicament',
+    hint_med_desactive: 'Ce médicament est actuellement désactivé. Réactivez-le pour recevoir des rappels.',
+    hint_med_actif: 'Le médicament sera conservé mais n\'apparaîtra plus dans vos rappels du jour.',
+    desactive_badge: '⏸ désactivé',
+    pris_bravo: '✅ Pris — bien joué !',
+    // ── Notifications ─────────────────────────────────
+    notif_installer_ios: '⚠️ Installez l\'app sur l\'écran d\'accueil pour activer les notifications.',
+    notif_non_supporte: '❌ Votre navigateur ne supporte pas les notifications.',
+    notif_active: '✅ Notifications activées — vous recevrez les rappels.',
+    notif_bloquee: '🚫 Notifications bloquées. Allez dans les réglages pour les autoriser.',
+    notif_inactive: '💤 Notifications non activées.',
+    // ── Session ───────────────────────────────────────
+    vider_cache_en_cours: '⏳ En cours…',
+    session_renouvelee: '✅ Session renouvelée !',
+    erreur_simple: '❌ Erreur',
+    renouveler_session: '🔄 Renouveler la session',
+    // ── Scanner médicament ────────────────────────────
+    scan_analyse: '⏳ Analyse du médicament en cours…',
+    scan_non_reconnu: '❌ Médicament non reconnu. Entrez le nom manuellement.',
+    scan_erreur: '❌ Erreur lors de l\'analyse. Entrez le nom manuellement.',
+    // ── Historique ────────────────────────────────────
+    aucune_glycemie: 'Aucune glycémie enregistrée pour le moment.',
+    aucun_repas_hist: 'Aucun repas enregistré pour le moment.',
+    aucune_injection: 'Aucune injection enregistrée.',
+    // ── Connexion ─────────────────────────────────────
+    connexion_en_cours: '⏳ Connexion…',
+    instruction_sms: 'Entrez le code à 4 chiffres\nreçu par SMS',
+    instruction_dev: 'Entrez le code à 4 chiffres\naffiché ci-dessous',
+    code_sms_titre: 'Code reçu par SMS',
+    // ── Écrans ────────────────────────────────────────
+    mes_repas_titre: 'Mes repas',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous sommes heureux de vous retrouver ce matin. Passez une excellente journée.`,
     salut_midi:  (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous espérons que votre journée se passe bien.`,
@@ -311,6 +347,42 @@ const _TRANSLATIONS = {
     aucun_med_enregistre: 'No medications saved',
     jour_lun: 'Mon', jour_mar: 'Tue', jour_mer: 'Wed', jour_jeu: 'Thu',
     jour_ven: 'Fri', jour_sam: 'Sat', jour_dim: 'Sun',
+    // ── Medication card ───────────────────────────────
+    fiche_med_titre: 'Medication card',
+    statut_desactive: '⏸ Deactivated',
+    statut_actif: '✅ Active',
+    reactiver_med: '▶ Reactivate this medication',
+    desactiver_med: '⏸ Deactivate this medication',
+    hint_med_desactive: 'This medication is currently deactivated. Reactivate it to receive reminders.',
+    hint_med_actif: 'The medication will be kept but will no longer appear in your daily reminders.',
+    desactive_badge: '⏸ deactivated',
+    pris_bravo: '✅ Taken — well done!',
+    // ── Notifications ─────────────────────────────────
+    notif_installer_ios: '⚠️ Install the app on your home screen to enable notifications.',
+    notif_non_supporte: '❌ Your browser does not support notifications.',
+    notif_active: '✅ Notifications enabled — you will receive reminders.',
+    notif_bloquee: '🚫 Notifications blocked. Go to settings to enable them.',
+    notif_inactive: '💤 Notifications not enabled.',
+    // ── Session ───────────────────────────────────────
+    vider_cache_en_cours: '⏳ In progress…',
+    session_renouvelee: '✅ Session renewed!',
+    erreur_simple: '❌ Error',
+    renouveler_session: '🔄 Renew session',
+    // ── Scanner ───────────────────────────────────────
+    scan_analyse: '⏳ Analysing medication…',
+    scan_non_reconnu: '❌ Medication not recognised. Enter the name manually.',
+    scan_erreur: '❌ Error during analysis. Enter the name manually.',
+    // ── History ───────────────────────────────────────
+    aucune_glycemie: 'No blood sugar recorded yet.',
+    aucun_repas_hist: 'No meals recorded yet.',
+    aucune_injection: 'No injection recorded.',
+    // ── Login ─────────────────────────────────────────
+    connexion_en_cours: '⏳ Connecting…',
+    instruction_sms: 'Enter the 4-digit code\nreceived by SMS',
+    instruction_dev: 'Enter the 4-digit code\nshown below',
+    code_sms_titre: 'SMS Code',
+    // ── Screens ───────────────────────────────────────
+    mes_repas_titre: 'My meals',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good morning ' + nom + '! ' : ''}We're happy to see you this morning. Have a wonderful day.`,
     salut_midi:  (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good afternoon ' + nom + '! ' : ''}We hope your day is going well.`,
@@ -491,6 +563,42 @@ const _TRANSLATIONS = {
     aucun_med_enregistre: 'Nessun farmaco salvato',
     jour_lun: 'Lun', jour_mar: 'Mar', jour_mer: 'Mer', jour_jeu: 'Gio',
     jour_ven: 'Ven', jour_sam: 'Sab', jour_dim: 'Dom',
+    // ── Scheda farmaco ────────────────────────────────
+    fiche_med_titre: 'Scheda farmaco',
+    statut_desactive: '⏸ Disattivato',
+    statut_actif: '✅ Attivo',
+    reactiver_med: '▶ Riattiva questo farmaco',
+    desactiver_med: '⏸ Disattiva questo farmaco',
+    hint_med_desactive: 'Questo farmaco è attualmente disattivato. Riattivalo per ricevere i promemoria.',
+    hint_med_actif: 'Il farmaco verrà conservato ma non apparirà più nei tuoi promemoria quotidiani.',
+    desactive_badge: '⏸ disattivato',
+    pris_bravo: '✅ Preso — bravo!',
+    // ── Notifiche ─────────────────────────────────────
+    notif_installer_ios: '⚠️ Installa l\'app sulla schermata principale per attivare le notifiche.',
+    notif_non_supporte: '❌ Il tuo browser non supporta le notifiche.',
+    notif_active: '✅ Notifiche attivate — riceverai i promemoria.',
+    notif_bloquee: '🚫 Notifiche bloccate. Vai nelle impostazioni per autorizzarle.',
+    notif_inactive: '💤 Notifiche non attivate.',
+    // ── Sessione ──────────────────────────────────────
+    vider_cache_en_cours: '⏳ In corso…',
+    session_renouvelee: '✅ Sessione rinnovata!',
+    erreur_simple: '❌ Errore',
+    renouveler_session: '🔄 Rinnova la sessione',
+    // ── Scanner ───────────────────────────────────────
+    scan_analyse: '⏳ Analisi del farmaco in corso…',
+    scan_non_reconnu: '❌ Farmaco non riconosciuto. Inserisci il nome manualmente.',
+    scan_erreur: '❌ Errore durante l\'analisi. Inserisci il nome manualmente.',
+    // ── Cronologia ────────────────────────────────────
+    aucune_glycemie: 'Nessuna glicemia registrata per il momento.',
+    aucun_repas_hist: 'Nessun pasto registrato per il momento.',
+    aucune_injection: 'Nessuna iniezione registrata.',
+    // ── Accesso ───────────────────────────────────────
+    connexion_en_cours: '⏳ Connessione…',
+    instruction_sms: 'Inserisci il codice a 4 cifre\nricevuto via SMS',
+    instruction_dev: 'Inserisci il codice a 4 cifre\nvisualizzato qui sotto',
+    code_sms_titre: 'Codice SMS',
+    // ── Schermate ─────────────────────────────────────
+    mes_repas_titre: 'I miei pasti',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Siamo felici di ritrovarti stamattina. Passa una giornata meravigliosa.`,
     salut_midi:  (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Speriamo che la tua giornata stia andando bene.`,
@@ -1263,7 +1371,7 @@ async function seConnecter() {
   if (!telephone) return afficherErreur(erreur, 'Veuillez entrer votre numéro de téléphone.');
   btn.disabled = true;
   const texteOrig = btn.textContent;
-  btn.textContent = '⏳ Connexion…';
+  btn.textContent = t('connexion_en_cours');
   try {
     const r = await fetch('/api/auth/connexion', {
       method: 'POST',
@@ -1292,10 +1400,10 @@ function afficherEcranVerification(devCode) {
   if (devCode) {
     banniere.innerHTML = `Mode test — votre code est :<strong>${devCode}</strong>`;
     banniere.classList.add('visible');
-    instruction.innerHTML = 'Entrez le code à 4 chiffres<br>affiché ci-dessous';
+    instruction.innerHTML = t('instruction_dev').replace(/\n/g, '<br>');
   } else {
     banniere.classList.remove('visible');
-    instruction.innerHTML = 'Entrez le code à 4 chiffres<br>reçu par SMS';
+    instruction.innerHTML = t('instruction_sms').replace(/\n/g, '<br>');
   }
   document.getElementById('inp-code').value = '';
   allerA('ecran-verification');
@@ -2286,7 +2394,7 @@ function _getHintGlyc() {
       aide = document.createElement('p');
       aide.id = 'glyc-aide-saisie';
       aide.className = 'glyc-aide-saisie';
-      aide.textContent = 'Appuyez sur le champ pour saisir votre valeur';
+      aide.textContent = t('glyc_hint');
       zone.insertAdjacentElement('afterend', aide);
     }
   }
@@ -2392,7 +2500,7 @@ function chargerHistorique() {
   const conteneur  = document.getElementById('liste-historique');
   const historique = getHistorique().filter(e => e.type === 'glycemie');
   if (historique.length === 0) {
-    conteneur.innerHTML = '<p class="cal-vide" style="margin-top:32px">Aucune glycémie enregistrée pour le moment.</p>';
+    conteneur.innerHTML = `<p class="cal-vide" style="margin-top:32px">${t('aucune_glycemie')}</p>`;
     return;
   }
   conteneur.innerHTML = rendreCalendrier(historique);
@@ -2544,7 +2652,7 @@ function chargerHistoriqueRepas() {
   const repas = getHistorique().filter(e => e.type === 'photo' || e.type === 'vocal');
 
   if (repas.length === 0) {
-    conteneur.innerHTML = '<p class="cal-vide" style="margin-top:32px">Aucun repas enregistré pour le moment.</p>';
+    conteneur.innerHTML = `<p class="cal-vide" style="margin-top:32px">${t('aucun_repas_hist')}</p>`;
     return;
   }
 
@@ -2921,7 +3029,7 @@ async function analyserMedicamentPhoto(input) {
   const base64    = await lireEnBase64(fichier);
   const resultat  = document.getElementById('scan-med-resultat');
   resultat.classList.add('visible');
-  resultat.innerHTML = '<span>⏳ Analyse du médicament en cours…</span>';
+  resultat.innerHTML = `<span>${t('scan_analyse')}</span>`;
   try {
     const r    = await fetch('/api/analyser-medicament', {
       method: 'POST',
@@ -2941,10 +3049,10 @@ async function analyserMedicamentPhoto(input) {
           ${data.instructions ? `<div class="scan-posologie">📋 ${data.instructions}</div>` : ''}
         </div>`;
     } else {
-      resultat.innerHTML = '<span class="scan-err">❌ Médicament non reconnu. Entrez le nom manuellement.</span>';
+      resultat.innerHTML = `<span class="scan-err">${t('scan_non_reconnu')}</span>`;
     }
   } catch {
-    resultat.innerHTML = "<span class='scan-err'>❌ Erreur lors de l'analyse. Entrez le nom manuellement.</span>";
+    resultat.innerHTML = `<span class='scan-err'>${t('scan_erreur')}</span>`;
   }
   input.value = '';
 }
@@ -3019,7 +3127,7 @@ function toggleListeMedsEnregistres(btn) {
           ${iconesPeriode[m.periode]||'💊'} ${labelsPeriode[m.periode]||m.periode}
         </span>
         <span class="liste-med-nom">${esc(m.nom)}${m.insuline?' 💉':''}</span>
-        ${m.desactive ? '<span class="liste-med-statut">⏸ désactivé</span>' : ''}
+        ${m.desactive ? `<span class="liste-med-statut">${t('desactive_badge')}</span>` : ''}
       </div>`).join('');
   }
   zone.style.display = 'block';
@@ -3328,7 +3436,7 @@ function marquerPris(id, btn) {
 }
 
 function _marquerPrisAvecUnites(id, btn, unites) {
-  btn.textContent = '✅ Pris — bien joué !';
+  btn.textContent = t('pris_bravo');
   btn.classList.add('deja-pris');
   btn.disabled = true;
   const carte = btn.closest('.med-carte, .med-bloc-item');
@@ -3342,7 +3450,7 @@ function _marquerPrisAvecUnites(id, btn, unites) {
     if (restants.length === 0) {
       bloc.classList.add('bloc-tout-pris');
       const badge = bloc.querySelector('.med-bloc-badge-oubli');
-      if (badge) { badge.className = 'med-bloc-badge-pris'; badge.textContent = 'Tout pris'; }
+      if (badge) { badge.className = 'med-bloc-badge-pris'; badge.textContent = t('med_tout_pris'); }
     }
   }
 
@@ -3398,17 +3506,17 @@ function ouvrirFicheMed(id) {
   const btnD  = document.getElementById('btn-fiche-desactiver');
   const hint  = document.getElementById('fiche-med-hint-desactiver');
   if (med.desactive) {
-    badge.textContent = '⏸ Désactivé';
+    badge.textContent = t('statut_desactive');
     badge.className   = 'fiche-med-statut-badge desactive';
-    btnD.textContent  = '▶ Réactiver ce médicament';
+    btnD.textContent  = t('reactiver_med');
     btnD.classList.add('reactiver');
-    hint.textContent  = 'Ce médicament est actuellement désactivé. Réactivez-le pour recevoir des rappels.';
+    hint.textContent  = t('hint_med_desactive');
   } else {
-    badge.textContent = '✅ Actif';
+    badge.textContent = t('statut_actif');
     badge.className   = 'fiche-med-statut-badge';
-    btnD.textContent  = '⏸ Désactiver ce médicament';
+    btnD.textContent  = t('desactiver_med');
     btnD.classList.remove('reactiver');
-    hint.textContent  = 'Le médicament sera conservé mais n\'apparaîtra plus dans vos rappels du jour.';
+    hint.textContent  = t('hint_med_actif');
   }
 
   // Réinitialise la zone de suppression
@@ -3430,7 +3538,7 @@ function ouvrirFicheMed(id) {
         .slice(0, 60);
 
       if (prises.length === 0) {
-        histListe.innerHTML = '<p class="fiche-insuline-vide">Aucune injection enregistrée.</p>';
+        histListe.innerHTML = `<p class="fiche-insuline-vide">${t('aucune_injection')}</p>`;
       } else {
         const iconesPeriode = { matin:'🌅', midi:'☀️', soir:'🌆', nuit:'🌙' };
         histListe.innerHTML = prises.map(p => {
@@ -3511,12 +3619,12 @@ function afficherStatutNotifications() {
   const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   if (!('Notification' in window)) {
     if (isIOS && !isPWA) {
-      statut.textContent = "⚠️ Installez l'app sur l'écran d'accueil pour activer les notifications.";
+      statut.textContent = t('notif_installer_ios');
       statut.className   = 'notif-statut notif-warn';
       if (hint) hint.style.display = 'block';
       if (btn)  btn.style.display  = 'none';
     } else {
-      statut.textContent = '❌ Votre navigateur ne supporte pas les notifications.';
+      statut.textContent = t('notif_non_supporte');
       statut.className   = 'notif-statut notif-off';
       if (btn) btn.style.display = 'none';
     }
@@ -3524,15 +3632,15 @@ function afficherStatutNotifications() {
   }
   const p = Notification.permission;
   if (p === 'granted') {
-    statut.textContent = '✅ Notifications activées — vous recevrez les rappels.';
+    statut.textContent = t('notif_active');
     statut.className   = 'notif-statut notif-on';
     if (btn) btn.style.display = 'none';
   } else if (p === 'denied') {
-    statut.textContent = '🚫 Notifications bloquées. Allez dans les réglages pour les autoriser.';
+    statut.textContent = t('notif_bloquee');
     statut.className   = 'notif-statut notif-off';
     if (btn) btn.style.display = 'none';
   } else {
-    statut.textContent = '💤 Notifications non activées.';
+    statut.textContent = t('notif_inactive');
     statut.className   = 'notif-statut notif-warn';
     if (btn) btn.style.display = 'block';
   }
@@ -3651,7 +3759,7 @@ function esc(s) {
 
 async function viderCache() {
   const btn = document.getElementById('btn-vider-cache');
-  if (btn) { btn.textContent = '⏳ En cours…'; btn.disabled = true; }
+  if (btn) { btn.textContent = t('vider_cache_en_cours'); btn.disabled = true; }
   try {
     const cles = await caches.keys();
     await Promise.all(cles.map(k => caches.delete(k)));
@@ -3659,11 +3767,11 @@ async function viderCache() {
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r => r.unregister()));
     }
-    if (btn) btn.textContent = '✅ Session renouvelée !';
+    if (btn) btn.textContent = t('session_renouvelee');
     setTimeout(() => { window.location.href = '/?v=' + Date.now(); }, 600);
   } catch {
-    if (btn) { btn.textContent = '❌ Erreur'; btn.disabled = false; }
-    setTimeout(() => { if (btn) { btn.textContent = '🔄 Renouveler la session'; btn.disabled = false; } }, 2000);
+    if (btn) { btn.textContent = t('erreur_simple'); btn.disabled = false; }
+    setTimeout(() => { if (btn) { btn.textContent = t('renouveler_session'); btn.disabled = false; } }, 2000);
   }
 }
 
