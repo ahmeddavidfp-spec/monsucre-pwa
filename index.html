@@ -358,15 +358,18 @@
       </div>
 
       <div id="glycemie-erreur" class="erreur-msg zone-cachee" role="alert" aria-live="assertive"></div>
+      <div id="glyc-confirm" class="glyc-confirm zone-cachee">Glycémie enregistrée !</div>
 
       <button class="btn-confirmer" onclick="sauverGlycemie()">Enregistrer</button>
+
+      <button class="btn-historique-glyc" onclick="allerA('ecran-historique')">Voir mon historique</button>
     </div>
   </div>
 
   <!-- ÉCRAN HISTORIQUE -->
   <div id="ecran-historique" class="ecran">
     <div class="entete-ecran">
-      <button class="btn-retour" onclick="allerA('ecran-repas')" aria-label="Retour à l'écran Repas">← Retour</button>
+      <button class="btn-retour" onclick="allerA('ecran-glycemie')" aria-label="Retour">← Retour</button>
       <h2>Mes repas &amp; glycémies</h2>
     </div>
     <div class="contenu-ecran" id="liste-historique">

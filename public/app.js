@@ -1640,7 +1640,12 @@ function sauverGlycemie() {
     unite: 'mg/dL'
   });
   patchUserLocal({ historique_repas: historique.slice(0, 60) });
-  afficherBravo('Votre glycémie est enregistrée. Continuez comme ça !', _texteCommentaireGlycemie(valeur));
+
+  // Confirmation inline — pas de redirection Bravo
+  const conf = document.getElementById('glyc-confirm');
+  if (conf) { conf.classList.add('visible'); }
+  _jouerTexteVocal(_texteCommentaireGlycemie(valeur));
+  setTimeout(() => allerA('ecran-accueil'), 2000);
 }
 
 // ════════════════════════════════════════════════════════

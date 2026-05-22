@@ -1250,7 +1250,7 @@ input[type="time"].champ-input {
 .scan-err { color: var(--rouge); }
 
 /* ── CALENDRIER HISTORIQUE ──────────────────────────── */
-.btn-historique {
+.btn-historique, .btn-historique-glyc {
   background: none;
   border: 2.5px solid #B0CFCA;
   border-radius: 14px;
@@ -1263,6 +1263,19 @@ input[type="time"].champ-input {
   text-align: center;
   margin-top: 4px;
 }
+
+/* Confirmation inline glycémie */
+.glyc-confirm {
+  text-align: center;
+  background: #D0ECD8;
+  color: #0B6650;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.glyc-confirm.zone-cachee { display: none; }
+.glyc-confirm.visible { display: block; }
 .calendrier {
   background: white;
   border-radius: 20px;
