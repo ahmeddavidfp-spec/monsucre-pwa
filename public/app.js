@@ -72,6 +72,12 @@ const _TRANSLATIONS = {
     modal_1733_texte: 'Le 1733 vous met en contact avec le médecin ou la pharmacie de garde.\nPour toute question médicale non urgente.',
     modal_1733_oui: 'Oui, appeler le 1733',
     modal_annuler: 'Non, annuler',
+    proche_aidant_label: 'Votre proche aidant :',
+    appeler_prenom: (p) => `Appeler ${p}`,
+    appeler_confirm: (nom) => `Appeler ${nom} ?`,
+    envoi_en_cours: 'Envoi en cours…',
+    envoi_echec: '⚠️ Échec — vérifier la configuration',
+    votre_proche_defaut: 'votre proche',
     repas_titre: 'Mon repas',
     quavez_mange: 'Qu\'avez-vous mangé ?',
     prendre_photo: 'Prendre une photo',
@@ -220,6 +226,12 @@ const _TRANSLATIONS = {
     modal_1733_texte: '1733 connects you to the on-call doctor or pharmacy.\nFor any non-urgent medical question.',
     modal_1733_oui: 'Yes, call 1733',
     modal_annuler: 'No, cancel',
+    proche_aidant_label: 'Your contact:',
+    appeler_prenom: (p) => `Call ${p}`,
+    appeler_confirm: (nom) => `Call ${nom}?`,
+    envoi_en_cours: 'Sending…',
+    envoi_echec: '⚠️ Failed — check configuration',
+    votre_proche_defaut: 'your contact',
     repas_titre: 'My meal',
     quavez_mange: 'What did you eat?',
     prendre_photo: 'Take a photo',
@@ -368,6 +380,12 @@ const _TRANSLATIONS = {
     modal_1733_texte: 'Il 1733 ti mette in contatto con il medico o la farmacia di guardia.\nPer qualsiasi domanda medica non urgente.',
     modal_1733_oui: 'Sì, chiama il 1733',
     modal_annuler: 'No, annulla',
+    proche_aidant_label: 'Il tuo contatto:',
+    appeler_prenom: (p) => `Chiama ${p}`,
+    appeler_confirm: (nom) => `Chiamare ${nom}?`,
+    envoi_en_cours: 'Invio in corso…',
+    envoi_echec: '⚠️ Errore — verificare la configurazione',
+    votre_proche_defaut: 'il tuo familiare',
     repas_titre: 'Il mio pasto',
     quavez_mange: 'Cosa hai mangiato?',
     prendre_photo: 'Scatta una foto',
@@ -2710,15 +2728,15 @@ function chargerEcranUrgence() {
   const btnTexte = document.getElementById('btn-alerter-texte');
 
   btn.disabled = false;
-  btnTexte.textContent = 'Prévenir ma famille';
+  btnTexte.textContent = t('prevenir_famille');
   masquerZone('urgence-confirmation');
   btn.style.display = '';
 
   if (proche) {
-    infoEl.innerHTML = `Votre proche aidant : <strong>${esc(proche.prenom)}</strong><br>${esc(proche.telephone)}`;
+    infoEl.innerHTML = `${t('proche_aidant_label')} <strong>${esc(proche.prenom)}</strong><br>${esc(proche.telephone)}`;
     afficherZone('urgence-proche-info');
     masquerZone('urgence-pas-de-proche');
-    btnTexte.textContent = `Appeler ${proche.prenom}`;
+    btnTexte.textContent = t('appeler_prenom')(proche.prenom);
   } else {
     masquerZone('urgence-proche-info');
     afficherZone('urgence-pas-de-proche');
@@ -2757,14 +2775,14 @@ function appelerMedecin() {
   const m = getMedecin();
   if (!m?.telephone) return;
   const nom = m.nom ? `${m.nom} (${m.telephone})` : m.telephone;
-  if (!confirm(`Appeler ${nom} ?`)) return;
+  if (!confirm(t('appeler_confirm')(nom))) return;
   window.location.href = `tel:${m.telephone}`;
 }
 function appelerPharmacie() {
   const p = getPharmacie();
   if (!p?.telephone) return;
   const nom = p.nom ? `${p.nom} (${p.telephone})` : p.telephone;
-  if (!confirm(`Appeler ${nom} ?`)) return;
+  if (!confirm(t('appeler_confirm')(nom))) return;
   window.location.href = `tel:${p.telephone}`;
 }
 
@@ -2772,7 +2790,7 @@ function _texteUrgence() {
   const prenomUser = getPrenom();
   const proche     = getProcheContact();
   if (proche) {
-    const nomProche = proche.prenom || 'votre proche';
+    const nomProche = proche.prenom || t('votre_proche_defaut');
     return t('urgence_vocal_proche')(prenomUser, nomProche);
   }
   return t('urgence_vocal_seul')(prenomUser);
@@ -2787,7 +2805,7 @@ async function envoyerAlerteUrgence() {
   const btn    = document.getElementById('btn-alerter-proche');
   const prenom = getPrenom() || 'Votre proche';
   btn.disabled = true;
-  document.getElementById('btn-alerter-texte').textContent = 'Envoi en cours…';
+  document.getElementById('btn-alerter-texte').textContent = t('envoi_en_cours');
   try {
     const r = await fetch('/api/urgence', {
       method: 'POST',
@@ -2796,7 +2814,7 @@ async function envoyerAlerteUrgence() {
     });
     const data = await r.json();
     if (!data.ok) {
-      document.getElementById('btn-alerter-texte').textContent = '⚠️ Échec — vérifier la configuration';
+      document.getElementById('btn-alerter-texte').textContent = t('envoi_echec');
       btn.disabled = false;
       return;
     }
