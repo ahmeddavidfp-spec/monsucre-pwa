@@ -283,8 +283,9 @@ function allerA(ecranId) {
   if (ecranId === 'ecran-urgence')      chargerEcranUrgence();
   if (ecranId === 'ecran-proche')       chargerFormulaireProche();
   if (ecranId === 'ecran-dev')          chargerEcranDev();
-  if (ecranId === 'ecran-historique')   chargerHistorique();
-  if (ecranId === 'ecran-glycemie')     reinitGlyc();
+  if (ecranId === 'ecran-historique')        chargerHistorique();
+  if (ecranId === 'ecran-historique-repas') chargerHistoriqueRepas();
+  if (ecranId === 'ecran-glycemie')          reinitGlyc();
   if (ecranId === 'ecran-medicaments')  chargerMedicaments();
   if (ecranId === 'ecran-repas')        verifierRappelGlyc();
 }
@@ -1814,6 +1815,59 @@ function rendreCalendrier(historique) {
   }
 
   return html;
+}
+
+// ════════════════════════════════════════════════════════
+// ── Historique Repas ────────────────────────────────────
+// ════════════════════════════════════════════════════════
+function chargerHistoriqueRepas() {
+  const conteneur = document.getElementById('liste-historique-repas');
+  const repas = getHistorique().filter(e => e.type === 'photo' || e.type === 'vocal');
+
+  if (repas.length === 0) {
+    conteneur.innerHTML = '<p class="cal-vide" style="margin-top:32px">Aucun repas enregistré pour le moment.</p>';
+    return;
+  }
+
+  // Grouper par date
+  const groupes = {};
+  const ordre   = [];
+  repas.forEach(e => {
+    const d   = new Date(e.date);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if (!groupes[key]) { groupes[key] = []; ordre.push(key); }
+    groupes[key].push(e);
+  });
+
+  let html = '';
+  ordre.forEach(key => {
+    const d     = new Date(key);
+    const label = d.toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' });
+    html += `<div class="glych-jour-titre">${label.charAt(0).toUpperCase() + label.slice(1)}</div>`;
+
+    groupes[key]
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .forEach(e => {
+        const heure = new Date(e.date).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+        const desc  = e.description ? `<p class="repas-hist-desc">"${esc(e.description)}"</p>` : '';
+        const conseil = e.conseil ? `<p class="repas-hist-conseil">${esc(e.conseil)}</p>` : '';
+        const photo = e.thumbnail
+          ? `<img class="repas-hist-photo" src="${e.thumbnail}" alt="Photo du repas" onerror="this.style.display='none'" />`
+          : '';
+        const icone = e.type === 'photo' ? '📷' : '🎤';
+        html += `<div class="repas-hist-carte">
+          <div class="repas-hist-entete">
+            <span class="repas-hist-icone">${icone}</span>
+            <span class="repas-hist-heure">${heure}</span>
+          </div>
+          ${photo}
+          ${desc}
+          ${conseil}
+        </div>`;
+      });
+  });
+
+  conteneur.innerHTML = `<div class="glych-groupe">${html}</div>`;
 }
 
 function naviguerMois(delta) {
