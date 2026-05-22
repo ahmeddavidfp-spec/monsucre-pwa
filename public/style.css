@@ -213,7 +213,7 @@ html, body {
 .entete-ecran h2 { font-size: 22px; font-weight: 800; }
 
 #ecran-repas .entete-ecran,
-#ecran-historique-repas .entete-ecran { background: var(--repas-couleur); }
+#ecran-historique-repas .entete-ecran { background: #7C3DB5; }
 #ecran-historique .entete-ecran {
   background: var(--glyc-couleur);
   justify-content: space-between;
@@ -221,7 +221,8 @@ html, body {
 #ecran-historique .entete-ecran h2 { flex: 1; text-align: center; }
 
 #ecran-medicaments .entete-ecran,
-#ecran-ajouter-med .entete-ecran { background: var(--meds-couleur); }
+#ecran-ajouter-med .entete-ecran,
+#ecran-fiche-med .entete-ecran   { background: #3A5BA0; }
 
 #ecran-glycemie .entete-ecran { background: var(--glyc-couleur); }
 
