@@ -135,17 +135,32 @@ async function hydraterDepuisServeur() {
 // ── PIN aidant ─────────────────────────────────────────
 // ════════════════════════════════════════════════════════
 let _pinSaisi = '';
+let _pinModeCreation = false;  // true = premier PIN à créer, false = vérification
 
 function ouvrirParametres() {
   const pin = localStorage.getItem(cleUser('ms_pin'));
   if (!pin) {
-    // Pas encore de PIN → première config, accès direct
-    allerA('ecran-proche');
+    // Pas de PIN sur cet appareil (nouvel appareil ou premier lancement) →
+    // montrer le modal en mode "création" plutôt que d'ouvrir directement les paramètres
+    document.getElementById('modal-pin').style.display = 'flex';
+    const titre = document.querySelector('.pin-titre');
+    if (titre) titre.textContent = '🔑 Créer votre code aidant';
+    const sousTitre = document.querySelector('.pin-sous');
+    if (sousTitre) sousTitre.textContent = 'Choisissez un code à 4 chiffres pour protéger les paramètres.';
+    _pinSaisi = '';
+    _majAffichagePin();
+    // Mode création : le premier code saisi devient le PIN
+    _pinModeCreation = true;
     return;
   }
+  _pinModeCreation = false;
   _pinSaisi = '';
   _majAffichagePin();
   document.getElementById('modal-pin').style.display = 'flex';
+  const titre = document.querySelector('.pin-titre');
+  if (titre) titre.textContent = '🔑 Accès aidant';
+  const sousTitre = document.querySelector('.pin-sous');
+  if (sousTitre) sousTitre.textContent = 'Entrez votre code à 4 chiffres.';
 }
 
 function _pinTouche(chiffre) {
@@ -168,6 +183,14 @@ function _majAffichagePin() {
 }
 
 function _verifierPin() {
+  if (_pinModeCreation) {
+    // Mode création : on enregistre le PIN saisi et on ouvre les paramètres
+    localStorage.setItem(cleUser('ms_pin'), _pinSaisi);
+    document.getElementById('modal-pin').style.display = 'none';
+    _pinModeCreation = false;
+    allerA('ecran-proche');
+    return;
+  }
   const pinSauve = localStorage.getItem(cleUser('ms_pin'));
   if (_pinSaisi === pinSauve) {
     document.getElementById('modal-pin').style.display = 'none';
@@ -183,6 +206,7 @@ function _verifierPin() {
 
 function fermerModalPin() {
   _pinSaisi = '';
+  _pinModeCreation = false;
   _majAffichagePin();
   document.getElementById('modal-pin').style.display = 'none';
 }
