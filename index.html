@@ -442,9 +442,11 @@
       <p class="champ-aide" style="margin-bottom:4px;">Les champs <span style="color:var(--rouge);font-weight:700">*</span> sont obligatoires.</p>
 
       <!-- Étape 1 : Nom -->
-      <div class="champ-group">
+      <div class="champ-group" style="position:relative">
         <label class="champ-label" for="inp-med-nom">Nom du médicament <span style="color:var(--rouge)">*</span></label>
-        <input class="champ-input" type="text" id="inp-med-nom" placeholder="Ex : Metformine" autocomplete="off" />
+        <input class="champ-input" type="text" id="inp-med-nom" placeholder="Ex : Metformine" autocomplete="off"
+               oninput="autocompleteNomMed(this.value)" onfocus="autocompleteNomMed(this.value)" onblur="setTimeout(()=>fermerAutocompleteMed(),200)" />
+        <ul id="med-autocomplete-liste" class="med-autocomplete-liste" style="display:none"></ul>
       </div>
 
       <!-- Étape 2 : Quand ? -->

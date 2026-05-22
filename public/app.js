@@ -2332,6 +2332,55 @@ function selectionnerPeriode(btn) {
   }
 }
 
+// ════════════════════════════════════════════════════════
+// ── Autocomplete médicaments belges ────────────────────
+// ════════════════════════════════════════════════════════
+let _listeMedsBE = null;
+
+async function _chargerListeMedsBE() {
+  if (_listeMedsBE) return _listeMedsBE;
+  try {
+    const r = await fetch('/public/medicaments-be.json');
+    _listeMedsBE = await r.json();
+  } catch { _listeMedsBE = []; }
+  return _listeMedsBE;
+}
+
+async function autocompleteNomMed(valeur) {
+  const liste = document.getElementById('med-autocomplete-liste');
+  if (!liste) return;
+  const q = valeur.trim().toLowerCase();
+  if (q.length < 2) { liste.style.display = 'none'; return; }
+  const meds = await _chargerListeMedsBE();
+  const resultats = meds
+    .filter(m => m.toLowerCase().includes(q))
+    .sort((a, b) => {
+      // Priorité : commence par la saisie > contient ailleurs
+      const aStart = a.toLowerCase().startsWith(q);
+      const bStart = b.toLowerCase().startsWith(q);
+      if (aStart && !bStart) return -1;
+      if (!aStart && bStart) return 1;
+      return a.localeCompare(b, 'fr');
+    })
+    .slice(0, 8);
+  if (resultats.length === 0) { liste.style.display = 'none'; return; }
+  liste.innerHTML = resultats.map(m =>
+    `<li class="med-autocomplete-item" onmousedown="choisirMedBE('${m.replace(/'/g, "\\'")}')">${m.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<strong>$1</strong>')}</li>`
+  ).join('');
+  liste.style.display = 'block';
+}
+
+function choisirMedBE(nom) {
+  const inp = document.getElementById('inp-med-nom');
+  if (inp) inp.value = nom;
+  fermerAutocompleteMed();
+}
+
+function fermerAutocompleteMed() {
+  const liste = document.getElementById('med-autocomplete-liste');
+  if (liste) liste.style.display = 'none';
+}
+
 function ajouterMedicament() {
   if (estSeniorOnly()) return; // verrouillé
   const nom      = document.getElementById('inp-med-nom').value.trim();
