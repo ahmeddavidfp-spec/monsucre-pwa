@@ -700,12 +700,12 @@ async function renvoyerCode() {
   } catch { /* silencieux */ }
 }
 
-// ── Résumé accueil : dernière glycémie + sous-titre médicaments ───────────
+// ── Sous-titres dynamiques accueil ────────────────────────────────────────
 function mettreAJourResume() {
-  // ── Dernière glycémie (ligne discrète sans icône) ───
-  const resume   = document.getElementById('accueil-resume');
+  // ── Sous-titre bouton Ma glycémie ──────────────────
+  const sousGlyc  = document.getElementById('sous-glycemie');
   const histoGlyc = getHistorique().filter(e => e.type === 'glycemie');
-  if (resume) {
+  if (sousGlyc) {
     if (histoGlyc.length > 0) {
       const derniere = histoGlyc[0];
       const d        = new Date(derniere.date);
@@ -717,29 +717,14 @@ function mettreAJourResume() {
       else if (diffMin < 60) quand = `il y a ${diffMin} min`;
       else if (diffH < 24)   quand = `il y a ${diffH}h`;
       else                   quand = d.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
-
-      const v  = derniere.valeur;
-      const st = _glycStatut((derniere.unite === 'mg/dL' || v > 40) ? v : v * 18);
-      resume.innerHTML = '';
-      const ligne = document.createElement('div');
-      ligne.className = 'resume-item';
-      const texte = document.createElement('span');
-      const val = document.createElement('strong');
-      val.className = `resume-val ${st.cls}`;
-      val.textContent = `${v} mg/dL`;
-      const quandSpan = document.createElement('span');
-      quandSpan.className = 'resume-quand';
-      quandSpan.textContent = ` — ${quand}`;
-      texte.append('Dernière glycémie : ', val, quandSpan);
-      ligne.appendChild(texte);
-      resume.appendChild(ligne);
-      resume.style.display = 'flex';
+      const v = derniere.valeur;
+      sousGlyc.textContent = `Dernière : ${v} mg/dL — ${quand}`;
     } else {
-      resume.style.display = 'none';
+      sousGlyc.textContent = 'Enregistrer ma valeur du jour';
     }
   }
 
-  // ── Sous-titre dynamique bouton médicaments ─────────
+  // ── Sous-titre bouton Mes médicaments ──────────────
   const sousMeds = document.getElementById('sous-meds');
   if (sousMeds) {
     const meds     = getMedicaments().filter(m => !m.desactive);
