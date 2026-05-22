@@ -105,6 +105,32 @@ const _TRANSLATIONS = {
     mode_nuit_label_auto: 'Automatique (21h–6h)',
     mode_nuit_label_off: 'Désactivé',
     partager: 'Partager',
+    mes_glycemies_titre: 'Mes glycémies',
+    cal_legende_hypo: 'Hypo',
+    nouveau_med: 'Nouveau médicament',
+    scanner_boite: '📷 Scanner la boîte',
+    champs_obligatoires: 'Les champs * sont obligatoires.',
+    nom_medicament_label: 'Nom du médicament',
+    placeholder_med: 'Ex : Metformine',
+    quand_prendre: 'Quand le prendre ?',
+    quand_prendre_hint: '(plusieurs choix possibles)',
+    insuline_titre: 'Piqûre d\'insuline',
+    insuline_sous: 'Cochez si c\'est une injection',
+    options_avancees_btn: '⚙️ Options avancées',
+    frequence_label: 'Fréquence',
+    freq_quotidien: '📅 Chaque jour',
+    freq_hebdo: '📆 Semaine',
+    freq_mensuel_btn: '🗓️ Mois',
+    quel_jour: 'Quel jour ?',
+    quel_jour_mois: 'Quel jour du mois ?',
+    heure_exacte: 'Heure exacte',
+    posologie_label: 'Posologie',
+    placeholder_posologie: 'Ex : 1 comprimé · 500 mg',
+    enregistrer_med: '✅ Enregistrer le médicament',
+    mes_meds_enregistres: '📋 Mes médicaments enregistrés',
+    aucun_med_enregistre: 'Aucun médicament enregistré',
+    jour_lun: 'Lun', jour_mar: 'Mar', jour_mer: 'Mer', jour_jeu: 'Jeu',
+    jour_ven: 'Ven', jour_sam: 'Sam', jour_dim: 'Dim',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous sommes heureux de vous retrouver ce matin. Passez une excellente journée.`,
     salut_midi:  (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous espérons que votre journée se passe bien.`,
@@ -259,6 +285,32 @@ const _TRANSLATIONS = {
     mode_nuit_label_auto: 'Automatic (9pm–6am)',
     mode_nuit_label_off: 'Disabled',
     partager: 'Share',
+    mes_glycemies_titre: 'My blood sugars',
+    cal_legende_hypo: 'Hypo',
+    nouveau_med: 'New medication',
+    scanner_boite: '📷 Scan the box',
+    champs_obligatoires: 'Fields marked * are required.',
+    nom_medicament_label: 'Medication name',
+    placeholder_med: 'E.g.: Metformin',
+    quand_prendre: 'When to take it?',
+    quand_prendre_hint: '(multiple choices)',
+    insuline_titre: 'Insulin injection',
+    insuline_sous: 'Check if it is an injection',
+    options_avancees_btn: '⚙️ Advanced options',
+    frequence_label: 'Frequency',
+    freq_quotidien: '📅 Every day',
+    freq_hebdo: '📆 Weekly',
+    freq_mensuel_btn: '🗓️ Monthly',
+    quel_jour: 'Which day?',
+    quel_jour_mois: 'Which day of the month?',
+    heure_exacte: 'Exact time',
+    posologie_label: 'Dosage',
+    placeholder_posologie: 'E.g.: 1 tablet · 500 mg',
+    enregistrer_med: '✅ Save medication',
+    mes_meds_enregistres: '📋 My saved medications',
+    aucun_med_enregistre: 'No medications saved',
+    jour_lun: 'Mon', jour_mar: 'Tue', jour_mer: 'Wed', jour_jeu: 'Thu',
+    jour_ven: 'Fri', jour_sam: 'Sat', jour_dim: 'Sun',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good morning ' + nom + '! ' : ''}We're happy to see you this morning. Have a wonderful day.`,
     salut_midi:  (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good afternoon ' + nom + '! ' : ''}We hope your day is going well.`,
@@ -413,6 +465,32 @@ const _TRANSLATIONS = {
     mode_nuit_label_auto: 'Automatico (21h–6h)',
     mode_nuit_label_off: 'Disattivato',
     partager: 'Condividi',
+    mes_glycemies_titre: 'Le mie glicemie',
+    cal_legende_hypo: 'Ipo',
+    nouveau_med: 'Nuovo farmaco',
+    scanner_boite: '📷 Scansiona la scatola',
+    champs_obligatoires: 'I campi * sono obbligatori.',
+    nom_medicament_label: 'Nome del farmaco',
+    placeholder_med: 'Es.: Metformina',
+    quand_prendre: 'Quando prenderlo?',
+    quand_prendre_hint: '(più scelte possibili)',
+    insuline_titre: 'Iniezione di insulina',
+    insuline_sous: 'Spunta se è un\'iniezione',
+    options_avancees_btn: '⚙️ Opzioni avanzate',
+    frequence_label: 'Frequenza',
+    freq_quotidien: '📅 Ogni giorno',
+    freq_hebdo: '📆 Settimanale',
+    freq_mensuel_btn: '🗓️ Mensile',
+    quel_jour: 'Quale giorno?',
+    quel_jour_mois: 'Quale giorno del mese?',
+    heure_exacte: 'Orario esatto',
+    posologie_label: 'Posologia',
+    placeholder_posologie: 'Es.: 1 compressa · 500 mg',
+    enregistrer_med: '✅ Salva farmaco',
+    mes_meds_enregistres: '📋 I miei farmaci salvati',
+    aucun_med_enregistre: 'Nessun farmaco salvato',
+    jour_lun: 'Lun', jour_mar: 'Mar', jour_mer: 'Mer', jour_jeu: 'Gio',
+    jour_ven: 'Ven', jour_sam: 'Sab', jour_dim: 'Dom',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Siamo felici di ritrovarti stamattina. Passa una giornata meravigliosa.`,
     salut_midi:  (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Speriamo che la tua giornata stia andando bene.`,
@@ -486,6 +564,11 @@ function appliquerTraductions() {
   document.querySelectorAll('[data-i18n-br]').forEach(el => {
     const val = t(el.dataset.i18nBr);
     if (typeof val === 'string') el.innerHTML = val.replace(/\n/g, '<br>');
+  });
+  // Éléments avec data-i18n-placeholder → placeholder des inputs
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const val = t(el.dataset.i18nPlaceholder);
+    if (typeof val === 'string') el.placeholder = val;
   });
   // Tous les boutons "← Retour"
   document.querySelectorAll('.btn-retour').forEach(el => {
@@ -2316,15 +2399,15 @@ function chargerHistorique() {
 }
 
 function _glycStatut(vRef) {
-  if (vRef < 70)  return { label: 'Hypoglycémie', cls: 'glych-bas'  };
-  if (vRef <= 126) return { label: 'Normal',        cls: 'glych-ok'   };
-  if (vRef <= 180) return { label: 'Élevé',          cls: 'glych-haut' };
-  return               { label: 'Très élevé',    cls: 'glych-tres' };
+  if (vRef < 70)   return { label: t('hypoglycemie'), cls: 'glych-bas'  };
+  if (vRef <= 126) return { label: t('normal'),        cls: 'glych-ok'   };
+  if (vRef <= 180) return { label: t('eleve'),          cls: 'glych-haut' };
+  return                  { label: t('tres_eleve'),    cls: 'glych-tres' };
 }
 
 function rendreCarteGlycHist(e) {
   const d    = new Date(e.date);
-  const heure = d.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+  const heure = d.toLocaleTimeString(t('locale_date'), { hour: '2-digit', minute: '2-digit' });
   const v     = e.valeur;
   const vRef  = (e.unite === 'mg/dL' || v > 40) ? v : v * 18;
   const st    = _glycStatut(vRef);
@@ -2337,8 +2420,15 @@ function rendreCarteGlycHist(e) {
 
 function rendreCalendrier(historique) {
   const { annee, mois, jourSelectionne } = calendrierEtat;
-  const moisNoms = ['Janvier','Février','Mars','Avril','Mai','Juin',
-                    'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const loc = t('locale_date');
+  const moisNoms = Array.from({length:12}, (_,i) => {
+    const s = new Date(2024,i,1).toLocaleDateString(loc,{month:'long'});
+    return s.charAt(0).toUpperCase()+s.slice(1);
+  });
+  // En-têtes jours (Lun 1er jan 2024 = lundi)
+  const joursEntetes = Array.from({length:7}, (_,i) =>
+    new Date(2024,0,1+i).toLocaleDateString(loc,{weekday:'short'}).slice(0,2).toUpperCase()
+  );
 
   const parJour = {};
   historique.forEach(e => {
@@ -2364,10 +2454,7 @@ function rendreCalendrier(historique) {
       <button class="btn-cal-nav" onclick="naviguerMois(1)">▶</button>
     </div>
     <div class="calendrier-grille">
-      <div class="cal-entete">Lu</div><div class="cal-entete">Ma</div>
-      <div class="cal-entete">Me</div><div class="cal-entete">Je</div>
-      <div class="cal-entete">Ve</div><div class="cal-entete">Sa</div>
-      <div class="cal-entete">Di</div>`;
+      ${joursEntetes.map(j=>`<div class="cal-entete">${j}</div>`).join('')}`;
 
   for (let i = 0; i < debutLundi; i++) html += `<div class="cal-jour vide"></div>`;
 
@@ -2400,9 +2487,9 @@ function rendreCalendrier(historique) {
 
   html += `</div>
     <div class="cal-legende">
-      <span class="cal-legende-item"><span class="cal-dot dot-glyc cal-legende-dot"></span> Normal</span>
-      <span class="cal-legende-item"><span class="cal-dot dot-glyc-haut cal-legende-dot"></span> Élevé</span>
-      <span class="cal-legende-item"><span class="cal-dot dot-glyc-bas cal-legende-dot"></span> Hypo</span>
+      <span class="cal-legende-item"><span class="cal-dot dot-glyc cal-legende-dot"></span> ${t('normal')}</span>
+      <span class="cal-legende-item"><span class="cal-dot dot-glyc-haut cal-legende-dot"></span> ${t('eleve')}</span>
+      <span class="cal-legende-item"><span class="cal-dot dot-glyc-bas cal-legende-dot"></span> ${t('cal_legende_hypo')}</span>
     </div>
   </div>`;
 
@@ -2411,7 +2498,7 @@ function rendreCalendrier(historique) {
     const key     = `${annee}-${String(mois+1).padStart(2,'0')}-${String(jourSelectionne).padStart(2,'0')}`;
     const entrees = (parJour[key] || []).sort((a, b) => new Date(a.date) - new Date(b.date));
     const jourLabel = new Date(annee, mois, jourSelectionne)
-      .toLocaleDateString('fr-BE', { weekday:'long', day:'numeric', month:'long' });
+      .toLocaleDateString(loc, { weekday:'long', day:'numeric', month:'long' });
     html += `<div class="glych-groupe">
       <div class="glych-jour-titre">${jourLabel.charAt(0).toUpperCase() + jourLabel.slice(1)}</div>`;
     if (entrees.length === 0) {
@@ -2436,7 +2523,7 @@ function rendreCalendrier(historique) {
       html += `<div class="glych-groupe">`;
       ordre.forEach(key => {
         const d      = new Date(key);
-        const label  = d.toLocaleDateString('fr-BE', { weekday:'long', day:'numeric', month:'long' });
+        const label  = d.toLocaleDateString(loc, { weekday:'long', day:'numeric', month:'long' });
         html += `<div class="glych-jour-titre">${label.charAt(0).toUpperCase() + label.slice(1)}</div>`;
         groupes[key]
           .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -2922,9 +3009,9 @@ function toggleListeMedsEnregistres(btn) {
   // Construire la liste
   const meds = getMedicaments();
   const iconesPeriode = { matin:'🌅', midi:'☀️', soir:'🌆', nuit:'🌙' };
-  const labelsPeriode = { matin:'Matin', midi:'Midi', soir:'Soir', nuit:'Nuit' };
+  const labelsPeriode = { matin:t('matin'), midi:t('midi'), soir:t('soir'), nuit:t('nuit') };
   if (!meds.length) {
-    zone.innerHTML = '<div style="text-align:center;color:#999;padding:12px;font-size:15px;">Aucun médicament enregistré</div>';
+    zone.innerHTML = `<div style="text-align:center;color:#999;padding:12px;font-size:15px;">${t('aucun_med_enregistre')}</div>`;
   } else {
     zone.innerHTML = meds.map(m => `
       <div class="liste-med-item ${m.desactive ? 'desactive' : ''}" onclick="ouvrirFicheMed(${m.id})">

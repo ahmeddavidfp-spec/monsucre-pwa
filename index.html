@@ -400,8 +400,8 @@
   <div id="ecran-historique" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-glycemie')" aria-label="Retour">← Retour</button>
-      <h2>Mes glycémies</h2>
-      <button class="btn-export-glyc" onclick="exporterGlycemies()" aria-label="Exporter">Partager</button>
+      <h2 data-i18n="mes_glycemies_titre">Mes glycémies</h2>
+      <button class="btn-export-glyc" onclick="exporterGlycemies()" aria-label="Exporter" data-i18n="partager">Partager</button>
     </div>
     <div class="contenu-ecran" id="liste-historique">
       <p class="chargement-meds">Aucune entrée enregistrée.</p>
@@ -429,30 +429,30 @@
   <div id="ecran-ajouter-med" class="ecran">
     <div class="entete-ecran">
       <button class="btn-retour" onclick="allerA('ecran-medicaments')" aria-label="Retour à Mes médicaments">← Retour</button>
-      <h2>Nouveau médicament</h2>
+      <h2 data-i18n="nouveau_med">Nouveau médicament</h2>
     </div>
     <div class="contenu-ecran">
 
       <!-- Scanner compact -->
-      <button class="btn-scan-compact" onclick="ouvrirScanMedicament()">
+      <button class="btn-scan-compact" onclick="ouvrirScanMedicament()" data-i18n="scanner_boite">
         📷 Scanner la boîte
       </button>
       <input type="file" id="input-scan-med" accept="image/*" capture="environment" style="display:none" onchange="analyserMedicamentPhoto(this)" />
       <div id="scan-med-resultat" class="scan-resultat zone-cachee"></div>
 
-      <p class="champ-aide" style="margin-bottom:4px;">Les champs <span style="color:var(--rouge);font-weight:700">*</span> sont obligatoires.</p>
+      <p class="champ-aide" style="margin-bottom:4px;" data-i18n="champs_obligatoires">Les champs * sont obligatoires.</p>
 
       <!-- Étape 1 : Nom -->
       <div class="champ-group" style="position:relative">
-        <label class="champ-label" for="inp-med-nom">Nom du médicament <span style="color:var(--rouge)">*</span></label>
-        <input class="champ-input" type="text" id="inp-med-nom" placeholder="Ex : Metformine" autocomplete="off"
+        <label class="champ-label" for="inp-med-nom" data-i18n="nom_medicament_label">Nom du médicament *</label>
+        <input class="champ-input" type="text" id="inp-med-nom" placeholder="Ex : Metformine" data-i18n-placeholder="placeholder_med" autocomplete="off"
                oninput="autocompleteNomMed(this.value)" onfocus="autocompleteNomMed(this.value)" onblur="setTimeout(()=>fermerAutocompleteMed(),200)" />
         <ul id="med-autocomplete-liste" class="med-autocomplete-liste" style="display:none"></ul>
       </div>
 
       <!-- Étape 2 : Quand ? -->
       <div class="champ-group">
-        <label class="champ-label">Quand le prendre ? <span style="color:var(--rouge)">*</span><span class="champ-hint-inline"> (plusieurs choix possibles)</span></label>
+        <label class="champ-label"><span data-i18n="quand_prendre">Quand le prendre ?</span> <span style="color:var(--rouge)">*</span><span class="champ-hint-inline" data-i18n="quand_prendre_hint"> (plusieurs choix possibles)</span></label>
         <div class="periode-grid">
           <button class="btn-periode matin" data-periode="matin" onclick="selectionnerPeriode(this)">🌅<br><span data-i18n="matin">Matin</span></button>
           <button class="btn-periode midi"  data-periode="midi"  onclick="selectionnerPeriode(this)">☀️<br><span data-i18n="midi">Midi</span></button>
@@ -467,8 +467,8 @@
         <div class="carte-insuline-inner">
           <span class="carte-insuline-icone">💉</span>
           <div>
-            <div class="carte-insuline-titre">Piqûre d'insuline</div>
-            <div class="carte-insuline-sous">Cochez si c'est une injection</div>
+            <div class="carte-insuline-titre" data-i18n="insuline_titre">Piqûre d'insuline</div>
+            <div class="carte-insuline-sous" data-i18n="insuline_sous">Cochez si c'est une injection</div>
           </div>
           <span class="carte-insuline-check" id="carte-insuline-check">○</span>
         </div>
@@ -476,50 +476,50 @@
 
       <!-- Options avancées -->
       <button class="btn-options-avancees" onclick="toggleOptionsAvancees(this)" type="button">
-        <span>⚙️ Options avancées</span><span class="chevron-options">›</span>
+        <span data-i18n="options_avancees_btn">⚙️ Options avancées</span><span class="chevron-options">›</span>
       </button>
       <div id="zone-options-avancees" style="display:none">
         <div class="champ-group">
-          <label class="champ-label">Fréquence</label>
+          <label class="champ-label" data-i18n="frequence_label">Fréquence</label>
           <div class="frequence-grid">
-            <button class="btn-frequence selectionne" data-freq="quotidien" onclick="selectionnerFrequence(this)">📅 Chaque jour</button>
-            <button class="btn-frequence" data-freq="hebdomadaire" onclick="selectionnerFrequence(this)">📆 Semaine</button>
-            <button class="btn-frequence" data-freq="mensuel" onclick="selectionnerFrequence(this)">🗓️ Mois</button>
+            <button class="btn-frequence selectionne" data-freq="quotidien" onclick="selectionnerFrequence(this)" data-i18n="freq_quotidien">📅 Chaque jour</button>
+            <button class="btn-frequence" data-freq="hebdomadaire" onclick="selectionnerFrequence(this)" data-i18n="freq_hebdo">📆 Semaine</button>
+            <button class="btn-frequence" data-freq="mensuel" onclick="selectionnerFrequence(this)" data-i18n="freq_mensuel_btn">🗓️ Mois</button>
           </div>
         </div>
         <div class="champ-group" id="zone-jour-semaine" style="display:none">
-          <label class="champ-label">Quel jour ?</label>
+          <label class="champ-label" data-i18n="quel_jour">Quel jour ?</label>
           <div class="jours-grid">
-            <button class="btn-jour" data-jour="1" onclick="selectionnerJourSemaine(this)">Lun</button>
-            <button class="btn-jour" data-jour="2" onclick="selectionnerJourSemaine(this)">Mar</button>
-            <button class="btn-jour" data-jour="3" onclick="selectionnerJourSemaine(this)">Mer</button>
-            <button class="btn-jour" data-jour="4" onclick="selectionnerJourSemaine(this)">Jeu</button>
-            <button class="btn-jour" data-jour="5" onclick="selectionnerJourSemaine(this)">Ven</button>
-            <button class="btn-jour" data-jour="6" onclick="selectionnerJourSemaine(this)">Sam</button>
-            <button class="btn-jour" data-jour="0" onclick="selectionnerJourSemaine(this)">Dim</button>
+            <button class="btn-jour" data-jour="1" onclick="selectionnerJourSemaine(this)" data-i18n="jour_lun">Lun</button>
+            <button class="btn-jour" data-jour="2" onclick="selectionnerJourSemaine(this)" data-i18n="jour_mar">Mar</button>
+            <button class="btn-jour" data-jour="3" onclick="selectionnerJourSemaine(this)" data-i18n="jour_mer">Mer</button>
+            <button class="btn-jour" data-jour="4" onclick="selectionnerJourSemaine(this)" data-i18n="jour_jeu">Jeu</button>
+            <button class="btn-jour" data-jour="5" onclick="selectionnerJourSemaine(this)" data-i18n="jour_ven">Ven</button>
+            <button class="btn-jour" data-jour="6" onclick="selectionnerJourSemaine(this)" data-i18n="jour_sam">Sam</button>
+            <button class="btn-jour" data-jour="0" onclick="selectionnerJourSemaine(this)" data-i18n="jour_dim">Dim</button>
           </div>
         </div>
         <div class="champ-group" id="zone-jour-mois" style="display:none">
-          <label class="champ-label" for="inp-jour-mois">Quel jour du mois ?</label>
+          <label class="champ-label" for="inp-jour-mois" data-i18n="quel_jour_mois">Quel jour du mois ?</label>
           <input class="champ-input" type="number" id="inp-jour-mois" min="1" max="31" placeholder="Ex : 15" inputmode="numeric" />
         </div>
         <div class="champ-group">
-          <label class="champ-label" for="inp-med-heure">Heure exacte</label>
+          <label class="champ-label" for="inp-med-heure" data-i18n="heure_exacte">Heure exacte</label>
           <input class="champ-input" type="time" id="inp-med-heure" />
         </div>
         <div class="champ-group">
-          <label class="champ-label" for="inp-med-posologie">Posologie</label>
-          <input class="champ-input" type="text" id="inp-med-posologie" placeholder="Ex : 1 comprimé · 500 mg" />
+          <label class="champ-label" for="inp-med-posologie" data-i18n="posologie_label">Posologie</label>
+          <input class="champ-input" type="text" id="inp-med-posologie" placeholder="Ex : 1 comprimé · 500 mg" data-i18n-placeholder="placeholder_posologie" />
         </div>
       </div>
 
       <div id="med-erreur" class="erreur-msg zone-cachee" role="alert" aria-live="assertive"></div>
-      <button class="btn-confirmer" onclick="ajouterMedicament()">✅ Enregistrer le médicament</button>
+      <button class="btn-confirmer" onclick="ajouterMedicament()" data-i18n="enregistrer_med">✅ Enregistrer le médicament</button>
 
       <!-- Liste de tous les médicaments enregistrés -->
       <div style="margin-top: 12px;">
         <button class="btn-liste-meds-toggle" onclick="toggleListeMedsEnregistres(this)" type="button">
-          📋 Mes médicaments enregistrés <span class="chevron-options">›</span>
+          <span data-i18n="mes_meds_enregistres">📋 Mes médicaments enregistrés</span> <span class="chevron-options">›</span>
         </button>
         <div id="liste-meds-enregistres" style="display:none; margin-top:8px;"></div>
       </div>
