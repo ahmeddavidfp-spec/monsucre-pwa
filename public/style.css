@@ -1875,6 +1875,46 @@ input[type="time"].champ-input {
 .toggle-dev input:checked + .toggle-dev-slider::after { transform: translateX(22px); }
 .toggle-dev-label { font-size: 16px; color: var(--texte); }
 
+/* ── Toggle Mode Nuit ────────────────────────────────── */
+.toggle-nuit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 0;
+}
+.toggle-nuit input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.toggle-nuit-slider {
+  display: inline-block;
+  width: 52px;
+  height: 30px;
+  background: #C8C8C8;
+  border-radius: 15px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-nuit-slider::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-nuit input:checked + .toggle-nuit-slider { background: #4A6FA5; }
+.toggle-nuit input:checked + .toggle-nuit-slider::after { transform: translateX(22px); }
+.toggle-nuit-label { font-size: 16px; color: var(--texte); }
+
 /* ── Senior Only ─────────────────────────────────────── */
 .senior-only-bloc {
   margin-top: 16px;
@@ -2172,6 +2212,12 @@ body.mode-nuit-heure .entete {
 }
 body.mode-nuit-heure {
   filter: brightness(0.96);
+}
+body.mode-nuit-heure .accueil-zone-titre {
+  color: rgba(255, 255, 255, 0.60);
+}
+body.mode-nuit-heure .accueil-zone-urgence {
+  border-top-color: rgba(255, 255, 255, 0.15);
 }
 
 /* ── RAPPORT ADMIN ───────────────────────────────────── */

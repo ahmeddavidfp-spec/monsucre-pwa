@@ -75,6 +75,10 @@ const _TRANSLATIONS = {
     parametres: '⚙️ Paramètres',
     langue_titre: '🌐 Langue',
     langue_sous: 'Choisissez la langue de l\'application.',
+    mode_nuit_titre: '🌙 Mode nuit',
+    mode_nuit_sous: 'Activez le mode nuit automatique (21h–6h) ou désactivez-le pour garder l\'affichage normal.',
+    mode_nuit_label_auto: 'Automatique (21h–6h)',
+    mode_nuit_label_off: 'Désactivé',
     partager: 'Partager',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Bonjour, je suis ${voix}. ${nom ? 'Bonjour ' + nom + ' ! ' : ''}Nous sommes heureux de vous retrouver ce matin. Passez une excellente journée.`,
@@ -196,6 +200,10 @@ const _TRANSLATIONS = {
     parametres: '⚙️ Settings',
     langue_titre: '🌐 Language',
     langue_sous: 'Choose the application language.',
+    mode_nuit_titre: '🌙 Night mode',
+    mode_nuit_sous: 'Enable automatic night mode (9pm–6am) or disable it to keep the normal display.',
+    mode_nuit_label_auto: 'Automatic (9pm–6am)',
+    mode_nuit_label_off: 'Disabled',
     partager: 'Share',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Hello, I'm ${voix}. ${nom ? 'Good morning ' + nom + '! ' : ''}We're happy to see you this morning. Have a wonderful day.`,
@@ -317,6 +325,10 @@ const _TRANSLATIONS = {
     parametres: '⚙️ Impostazioni',
     langue_titre: '🌐 Lingua',
     langue_sous: 'Scegli la lingua dell\'applicazione.',
+    mode_nuit_titre: '🌙 Modalità notte',
+    mode_nuit_sous: 'Attiva la modalità notte automatica (21h–6h) o disattivala per mantenere la visualizzazione normale.',
+    mode_nuit_label_auto: 'Automatico (21h–6h)',
+    mode_nuit_label_off: 'Disattivato',
     partager: 'Condividi',
     // ── Vocal ──────────────────────────────────────────
     salut_matin: (nom, voix) => `Buongiorno, sono ${voix}. ${nom ? 'Buongiorno ' + nom + '! ' : ''}Siamo felici di ritrovarti stamattina. Passa una giornata meravigliosa.`,
@@ -767,6 +779,17 @@ function chargerFormulaireProche() {
   masquerZone('medecin-sauve');
   masquerZone('pharmacie-sauve');
   afficherStatutNotifications();
+
+  // Toggle mode nuit
+  const modeNuitActif = localStorage.getItem('ms_mode_nuit') !== 'off';
+  const toggleNuit = document.getElementById('toggle-mode-nuit');
+  if (toggleNuit) toggleNuit.checked = modeNuitActif;
+  const labelNuit = document.getElementById('mode-nuit-label');
+  if (labelNuit) {
+    labelNuit.setAttribute('data-i18n', modeNuitActif ? 'mode_nuit_label_auto' : 'mode_nuit_label_off');
+  }
+  appliquerTraductions();
+
   // Note : les toggles DEV et SeniorOnly sont initialisés par chargerEcranDev()
   // qui est appelé automatiquement quand on navigue vers ecran-dev.
 }
@@ -1528,20 +1551,34 @@ const PERIODES_HEURE = ['heure-nuit','heure-aube','heure-matin','heure-midi','he
 
 function appliquerModeHeure() {
   const h = new Date().getHours();
-  document.body.classList.toggle('mode-nuit-heure', h < 6 || h >= 21);
+  const modeNuit = localStorage.getItem('ms_mode_nuit') !== 'off';
+  document.body.classList.toggle('mode-nuit-heure', modeNuit && (h < 6 || h >= 21));
 
   // Classe colorée selon la plage horaire
   let periode;
-  if      (h >= 21 || h <  5)  periode = 'heure-nuit';
-  else if (h >= 5  && h <  8)  periode = 'heure-aube';
-  else if (h >= 8  && h < 12)  periode = 'heure-matin';
-  else if (h >= 12 && h < 14)  periode = 'heure-midi';
-  else if (h >= 14 && h < 18)  periode = 'heure-aprem';
-  else if (h >= 18 && h < 20)  periode = 'heure-soir';
-  else                          periode = 'heure-crepuscule';
+  if      (!modeNuit)            periode = 'heure-matin';  // forcer neutre si nuit désactivée
+  else if (h >= 21 || h <  5)   periode = 'heure-nuit';
+  else if (h >= 5  && h <  8)   periode = 'heure-aube';
+  else if (h >= 8  && h < 12)   periode = 'heure-matin';
+  else if (h >= 12 && h < 14)   periode = 'heure-midi';
+  else if (h >= 14 && h < 18)   periode = 'heure-aprem';
+  else if (h >= 18 && h < 20)   periode = 'heure-soir';
+  else                           periode = 'heure-crepuscule';
 
   PERIODES_HEURE.forEach(p => document.body.classList.remove(p));
   document.body.classList.add(periode);
+}
+
+function basculerModeNuit(checkbox) {
+  if (checkbox.checked) {
+    localStorage.setItem('ms_mode_nuit', 'auto');
+  } else {
+    localStorage.setItem('ms_mode_nuit', 'off');
+  }
+  appliquerModeHeure();
+  const label = document.getElementById('mode-nuit-label');
+  if (label) label.setAttribute('data-i18n', checkbox.checked ? 'mode_nuit_label_auto' : 'mode_nuit_label_off');
+  appliquerTraductions();
 }
 
 // ════════════════════════════════════════════════════════
