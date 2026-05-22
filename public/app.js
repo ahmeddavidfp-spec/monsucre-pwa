@@ -2508,13 +2508,14 @@ function chargerMedicaments() {
   const cible = document.getElementById('med-bloc-' + periodeActive)
              || document.querySelector('.med-bloc');
   if (cible) {
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       const conteneur = document.querySelector('#ecran-medicaments .contenu-ecran');
-      if (conteneur) {
-        const offsetTop = cible.offsetTop - 12;
-        conteneur.scrollTo({ top: offsetTop, behavior: 'smooth' });
-      }
-    });
+      if (!conteneur) return;
+      const conteneurRect = conteneur.getBoundingClientRect();
+      const cibleRect     = cible.getBoundingClientRect();
+      const offset = cibleRect.top - conteneurRect.top + conteneur.scrollTop - 12;
+      conteneur.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
+    }, 80);
   }
 }
 
