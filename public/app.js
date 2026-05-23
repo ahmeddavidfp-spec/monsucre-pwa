@@ -1010,6 +1010,21 @@ function _majBoutonsTTS() {
 function basculerTTS(provider) {
   setTTSProvider(provider);
   _majBoutonsTTS();
+  // Réinitialise la date de salutation → la voix rejouera à la prochaine visite de l'accueil
+  localStorage.removeItem(cleUser('ms_voix_date'));
+}
+
+async function testerVoix() {
+  const btn = document.getElementById('btn-tts-test');
+  if (btn) { btn.textContent = '⏳ Chargement…'; btn.disabled = true; }
+  const session = getSession();
+  const prenom  = session?.prenom ? `, ${session.prenom}` : '';
+  const texteTest = `Bonjour${prenom} ! Je suis votre assistant Mon Sucre. La voix ${getTTSProvider() === 'elevenlabs' ? 'ElevenLabs' : 'OpenAI'} est active.`;
+  try {
+    await new Promise((resolve) => _jouerTexteVocal(texteTest, resolve));
+  } finally {
+    if (btn) { btn.textContent = '🔊 Tester la voix maintenant'; btn.disabled = false; }
+  }
 }
 
 // ════════════════════════════════════════════════════════
