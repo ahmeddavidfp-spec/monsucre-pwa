@@ -1004,7 +1004,7 @@ function _majBoutonsTTS() {
   _styleBtn(btnO, p === 'openai');
   if (label) label.textContent = p === 'openai'
     ? '🤖 OpenAI TTS actif (nova) — pour tests quota ElevenLabs épuisé'
-    : '🎙️ ElevenLabs actif (Matilda)';
+    : '🎙️ ElevenLabs actif (Léa)';
 }
 
 function basculerTTS(provider) {
@@ -1794,10 +1794,8 @@ async function _jouerDepuisBuffer(ab, texteFallback, onFin) {
 }
 
 // Nom de la voix annoncé dans le message TTS.
-// ⚠️  À synchroniser avec ELEVEN_VOICE_ID dans api/salutation.js :
-//   Matilda (gratuit)  → VOIX_NOM = 'Matilda'
-//   Marie-Alice (payant) → VOIX_NOM = 'Marie-Alice'
-const VOIX_NOM = 'Matilda';
+// ⚠️  À synchroniser avec ELEVEN_VOICE_ID dans api/salutation.js.
+const VOIX_NOM = 'Léa';
 
 function _texteeSalutation() {
   const prenom = getPrenom() || '';

@@ -1,8 +1,7 @@
 // POST /api/salutation
 // Body : { texte: "...", provider?: "elevenlabs" | "openai" }
-// Par défaut : ElevenLabs (Matilda)
+// Par défaut : ElevenLabs (Léa)
 // provider:"openai" → OpenAI TTS (nova) — pour tests DEV quand quota ElevenLabs épuisé
-// ⬆️ Après upgrade ElevenLabs : remplacer ELEVEN_VOICE_ID par 'tMyQcCxfGDdIt7wJ2RQw' (Marie-Alice)
 //
 // ── Cache TTS (Redis Upstash) ────────────────────────────────────────────────
 // Clé : tts:<provider>:<voiceOrModel>:<md5(texte)>
@@ -15,8 +14,8 @@ import crypto from 'crypto';
 import { lireSessionDepuisRequete } from './_lib/session.js';
 import { redis } from './_lib/db.js';
 
-const ELEVEN_VOICE_ID = 'XrExE9yKIg1WjnnlVkGX'; // Matilda — gratuit
-// const ELEVEN_VOICE_ID = 'tMyQcCxfGDdIt7wJ2RQw'; // Marie-Alice — après upgrade
+const ELEVEN_VOICE_ID = 'ICk609TItINMseDpChFt'; // Léa
+// const ELEVEN_VOICE_ID = 'XrExE9yKIg1WjnnlVkGX'; // Matilda (ancienne voix)
 const ELEVEN_MODEL_ID = 'eleven_multilingual_v2';
 
 const OPENAI_VOICE    = 'nova';   // nova = voix féminine, douce, bon français
