@@ -1,29 +1,15 @@
 // TEMPORAIRE — endpoint one-shot pour vider les prises d'insuline de Paolo
-// Protégé par la même vérification admin que /api/admin/users
+// Protégé par un token secret one-shot.
 // À supprimer après utilisation.
 import { redis } from '../_lib/db.js';
-import { lireSessionDepuisRequete } from '../_lib/session.js';
-import { normaliserTelephone } from '../_lib/phone.js';
 
-function getAdmins() {
-  const raw = process.env.ADMIN_PHONES || '';
-  return raw.split(',').map(s => normaliserTelephone(s.trim())).filter(Boolean);
-}
-function isDev() {
-  return ['true', '1', 'yes'].includes((process.env.DEV_MODE || '').toLowerCase().trim());
-}
-function estAutorise(telephone) {
-  const admins = getAdmins();
-  if (admins.length > 0) return admins.includes(telephone);
-  return isDev();
-}
+const ONE_SHOT_TOKEN = 'monsucre-fix-paolo-2026';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const session = lireSessionDepuisRequete(req);
-  if (!session?.telephone) return res.status(401).json({ erreur: 'Non authentifié.' });
-  if (!estAutorise(session.telephone)) return res.status(403).json({ erreur: 'Accès refusé.' });
+  const { token } = req.body || {};
+  if (token !== ONE_SHOT_TOKEN) return res.status(403).json({ erreur: 'Token invalide.' });
 
   try {
     const keys = await redis.keys('user:*');
