@@ -56,10 +56,14 @@ export default async function handler(req, res) {
   const session = lireSessionDepuisRequete(req);
   if (!session?.telephone) return res.status(401).json({ erreur: 'Non authentifié.' });
 
-  const { texte, provider = 'elevenlabs' } = req.body || {};
+  const { texte, provider = 'elevenlabs', voiceId } = req.body || {};
   if (!texte || typeof texte !== 'string' || texte.length > 500) {
     return res.status(400).json({ erreur: 'Texte invalide.' });
   }
+  // voiceId optionnel : doit être un ID ElevenLabs valide (20 chars alphanum)
+  const effectiveVoiceId = (voiceId && /^[a-zA-Z0-9]{20}$/.test(voiceId))
+    ? voiceId
+    : ELEVEN_VOICE_ID;
 
   // ── OpenAI TTS ───────────────────────────────────────────
   if (provider === 'openai') {
@@ -110,7 +114,7 @@ export default async function handler(req, res) {
   }
 
   // ── ElevenLabs TTS (défaut) ──────────────────────────────
-  const cle = cleTTS('elevenlabs', ELEVEN_VOICE_ID, texte);
+  const cle = cleTTS('elevenlabs', effectiveVoiceId, texte);
 
   // Vérification du cache
   const cached = await lireCache(cle);
@@ -124,7 +128,7 @@ export default async function handler(req, res) {
   const apiKey = process.env.ELEVENLABS_API_KEY;
   if (!apiKey) return res.status(500).json({ erreur: 'Clé ElevenLabs manquante.' });
   try {
-    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVEN_VOICE_ID}`, {
+    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${effectiveVoiceId}`, {
       method: 'POST',
       headers: {
         'xi-api-key': apiKey,

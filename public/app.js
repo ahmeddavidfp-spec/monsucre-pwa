@@ -994,6 +994,7 @@ function _majBoutonsTTS() {
   const btnE  = document.getElementById('btn-tts-eleven');
   const btnO  = document.getElementById('btn-tts-openai');
   const label = document.getElementById('tts-provider-label');
+  const sel   = document.getElementById('select-voix-eleven');
   const _styleBtn = (btn, actif) => {
     if (!btn) return;
     btn.style.background  = actif ? '#2e7d32' : '#fff';
@@ -1004,7 +1005,12 @@ function _majBoutonsTTS() {
   _styleBtn(btnO, p === 'openai');
   if (label) label.textContent = p === 'openai'
     ? '🤖 OpenAI TTS actif (nova) — pour tests quota ElevenLabs épuisé'
-    : '🎙️ ElevenLabs actif (Léa)';
+    : `🎙️ ElevenLabs actif (${getVoixNom()})`;
+  // Synchronise le dropdown avec la sélection en cours
+  if (sel) sel.value = getVoixId();
+  // Afficher/masquer le sélecteur de voix selon le moteur
+  const rowVoix = document.getElementById('row-voix-eleven');
+  if (rowVoix) rowVoix.style.display = p === 'elevenlabs' ? 'block' : 'none';
 }
 
 function basculerTTS(provider) {
@@ -1019,7 +1025,8 @@ async function testerVoix() {
   if (btn) { btn.textContent = '⏳ Chargement…'; btn.disabled = true; }
   const session = getSession();
   const prenom  = session?.prenom ? `, ${session.prenom}` : '';
-  const texteTest = `Bonjour${prenom} ! Je suis votre assistant Mon Sucre. La voix ${getTTSProvider() === 'elevenlabs' ? 'ElevenLabs' : 'OpenAI'} est active.`;
+  const nomVoix   = getTTSProvider() === 'elevenlabs' ? getVoixNom() : 'OpenAI';
+  const texteTest = `Bonjour${prenom} ! Je suis votre assistant Mon Sucre. Je m'appelle ${nomVoix}.`;
   try {
     await new Promise((resolve) => _jouerTexteVocal(texteTest, resolve));
   } finally {
@@ -1622,6 +1629,30 @@ function setTTSProvider(p) {
   localStorage.setItem('ms_tts_provider', p);
 }
 
+// ── Sélection de voix ElevenLabs ─────────────────────────
+const VOIX_OPTIONS = [
+  { id: 'ucMmKRQbfDEYyb2IIGax', nom: 'Aurore' },
+  { id: 'ICk609TItINMseDpChFt', nom: 'Léa' },
+  { id: '1T2MOlQA0Xp3hNv1dBxp', nom: 'Loulou' },
+  { id: 'NzCI2wsmQgzQiufNpYi7', nom: 'Virginie' },
+  { id: 'Ap2b3ZnSIW7h0QbBbxCq', nom: 'Alessandre (IT)' },
+  { id: 'uIZsnBL0YK1S5j69bAih', nom: 'Samantha (UK)' },
+];
+function getVoixId() {
+  return localStorage.getItem('ms_voix_id') || 'ICk609TItINMseDpChFt';
+}
+function setVoixId(id) {
+  localStorage.setItem('ms_voix_id', id);
+}
+function getVoixNom() {
+  return VOIX_OPTIONS.find(v => v.id === getVoixId())?.nom || 'Léa';
+}
+function changerVoix(id) {
+  setVoixId(id);
+  localStorage.removeItem(cleUser('ms_voix_date')); // force replay salutation
+  _majBoutonsTTS();
+}
+
 async function _jouerTexteVocal(texte, onFin) {
   _stopperAudioGlobal(); // coupe tout audio en cours
   _afficherLoadingTTS(); // rassure les seniors pendant le fetch ElevenLabs
@@ -1640,7 +1671,7 @@ async function _jouerTexteVocal(texte, onFin) {
     const resp = await fetch('/api/salutation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeader() },
-      body: JSON.stringify({ texte, provider: getTTSProvider() })
+      body: JSON.stringify({ texte, provider: getTTSProvider(), voiceId: getVoixId() })
     });
     if (!resp.ok) {
       const errBody = await resp.json().catch(() => ({}));
@@ -1744,7 +1775,7 @@ async function _prefetchAudio(texte) {
     const resp = await fetch('/api/salutation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeader() },
-      body: JSON.stringify({ texte, provider: getTTSProvider() })
+      body: JSON.stringify({ texte, provider: getTTSProvider(), voiceId: getVoixId() })
     });
     if (!resp.ok) throw new Error('api-' + resp.status);
     return await resp.arrayBuffer();
@@ -1793,16 +1824,15 @@ async function _jouerDepuisBuffer(ab, texteFallback, onFin) {
   }
 }
 
-// Nom de la voix annoncé dans le message TTS.
-// ⚠️  À synchroniser avec ELEVEN_VOICE_ID dans api/salutation.js.
-const VOIX_NOM = 'Léa';
+// Nom de la voix annoncé dans le message TTS — dynamique selon la sélection.
+function voixNom() { return getVoixNom(); }
 
 function _texteeSalutation() {
   const prenom = getPrenom() || '';
   const h = new Date().getHours();
-  if (h >= 5 && h < 12) return t('salut_matin')(prenom, VOIX_NOM);
-  if (h >= 12 && h < 18) return t('salut_midi')(prenom, VOIX_NOM);
-  return t('salut_soir')(prenom, VOIX_NOM);
+  if (h >= 5 && h < 12) return t('salut_matin')(prenom, voixNom());
+  if (h >= 12 && h < 18) return t('salut_midi')(prenom, voixNom());
+  return t('salut_soir')(prenom, voixNom());
 }
 
 async function _parlerSalutation(texteOverride) {

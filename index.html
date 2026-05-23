@@ -857,6 +857,19 @@
               🤖 OpenAI
             </button>
           </div>
+          <!-- Sélecteur de voix ElevenLabs (masqué si OpenAI actif) -->
+          <div id="row-voix-eleven" style="margin-top:10px">
+            <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px">🎤 Voix ElevenLabs</label>
+            <select id="select-voix-eleven" onchange="changerVoix(this.value)"
+              style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #ccc;font-size:15px;background:#fff;cursor:pointer;appearance:auto">
+              <option value="ucMmKRQbfDEYyb2IIGax">Aurore</option>
+              <option value="ICk609TItINMseDpChFt" selected>Léa</option>
+              <option value="1T2MOlQA0Xp3hNv1dBxp">Loulou</option>
+              <option value="NzCI2wsmQgzQiufNpYi7">Virginie</option>
+              <option value="Ap2b3ZnSIW7h0QbBbxCq">Alessandre (IT)</option>
+              <option value="uIZsnBL0YK1S5j69bAih">Samantha (UK)</option>
+            </select>
+          </div>
           <p id="tts-provider-label" style="margin-top:8px;font-size:13px;color:#555;text-align:center"></p>
           <button id="btn-tts-test" onclick="testerVoix()" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:none;background:#1450C4;color:#fff;font-size:14px;font-weight:700;cursor:pointer">
             🔊 Tester la voix maintenant
