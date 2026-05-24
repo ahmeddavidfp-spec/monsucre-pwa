@@ -673,11 +673,12 @@ const _TRANSLATIONS = {
 };
 
 function getLang() {
-  // Clé par utilisateur si session active, sinon clé globale (écran connexion)
+  // Clé par utilisateur si session active — pas de fallback sur la clé globale
+  // pour éviter qu'un autre utilisateur (ex. Paolo en italien) ne pollue la session.
   const session = (() => { try { return JSON.parse(localStorage.getItem('ms_session') || 'null'); } catch { return null; } })();
   if (session?.telephone) {
     const cle = `ms_langue_${session.telephone}`;
-    return localStorage.getItem(cle) || localStorage.getItem('ms_langue') || 'fr';
+    return localStorage.getItem(cle) || 'fr';
   }
   return localStorage.getItem('ms_langue') || 'fr';
 }
@@ -3009,10 +3010,13 @@ function chargerEcranUrgence() {
     afficherZone('urgence-proche-info');
     masquerZone('urgence-pas-de-proche');
     btnTexte.textContent = t('appeler_prenom')(proche.prenom);
+    // Bouton = appel téléphonique direct (pas un SMS)
+    btn.onclick = () => appelerProche(1);
   } else {
     masquerZone('urgence-proche-info');
     afficherZone('urgence-pas-de-proche');
     btn.disabled = true;
+    btn.onclick = envoyerAlerteUrgence;
   }
 
   // Médecin + Pharmacie
