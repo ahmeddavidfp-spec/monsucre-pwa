@@ -362,6 +362,11 @@
       </div>
       <p id="glyc-aide-saisie" class="glyc-aide-saisie" data-i18n="glyc_hint">Appuyez sur le champ pour saisir votre valeur</p>
 
+      <button class="btn-confirmer" onclick="sauverGlycemie()" data-i18n="enregistrer">Enregistrer</button>
+
+      <div id="glycemie-erreur" class="erreur-msg zone-cachee" role="alert" aria-live="assertive"></div>
+      <div id="glyc-confirm" class="glyc-confirm zone-cachee" data-i18n="glycemie_enregistree">Glycémie enregistrée !</div>
+
       <div id="glycemie-indicateur" class="glycemie-indicateur"></div>
 
       <div class="glycemie-reference">
@@ -386,11 +391,6 @@
           <span class="glyc-ref-val">&gt; 180 mg/dL</span>
         </div>
       </div>
-
-      <div id="glycemie-erreur" class="erreur-msg zone-cachee" role="alert" aria-live="assertive"></div>
-      <div id="glyc-confirm" class="glyc-confirm zone-cachee" data-i18n="glycemie_enregistree">Glycémie enregistrée !</div>
-
-      <button class="btn-confirmer" onclick="sauverGlycemie()" data-i18n="enregistrer">Enregistrer</button>
 
       <button class="btn-historique-glyc" onclick="allerA('ecran-historique')" data-i18n="voir_historique">Voir mon historique</button>
     </div>
