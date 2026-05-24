@@ -672,8 +672,24 @@ const _TRANSLATIONS = {
   }
 };
 
-function getLang()     { return localStorage.getItem('ms_langue') || 'fr'; }
-function setLang(lang) { localStorage.setItem('ms_langue', lang); }
+function getLang() {
+  // Clé par utilisateur si session active, sinon clé globale (écran connexion)
+  const session = (() => { try { return JSON.parse(localStorage.getItem('ms_session') || 'null'); } catch { return null; } })();
+  if (session?.telephone) {
+    const cle = `ms_langue_${session.telephone}`;
+    return localStorage.getItem(cle) || localStorage.getItem('ms_langue') || 'fr';
+  }
+  return localStorage.getItem('ms_langue') || 'fr';
+}
+function setLang(lang) {
+  // Sauvegarde par utilisateur si session active, sinon globalement
+  const session = (() => { try { return JSON.parse(localStorage.getItem('ms_session') || 'null'); } catch { return null; } })();
+  if (session?.telephone) {
+    localStorage.setItem(`ms_langue_${session.telephone}`, lang);
+  } else {
+    localStorage.setItem('ms_langue', lang);
+  }
+}
 
 function t(key) {
   const T = _TRANSLATIONS[getLang()] || _TRANSLATIONS.fr;
