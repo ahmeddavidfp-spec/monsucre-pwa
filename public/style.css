@@ -514,7 +514,6 @@ html, body {
 
 /* Bouton Enregistrer ancré en bas de l'écran glycémie */
 #ecran-glycemie .btn-confirmer {
-  margin-top: auto;
   margin-bottom: 8px;
 }
 
