@@ -1130,6 +1130,9 @@ function chargerFormulaireProche() {
   }
   appliquerTraductions();
 
+  // Blocs visibles
+  _syncBlocsToggles();
+
   // Note : les toggles DEV et SeniorOnly sont initialisés par chargerEcranDev()
   // qui est appelé automatiquement quand on navigue vers ecran-dev.
 }
@@ -1555,6 +1558,7 @@ function mettreAJourResume() {
 function entrerDansAccueil() {
   appliquerModeHeure();
   appliquerTraductions();
+  appliquerBlocs();
   const el = document.getElementById('message-bonjour');
   if (el) el.textContent = messageBonjourComplet();
   allerA('ecran-accueil');
@@ -1942,6 +1946,51 @@ function appliquerModeHeure() {
 
   PERIODES_HEURE.forEach(p => document.body.classList.remove(p));
   document.body.classList.add(periode);
+}
+
+// ════════════════════════════════════════════════════════
+// ── Blocs visibles (par utilisateur) ──────────────────
+// ════════════════════════════════════════════════════════
+const _BLOCS_DEFAUT = { glycemie: true, meds: true, repas: true, urgence: true };
+
+function getBlocs() {
+  try {
+    const val = localStorage.getItem(cleUser('ms_blocs'));
+    return val ? { ..._BLOCS_DEFAUT, ...JSON.parse(val) } : { ..._BLOCS_DEFAUT };
+  } catch { return { ..._BLOCS_DEFAUT }; }
+}
+
+function appliquerBlocs() {
+  const blocs = getBlocs();
+  const show = (id, visible) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = visible ? '' : 'none';
+  };
+  show('bloc-glycemie', blocs.glycemie);
+  show('bloc-meds',     blocs.meds);
+  show('bloc-repas',    blocs.repas);
+  show('bloc-urgence',  blocs.urgence);
+  // Masquer la zone "Mon quotidien" si les 3 blocs sont désactivés
+  const zoneQ = document.querySelector('.accueil-zone-quotidien');
+  if (zoneQ) zoneQ.style.display = (!blocs.glycemie && !blocs.meds && !blocs.repas) ? 'none' : '';
+}
+
+function basculerBloc(key, checked) {
+  const blocs = getBlocs();
+  blocs[key] = !!checked;
+  localStorage.setItem(cleUser('ms_blocs'), JSON.stringify(blocs));
+  appliquerBlocs();
+  // Resynchroniser le toggle dans les Paramètres
+  const el = document.getElementById(`toggle-bloc-${key}`);
+  if (el) el.checked = !!checked;
+}
+
+function _syncBlocsToggles() {
+  const blocs = getBlocs();
+  ['glycemie', 'meds', 'repas', 'urgence'].forEach(key => {
+    const el = document.getElementById(`toggle-bloc-${key}`);
+    if (el) el.checked = blocs[key] !== false;
+  });
 }
 
 function basculerModeNuit(event) {

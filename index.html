@@ -201,20 +201,20 @@
     <div class="accueil-zone accueil-zone-quotidien">
       <div class="accueil-zone-titre" data-i18n="zone_quotidien">Mon quotidien</div>
 
-<button class="btn-principal btn-glycemie" onclick="allerA('ecran-glycemie')">
+<button id="bloc-glycemie" class="btn-principal btn-glycemie" onclick="allerA('ecran-glycemie')">
         <span class="btn-icone">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
         </span>
         <span class="btn-texte"><span data-i18n="ma_glycemie">Ma glycémie</span><span class="btn-sous-texte" id="sous-glycemie">Enregistrer ma valeur du jour</span></span>
       </button>
-      <button class="btn-principal btn-meds" onclick="allerA('ecran-medicaments')">
+      <button id="bloc-meds" class="btn-principal btn-meds" onclick="allerA('ecran-medicaments')">
         <span class="btn-icone">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
         </span>
         <span class="btn-texte"><span data-i18n="mes_medicaments">Mes médicaments</span><span class="btn-sous-texte" id="sous-meds">Voir mes prises du jour</span></span>
         <span class="badge-meds" id="badge-meds" style="display:none">0</span>
       </button>
-      <button class="btn-principal btn-repas" onclick="allerA('ecran-repas')">
+      <button id="bloc-repas" class="btn-principal btn-repas" onclick="allerA('ecran-repas')">
         <span class="btn-icone">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2 1.1 0 2-.9 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h3v7"/></svg>
         </span>
@@ -223,7 +223,7 @@
     </div>
 
     <!-- ── ZONE URGENCE ─────────────────────────────────── -->
-    <div class="accueil-zone accueil-zone-urgence">
+    <div id="bloc-urgence" class="accueil-zone accueil-zone-urgence">
       <div class="accueil-zone-titre" data-i18n="zone_urgence">En cas de problème</div>
       <button class="btn-urgence-home" onclick="allerA('ecran-urgence')">
         <span class="btn-icone btn-icone-urgence">
@@ -784,6 +784,32 @@
           <button class="btn-langue" data-lang="en" onclick="changerLangue('en')">🇬🇧 English</button>
           <button class="btn-langue" data-lang="it" onclick="changerLangue('it')">🇮🇹 Italiano</button>
         </div>
+      </div>
+
+      <!-- Blocs visibles -->
+      <div class="config-section">
+        <div class="config-section-titre">📋 Blocs visibles sur l'accueil</div>
+        <p class="config-section-sous">Masquez les sections que votre proche n'utilise pas.</p>
+        <label class="toggle-nuit" onclick="basculerBloc('glycemie', !document.getElementById('toggle-bloc-glycemie').checked)">
+          <input type="checkbox" id="toggle-bloc-glycemie" onchange="basculerBloc('glycemie', this.checked)" />
+          <span class="toggle-nuit-slider"></span>
+          <span class="toggle-nuit-label">💧 Ma glycémie</span>
+        </label>
+        <label class="toggle-nuit" onclick="basculerBloc('meds', !document.getElementById('toggle-bloc-meds').checked)">
+          <input type="checkbox" id="toggle-bloc-meds" onchange="basculerBloc('meds', this.checked)" />
+          <span class="toggle-nuit-slider"></span>
+          <span class="toggle-nuit-label">💊 Mes médicaments</span>
+        </label>
+        <label class="toggle-nuit" onclick="basculerBloc('repas', !document.getElementById('toggle-bloc-repas').checked)">
+          <input type="checkbox" id="toggle-bloc-repas" onchange="basculerBloc('repas', this.checked)" />
+          <span class="toggle-nuit-slider"></span>
+          <span class="toggle-nuit-label">🍽️ Mon repas</span>
+        </label>
+        <label class="toggle-nuit" onclick="basculerBloc('urgence', !document.getElementById('toggle-bloc-urgence').checked)">
+          <input type="checkbox" id="toggle-bloc-urgence" onchange="basculerBloc('urgence', this.checked)" />
+          <span class="toggle-nuit-slider"></span>
+          <span class="toggle-nuit-label">🆘 En cas de problème</span>
+        </label>
       </div>
 
       <!-- Mode nuit -->
