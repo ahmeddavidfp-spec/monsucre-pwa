@@ -1749,7 +1749,9 @@ function _annulerTimeoutSplash() {
 
 function _preparerSalutationVocale() {
   const today = new Date().toDateString();
-  const voixNecessaire = estModeDevActif() || localStorage.getItem(cleUser('ms_voix_date')) !== today;
+  // Si la salutation est désactivée pour cet utilisateur → on passe
+  const salutationActive = getBlocs().salutation !== false;
+  const voixNecessaire = salutationActive && (estModeDevActif() || localStorage.getItem(cleUser('ms_voix_date')) !== today);
 
   if (!voixNecessaire) {
     _salutationEnAttente = false;
@@ -1951,7 +1953,7 @@ function appliquerModeHeure() {
 // ════════════════════════════════════════════════════════
 // ── Blocs visibles (par utilisateur) ──────────────────
 // ════════════════════════════════════════════════════════
-const _BLOCS_DEFAUT = { glycemie: true, meds: true, repas: true, urgence: true };
+const _BLOCS_DEFAUT = { glycemie: true, meds: true, repas: true, urgence: true, salutation: true, bienetre: true };
 
 function getBlocs() {
   try {
@@ -1987,7 +1989,7 @@ function basculerBloc(key, checked) {
 
 function _syncBlocsToggles() {
   const blocs = getBlocs();
-  ['glycemie', 'meds', 'repas', 'urgence'].forEach(key => {
+  ['glycemie', 'meds', 'repas', 'urgence', 'salutation', 'bienetre'].forEach(key => {
     const el = document.getElementById(`toggle-bloc-${key}`);
     if (el) el.checked = blocs[key] !== false;
   });
@@ -2060,6 +2062,9 @@ function questionDuJour() {
 function afficherQuestionBienEtre() {
   const carte = document.getElementById('carte-bienetre');
   if (!carte) return;
+
+  // Désactivé pour cet utilisateur → masquer la carte
+  if (getBlocs().bienetre === false) { carte.style.display = 'none'; return; }
 
   // Vérifie si déjà répondu aujourd'hui
   const today    = new Date().toDateString();

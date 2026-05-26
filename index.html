@@ -810,6 +810,16 @@
           <span class="toggle-nuit-slider"></span>
           <span class="toggle-nuit-label">🆘 En cas de problème</span>
         </label>
+        <label class="toggle-nuit" onclick="basculerBloc('salutation', !document.getElementById('toggle-bloc-salutation').checked)">
+          <input type="checkbox" id="toggle-bloc-salutation" onchange="basculerBloc('salutation', this.checked)" />
+          <span class="toggle-nuit-slider"></span>
+          <span class="toggle-nuit-label">🔊 Message vocal d'accueil</span>
+        </label>
+        <label class="toggle-nuit" onclick="basculerBloc('bienetre', !document.getElementById('toggle-bloc-bienetre').checked)">
+          <input type="checkbox" id="toggle-bloc-bienetre" onchange="basculerBloc('bienetre', this.checked)" />
+          <span class="toggle-nuit-slider"></span>
+          <span class="toggle-nuit-label">👍 Question bien-être (pouce)</span>
+        </label>
       </div>
 
       <!-- Mode nuit -->
