@@ -1577,6 +1577,13 @@ function entrerDansAccueil() {
 function _lancerSession() {
   entrerDansAccueil();
   demanderPermissionNotifications();
+  // Si le bloc médicaments est désactivé, annuler tous les timers SW au démarrage
+  if (getBlocs().meds === false) {
+    swController().then(sw => {
+      if (!sw) return;
+      getMedicaments().forEach(m => sw.postMessage({ type: 'ANNULER_NOTIF', medId: m.id }));
+    });
+  }
   verifierMedsOublies();
   if (!_intervalMeds) _intervalMeds = setInterval(verifierMedsOublies, 15 * 60 * 1000);
   getMedicaments().forEach(planifierNotification);
@@ -3837,6 +3844,7 @@ async function envoyerNotification(titre, corps, tag) {
 }
 
 function verifierMedsOublies() {
+  if (getBlocs().meds === false) return; // bloc médicaments désactivé
   const now     = minutesMaintenant();
   const meds    = getMedicaments();
   const oublies = meds.filter(m => estDuAujourdhui(m) && !m.pris && !m.desactive && heureEnMinutes(m) + 30 <= now);
