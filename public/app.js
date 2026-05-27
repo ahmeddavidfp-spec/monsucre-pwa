@@ -1996,7 +1996,8 @@ function basculerBloc(key, checked) {
   // Effets de bord sur les notifications
   if (key === 'meds') {
     if (!checked) {
-      // Désactivation → annuler toutes les notifications médicaments dans le SW
+      // Désactivation → annuler toutes les notifications + effacer le badge icône
+      mettreAJourBadge(0);
       swController().then(sw => {
         if (!sw) return;
         getMedicaments().forEach(m => {
