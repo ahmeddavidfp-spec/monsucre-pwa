@@ -1985,6 +1985,24 @@ function basculerBloc(key, checked) {
   // Resynchroniser le toggle dans les Paramètres
   const el = document.getElementById(`toggle-bloc-${key}`);
   if (el) el.checked = !!checked;
+
+  // Effets de bord sur les notifications
+  if (key === 'meds') {
+    if (!checked) {
+      // Désactivation → annuler toutes les notifications médicaments dans le SW
+      swController().then(sw => {
+        if (!sw) return;
+        getMedicaments().forEach(m => {
+          sw.postMessage({ type: 'ANNULER_NOTIF', medId: m.id });
+        });
+      });
+    } else {
+      // Réactivation → replanifier toutes les notifications médicaments
+      if (Notification.permission === 'granted') {
+        getMedicaments().forEach(planifierNotification);
+      }
+    }
+  }
 }
 
 function _syncBlocsToggles() {
@@ -3840,6 +3858,7 @@ function verifierMedsOublies() {
 async function planifierNotification(med) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   if (med.desactive) return;
+  if (getBlocs().meds === false) return; // bloc médicaments désactivé
 
   const cible = new Date();
   const mins  = heureEnMinutes(med);
