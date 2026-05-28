@@ -1982,6 +1982,8 @@ function appliquerBlocs() {
   // Masquer la zone "Mon quotidien" si les 3 blocs sont désactivés
   const zoneQ = document.querySelector('.accueil-zone-quotidien');
   if (zoneQ) zoneQ.style.display = (!blocs.glycemie && !blocs.meds && !blocs.repas) ? 'none' : '';
+  // Si meds désactivé → vider le badge icône immédiatement
+  if (blocs.meds === false) mettreAJourBadge(0);
 }
 
 function basculerBloc(key, checked) {
