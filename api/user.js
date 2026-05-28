@@ -115,6 +115,13 @@ export default async function handler(req, res) {
       }
       champsAutorises.bien_etre = patch.bien_etre;
     }
+    if ('preferences' in patch) {
+      const p = patch.preferences;
+      if (p !== null && typeof p !== 'object') {
+        return res.status(400).json({ erreur: 'Préférences invalides.' });
+      }
+      champsAutorises.preferences = p;
+    }
 
     try {
       const user = await mettreAJourUser(tel, champsAutorises);

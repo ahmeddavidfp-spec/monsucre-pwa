@@ -687,6 +687,8 @@ function setLang(lang) {
   const session = (() => { try { return JSON.parse(localStorage.getItem('ms_session') || 'null'); } catch { return null; } })();
   if (session?.telephone) {
     localStorage.setItem(`ms_langue_${session.telephone}`, lang);
+    // Persistance serveur (différée pour ne pas bloquer)
+    setTimeout(() => _sauverPreferences(), 0);
   } else {
     localStorage.setItem('ms_langue', lang);
   }
@@ -1588,7 +1590,12 @@ function _lancerSession() {
   if (!_intervalMeds) _intervalMeds = setInterval(verifierMedsOublies, 15 * 60 * 1000);
   getMedicaments().forEach(planifierNotification);
   hydraterDepuisServeur().then(u => {
-    if (u) { mettreAJourBoutonsAppel(); chargerMedicaments(); mettreAJourResume(); }
+    if (u) {
+      _chargerPreferencesDepuisUser(u); // restaure langue + blocs depuis Redis
+      mettreAJourBoutonsAppel();
+      chargerMedicaments();
+      mettreAJourResume();
+    }
   });
 }
 
@@ -1986,6 +1993,28 @@ function appliquerBlocs() {
   if (blocs.meds === false) mettreAJourBadge(0);
 }
 
+// Sauvegarde langue + blocs sur le serveur (Redis) pour persistance multi-appareil
+function _sauverPreferences() {
+  patchUserLocal({ preferences: { langue: getLang(), blocs: getBlocs() } });
+}
+
+// Restaure les préférences depuis le profil serveur après hydratation
+function _chargerPreferencesDepuisUser(user) {
+  const prefs = user?.preferences;
+  if (!prefs) return;
+  // Langue
+  if (prefs.langue) {
+    setLang(prefs.langue);
+    appliquerTraductions();
+  }
+  // Blocs
+  if (prefs.blocs) {
+    localStorage.setItem(cleUser('ms_blocs'), JSON.stringify(prefs.blocs));
+    appliquerBlocs();
+    _syncBlocsToggles();
+  }
+}
+
 function basculerBloc(key, checked) {
   const blocs = getBlocs();
   blocs[key] = !!checked;
@@ -1994,6 +2023,9 @@ function basculerBloc(key, checked) {
   // Resynchroniser le toggle dans les Paramètres
   const el = document.getElementById(`toggle-bloc-${key}`);
   if (el) el.checked = !!checked;
+
+  // Persistance serveur
+  _sauverPreferences();
 
   // Effets de bord sur les notifications
   if (key === 'meds') {
